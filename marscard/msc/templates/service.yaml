@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "msc.fullname" . }}
+  labels:
+    {{- include "msc.labels" . | nindent 4 }}
+  annotations:
+    metallb.universe.tf/allow-shared-ip: {{ .Chart.Name }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.port }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "msc.selectorLabels" . | nindent 4 }}

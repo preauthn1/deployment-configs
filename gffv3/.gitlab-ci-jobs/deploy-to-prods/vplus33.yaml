@@ -1,0 +1,144 @@
+.release_prod_rule: &release_prod_rule
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger" && $SRC_PROJECT == $TRIGGER_FROM_PROJECT && $SRC_COMMIT_TAG =~ /^release_\d+$/'
+    - when: never
+
+vplus33 at vplus33 baremetal:
+  <<: *release_prod_rule
+  stage: choose-env
+  tags:
+    - php
+  needs:
+    - "info"
+  when: manual
+  script:
+    - echo "choose vplus33 baremetal (vplus33)"
+
+migration to vplus33 baremetal (vplus33):
+  <<: *release_prod_rule
+  image: google/cloud-sdk:latest
+  stage: deploy
+  tags:
+    - php
+  needs:
+    - "vplus33 at vplus33 baremetal"
+  variables:
+    DEPLOY_NS: 
+    # 建置來源專案
+    TRIGGER_FROM_PROJECT: target/gffv3/apis
+    AR_PATH: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024
+    # 應用名
+    DEPLOYMENT_NAME: laravel-migration
+    APP_NAME: Laravel
+    APP_PORT: 80
+    # # GKE 叢集
+    # GKE_CLUSTER_NAME: cluster-vn
+    # GKE_CLUSTER_ZONE: asia-southeast1-a
+    # GCP_PROJECT: gff-tpower-vn
+    # 部署命名空間
+    DEPLOY_NS: default
+    # 部署金鑰
+    DEPLOY_KEY_FILE: deploy-keys/vplus33-production
+    # HELM 圖表路徑
+    HELM_CHART_PATH: helm-charts/laravel-migration
+    # 部署值檔案
+    DEPLOY_VALUES_FILE: helm-charts/laravel-migration/values_vplus33.yaml
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq make
+    - make setup-tools
+    - make debug-info
+  script:
+    - make deploy-baremetal
+    - make wait-job-deployment
+
+deploy to vplus33 baremetal (vplus33):
+  <<: *release_prod_rule
+  image: google/cloud-sdk:latest
+  stage: deploy
+  tags:
+    - php
+  needs:
+    - "vplus33 at vplus33 baremetal"
+    - "migration to vplus33 baremetal (vplus33)"
+  variables:
+    # 建置來源專案
+    TRIGGER_FROM_PROJECT: target/gffv3/apis
+    AR_PATH: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024
+    # 應用名
+    DEPLOYMENT_NAME: apis
+    APP_NAME: Laravel
+    APP_PORT: 80
+    # GKE 叢集
+    # GKE_CLUSTER_NAME: cluster-vn
+    # GKE_CLUSTER_ZONE: asia-southeast1-a
+    # GCP_PROJECT: gff-tpower-vn
+    # 部署命名空間
+    DEPLOY_NS: default
+    # 部署模式
+    DEPLOY_MODE: split
+    # 部署金鑰
+    DEPLOY_KEY_FILE: deploy-keys/vplus33-production
+    # HELM 圖表路徑
+    HELM_CHART_PATH: helm-charts/apis
+    # 部署值檔案
+    DEPLOY_VALUES_FILE: helm-charts/apis/values_vplus33.yaml
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq make
+    - make setup-tools
+    - make debug-info
+  script:
+    - make deploy-baremetal
+
+############################################################
+# agent-backend（新後台前端）→ vplus33
+# 比照 .gitlab-ci-jobs/deploy-to-rd.yml 的 SRC_PROJECT 分流：
+# 僅在 target/gffv3/agent-backend 以 release_N tag trigger 時出現，
+# 不與上方 apis 的 jobs 混流；前端無 DB，不需 migration job
+############################################################
+.release_agent_backend_prod_rule_vplus33: &release_agent_backend_prod_rule_vplus33
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger" && $SRC_PROJECT == "target/gffv3/agent-backend" && $SRC_COMMIT_TAG =~ /^release_\d+$/'
+    - when: never
+
+choose agent-backend vplus33 baremetal (vplus33):
+  <<: *release_agent_backend_prod_rule_vplus33
+  stage: choose-env
+  tags:
+    - php
+  needs:
+    - "info"
+  when: manual
+  script:
+    - echo "choose agent-backend vplus33 baremetal (vplus33)"
+
+deploy agent-backend to vplus33 baremetal (vplus33):
+  <<: *release_agent_backend_prod_rule_vplus33
+  extends: .deploy-app-echo-variables
+  stage: deploy
+  tags:
+    - php
+  needs:
+    - "choose agent-backend vplus33 baremetal (vplus33)"
+  variables:
+    # 建置來源專案
+    TRIGGER_FROM_PROJECT: target/gffv3/agent-backend
+    AR_PATH: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024
+    # 應用名
+    DEPLOYMENT_NAME: agent-backend
+    APP_NAME: AgentBackend
+    APP_PORT: 8080
+    # baremetal 環境，無 GKE 叢集參數（比照同檔 apis job，GKE_* 不適用）
+    # 部署命名空間
+    DEPLOY_NS: default
+    # 部署金鑰（kubeconfig，由 Makefile auth-baremetal 複製為 ~/.kube/config）
+    DEPLOY_KEY_FILE: deploy-keys/vplus33-production
+    # HELM 圖表路徑
+    HELM_CHART_PATH: helm-charts/agent-backend
+    # 部署值檔案
+    DEPLOY_VALUES_FILE: helm-charts/agent-backend/values_vplus33.yaml
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq make
+    - make setup-tools
+    - make debug-info
+  script:
+    - make deploy-baremetal

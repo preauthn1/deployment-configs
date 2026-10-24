@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    example.invalid/auto: "true"
+  name: deployment-game-tfserver
+  namespace: target-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: game-tfserver
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      annotations:
+        version/config: "20200316004"
+      labels:
+        name: game-tfserver
+    spec:
+      volumes:
+        - name: tfconfig
+          configMap:
+            name: game-tfserver
+            items:
+              - key: tfconfig-tfconfig.dat
+                path: tfconfig.dat
+        - name: tfconfig-portrouter
+          configMap:
+            name: game-tfserver
+            items:
+              - key: tfconfig-portrouter.xml
+                path: portrouter.xml
+        - name: tfserver
+          configMap:
+            name: game-tfserver
+            items:
+              - key: tfserver-tfserver.dat
+                path: tfserver.dat
+        - name: storage
+          emptyDir: {}
+      containers:
+        - name: game-tfserver
+          image: example.invalid/tfserver:beta
+          #imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 10080
+              protocol: TCP
+          volumeMounts:
+            - name: tfconfig
+              mountPath: /app/tfconfig/config
+              readOnly: true
+            - name: tfconfig-portrouter
+              mountPath: /app/tfconfig/portrouter.xml
+              subPath: portrouter.xml
+              readOnly: true
+            - name: tfserver
+              mountPath: /app/tfserver/config
+              readOnly: true
+      imagePullSecrets:
+        - name: regcred

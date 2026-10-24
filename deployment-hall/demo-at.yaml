@@ -1,0 +1,39 @@
+image:
+  repository: example.invalid/target/hall
+  tag: latest
+  pullPolicy: Always
+
+imagePullSecrets: 
+  - name: regcred
+
+ingress:
+  enabled: true
+  annotations: {}
+    # example.invalid/ingress.class: nginx
+    # example.invalid/tls-acme: "true"
+  hosts:
+    - host: example.invalid
+      paths: [/]
+    - host: example.invalid
+      paths: [/]
+  tls:
+    - secretName: example.invalid-tls
+      hosts:
+        - example.invalid
+    - secretName: example.invalid-tls
+      hosts:
+        - example.invalid
+hall:
+  server:
+    http:
+      port: 80
+  target:
+    api:
+      uri: http://backend-api-public:3109/v1
+    merchant:
+      id: 176657
+      api-key: 2445cf1db9424fd
+    brand:
+      name: target
+      title: AT Games Demo Hall
+      link: #

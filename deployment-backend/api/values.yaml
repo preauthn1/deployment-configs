@@ -1,0 +1,128 @@
+# Default values for backend-api.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: example.invalid/target/backend/target.api.adminsys
+  tag: latest
+  pullPolicy: Always
+
+imagePullSecrets:
+  - name: regcred
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext:
+  capabilities:
+    add:
+      - SYS_PTRACE
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 3100
+
+ingress:
+  enabled: true
+  annotations:
+    example.invalid/ingress.class: nginx
+    example.invalid/proxy-body-size: "0"
+    example.invalid/ssl-redirect: "false"
+    # example.invalid/ingress.class: nginx
+    # example.invalid/tls-acme: "true"
+  hosts:
+    - host: example.invalid
+      paths:
+        - /
+    - host: example.invalid
+      paths:
+        - /
+    - host: example.invalid
+      paths:
+        - /
+    - host: example.invalid
+      paths:
+        - /
+  tls:
+    - secretName: example.invalid
+      hosts:
+        - example.invalid
+    - secretName: example.invalid
+      hosts:
+        - example.invalid
+    - secretName: example.invalid
+      hosts:
+        - example.invalid
+    - secretName: example.invalid
+      hosts:
+        - example.invalid
+
+resources:
+  limits:
+    cpu: 0.8
+    memory: 512Mi
+  requests:
+    cpu: 0.5
+
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+hpa: {}
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+app:
+  name: adminsys
+
+appsettings:
+  env: Production
+  Telegram_Bot_SecretToken: [REDACTED]
+  redis:
+    conn: 0.0.0.0:6379,abortConnect=False,
+    db_number: 1
+  db:
+    host: 0.0.0.0
+    user: saV3
+    password: [REDACTED]
+  logDB:
+    host: 0.0.0.0
+    user: sa
+    password: [REDACTED]
+  oldDataDB:
+    host: 0.0.0.0
+    user: sa
+    password: [REDACTED]
+  elasticsearch:
+    api_url: https://0.0.0.0:9200
+    api_auth_toekn: ZWxhc3RpYzpEWD1pWU53MVhnUkE5am80WE1wOA==
+    index_prefix_name: PGS_

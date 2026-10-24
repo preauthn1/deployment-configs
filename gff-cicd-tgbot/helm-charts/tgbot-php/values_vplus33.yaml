@@ -1,0 +1,127 @@
+# Default values for cm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+deployname: tgbot-php-dev
+replicaCount: 1
+
+image:
+  repository: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024/sre/gff-cicd/cm/tgbot-php
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets:
+  - name: ar-secret
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations: 
+    # nginx 配置
+    example.invalid/ssl-redirect: "true"
+    example.invalid/force-ssl-redirect: "true"
+    # 可選：設置上傳文件大小限制
+    example.invalid/proxy-body-size: "100m"
+    # 可選：設置超時時間
+    example.invalid/proxy-read-timeout: "300"
+    example.invalid/proxy-send-timeout: "300"
+    # example.invalid/ingress.class: nginx
+    # example.invalid/tls-acme: "true"
+  hosts:
+    - host: example.invalid
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+app:
+  name: tgbot
+  env: production
+  key: base64:9+oI2AGYtBGB9HewoFPMvmDIBfvpyvd32snTS5lHjV4=
+  url: https://example.invalid
+  api_external_url: "https://example.invalid/"
+  web_frontend_url: "https://example.invalid/"
+  log:
+    channel: stderr
+  db:
+    connection: mysql
+    read:
+      host: mysql-service.mysql.svc.cluster.local
+      username: developer
+      password: [REDACTED]"
+    write:
+      host: mysql-service.mysql.svc.cluster.local
+      username: developer
+      password: [REDACTED]"
+    port: 3306
+    database: tgbot
+  session:
+    driver: redis
+  redis:
+    host: redis-service.redis.svc.cluster.local
+    password: [REDACTED]"
+    port: 6379
+    prefix: tgbot
+    db: 15
+  api:
+    url: http://apis-frontend.default.svc.cluster.local/frontend/api
+    md5_key: "U7zrO7baZpil8Y7B"
+    aes_key: "41XO3vcS87hVZ5do"
+    iv: "5150080462393118"
+    secret_key: [REDACTED]"

@@ -1,0 +1,130 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-backend-api
+  namespace: target-dev
+spec:
+  type: LoadBalancer
+  ports:
+    - name: adminsys
+      port: 3102
+      protocol: TCP
+    - name: game
+      port: 3100
+      protocol: TCP
+    - name: public
+      port: 3109
+      protocol: TCP
+    - name: vendor
+      port: 3101
+      protocol: TCP
+  selector:
+    name: backend-api
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    example.invalid/auto: "true"
+  name: deployment-backend-api
+  namespace: target-dev
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: backend-api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 60
+  template:
+    metadata:
+      annotations:
+        version/config: "20200410001"
+      labels:
+        name: backend-api
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      volumes:
+        - name: api
+          configMap:
+            name: backend-api
+            items:
+              - key: adminsys-appsettings.json
+                path: adminsys-appsettings.json
+              - key: game-appsettings.json
+                path: game-appsettings.json
+              - key: public-appsettings.json
+                path: public-appsettings.json
+              - key: vendor-appsettings.json
+                path: vendor-appsettings.json
+        - name: storage
+          emptyDir: {}
+      containers:
+        - name: backend-api-adminsys
+          image: example.invalid/target/backend/target.api.adminsys
+          #imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Dev
+          ports:
+            - name: adminsys
+              containerPort: 3102
+              protocol: TCP
+          volumeMounts:
+            - name: api
+              mountPath: /app/target.API.AdminSys/appsettings.Dev.json
+              subPath: adminsys-appsettings.json
+              readOnly: true
+        - name: backend-api-game
+          image: example.invalid/target/backend/target.api.game
+          #imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Dev
+          ports:
+            - name: game
+              containerPort: 3100
+              protocol: TCP
+          volumeMounts:
+            - name: api
+              mountPath: /app/target.API.Game/appsettings.Dev.json
+              subPath: game-appsettings.json
+              readOnly: true
+        - name: backend-api-public
+          image: example.invalid/target/backend/target.api.public
+          #imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Dev
+          ports:
+            - name: public
+              containerPort: 3109
+              protocol: TCP
+          volumeMounts:
+            - name: api
+              mountPath: /app/target.API.Public/appsettings.Dev.json
+              subPath: public-appsettings.json
+              readOnly: true
+        - name: backend-api-vendor
+          image: example.invalid/target/backend/target.api.vendor
+          #imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Dev
+          ports:
+            - name: vendor
+              containerPort: 3101
+              protocol: TCP
+          volumeMounts:
+            - name: api
+              mountPath: /app/target.API.Vendor/appsettings.Dev.json
+              subPath: vendor-appsettings.json
+              readOnly: true

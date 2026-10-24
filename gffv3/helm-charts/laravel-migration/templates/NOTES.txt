@@ -1,0 +1,17 @@
+🚀 Laravel Migration Job has been deployed!
+
+Job Name: {{ include "laravel-migration.fullname" . }}-{{ .Values.version | default "default" }}
+Environment: {{ .Values.environment }}
+
+To check the migration status:
+  kubectl get jobs -l example.invalid/instance={{ .Release.Name }}
+
+To view migration logs:
+  kubectl logs -l example.invalid/instance={{ .Release.Name }}
+
+To wait for migration completion:
+  kubectl wait --for=condition=complete job -l example.invalid/instance={{ .Release.Name }} --timeout=600s
+
+{{- if .Values.migration.seedDatabase }}
+⚠️  Database seeding is ENABLED
+{{- end }}

@@ -1,0 +1,32 @@
+game:
+  infc:
+    id: 4001
+    name: 印度切水果
+    group: poker
+    room:
+      - serverid: 400100010
+        proto: infc
+        configs:
+          gameserver.dat: |
+            [gameserver]
+            gameid=4001				 	        // 遊戲ID
+            gamename=印度切水果           // 遊戲名稱
+            flag=1				     	        // 顯示名稱,客戶端可根據此名稱將房間分類顯示
+            minplayer=2              	  // 遊戲最小人數
+            maxplayer=2          		    // 遊戲最大人數
+            tablecount=480			 	        // 桌子數
+            seatcount=2		    		      // 椅子數
+            loginmoney=500			 	      // 進入遊戲最小金幣，不足會被踢
+            scoremode=0					        // 0 即時寫分 1退房間寫分
+            maxuser=480					        // 最大人數
+            taxscale=5					        // 抽水比例
+            readywaittime=10			      // 舉手超時時間,單位秒
+            reghallserverinterval=5		  // 註冊廣場時間間隔,單位秒
+            basescore=500				        // 底分
+            deallog=2					          // 牌局記錄器類型 0: 不記錄 ,1: 文本, 2: db, 3: 捕魚, 4: 條件紀錄, 5: Console
+            gamemode=0                  // 0: DeathGame, 1: FixedTimeGame
+            roundtime=7s                // 遊戲一局時間 (FixedTimeGame) 需要
+            misslimit=3                 // 失誤致死次數
+
+            [gamequeue]
+            queuetype=4					        // 撮合類型 0:時間隨機 1:固定人數 2: 3: 玩家自選桌 4: 玩家手動排隊

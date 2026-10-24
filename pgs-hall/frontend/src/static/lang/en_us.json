@@ -1,0 +1,57 @@
+{
+    "Label_Prompt" : "Prompt",
+    "Label_RecentlyGame" : "Recently played",
+    "Label_GameList" : "Game list",
+    "Label_GameHall" : "Game hall",
+    "Label_Events" : "Promotion events",
+    "Label_Messages" : "Messages",
+    "Label_SelectLanguage" : "Language",
+
+    "Label_EventTime" : "Event time",
+    "Label_EventNote" : "Note",
+    "Button_Confirm" : "Confirm",
+    "Label_Tag_System" : "System",
+    
+    "Label_Detail" : "Detail",
+    "Label_TrialPlay" : "Play",
+    "Label_GameName" : "Game name",
+    "Label_OrderNo" : "Order number",
+    "Label_PlayerName" : "Player name",
+    "Label_BetTime" : "Bet time",
+    "Label_BetAmount" : "Bet amount",
+    "Label_Amount" : "Amount",
+    "Label_Time" : "Time",
+    "Label_PrizeName" : "Prize name",
+    "Label_PayoutAmount" : "Payout amount",
+    "Label_BackToPage" : "Back to previous page",
+    "Label_EarnReward" : "Earn reward",
+
+
+    "Title_ViewHistory" : "Bet History",
+    "Label_Cancel" : "Cancel",
+    "Label_Exit" : "Exit",
+    "Label_LuckyWheel" : "Lucky wheel",
+
+
+    "Label_RemainingDrawTimes": "Remaining draw times",
+    "Label_RemainingPoint": "Remaining point",
+    "Label_CosumePointPerDraw": "Consume point per draw",
+    "Label_EventRestrictGames": "Event support games",
+    "Label_DrawResult": "Draw result",
+
+
+    "GameType_ALL" : "All",
+    "Timezone" : "Timezone",
+    "Msg_OnlyShowNewstNumberOfSize" : "Show latest {size} items.",
+
+
+    "Invalid_AuthToken" : "Your login information has expired, please try to log in again ",
+
+    "Msg_SystemMaintain" : "System under maintenance , We recommend that you play the game later.",
+    "Msg_NoMessages" : "No message found.",
+    "Msg_RewardHadSendToWallet" : "Reward had deposit to your game-wallet."
+
+
+    
+}
+

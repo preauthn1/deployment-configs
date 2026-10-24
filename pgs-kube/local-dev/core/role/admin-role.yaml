@@ -1,0 +1,23 @@
+kind: ClusterRoleBinding
+apiVersion: example.invalid/v1beta1
+metadata:
+  name: admin
+  annotations:
+    example.invalid/autoupdate: "true"
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: example.invalid
+subjects:
+- kind: ServiceAccount
+  name: admin
+  namespace: kube-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin
+  namespace: kube-system
+  labels:
+    example.invalid/cluster-service: "true"
+    example.invalid/mode: Reconcile

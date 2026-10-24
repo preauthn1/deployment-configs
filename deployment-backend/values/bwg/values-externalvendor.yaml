@@ -1,0 +1,128 @@
+# Default values for bwg-api
+replicaCount: 1
+
+minReadySeconds: 15
+
+image:
+  repository: example.invalid/target/backend/target.api.externalvendor
+  tag: latest
+  pullPolicy: Always
+
+imagePullSecrets:
+  - name: regcred
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 3100
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    example.invalid/proxy-body-size: "0"
+    example.invalid/ssl-redirect: "false"
+    example.invalid/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: example.invalid
+      paths:
+        - /
+  tls:
+    - secretName: wildcard-target-com-tls
+      hosts:
+        - example.invalid
+
+resources:
+  limits:
+    cpu: 1.5
+    memory: 2048Mi
+  requests:
+    cpu: 1
+
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 70
+
+# Deprecated hpa use autoscaling instead
+# hpa:
+#   metrics:
+#   - type: Resource
+#     resource:
+#       name: cpu
+#       targetAverageUtilization: 60
+#   - type: Resource
+#     resource:
+#       name: memory
+#       targetAverageUtilization: 90
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+app:
+  name: externalvendor
+  # deprecaated scaleble with new value autoscaling.enabled
+  # scaleble: true
+  # deprecated min_replicas with new value autoscaling.minReplicas
+  # min_replicas: 2
+
+appsettings:
+  env: Production
+  TelegramBotToken: [REDACTED]
+  PromoteBrandType: 21
+  redis:
+    conn: 0.0.0.0:6379,abortConnect=False,
+    db_number: 1
+  elasticsearch:
+    api_url: https://0.0.0.0:9200
+    api_auth_toekn: ZWxhc3RpYzowYTNDakZCQ1FlRDJMYVRhbHFDLQ==
+    index_prefix_name: BWG_
+  db:
+    host: 0.0.0.0
+    user: saV3
+    password: [REDACTED]
+  logDB:
+    host: 0.0.0.0
+    user: sa
+    password: [REDACTED]
+  oldDataDB:
+    host: 0.0.0.0
+    user: sa
+    password: [REDACTED]

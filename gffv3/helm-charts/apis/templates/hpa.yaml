@@ -1,0 +1,45 @@
+{{- $deployMode := .Values.deployMode | default "standard" }}
+{{- $components := list }}
+{{- if eq $deployMode "allinone" }}
+  {{- $components = list "allinone" }}
+{{- else }}
+  {{- $components = list "frontend" "agent" "external" }}
+{{- end }}
+
+{{- range $component := $components }}
+  {{- $isEnabled := false }}
+  {{- $componentConfig := dict }}
+  {{- if $.Values.components }}
+    {{- if hasKey $.Values.components $component }}
+      {{- $componentConfig = index $.Values.components $component }}
+    {{- end }}
+  {{- end }}
+
+  {{- if and $componentConfig (index $componentConfig "autoscaling") }}
+    {{- if index $componentConfig "autoscaling" "enabled" }}
+      {{- $isEnabled = true }}
+    {{- end }}
+  {{- else if $.Values.autoscaling.enabled }}
+    {{- $isEnabled = true }}
+  {{- end }}
+
+  {{- if $isEnabled }}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ $.Release.Name }}-{{ $component }}
+  labels:
+    {{- if eq $component "allinone" }}
+    {{- include "cm.labels" $ | nindent 4 }}
+    {{- else }}
+    {{- include (printf "cm.%sLabels" $component) $ | nindent 4 }}
+    {{- end }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ $.Release.Name }}-{{ $component }}
+  {{- include "cm.hpa.config" (list $ $component) | nindent 2 }}
+  {{- end }}
+{{- end }}

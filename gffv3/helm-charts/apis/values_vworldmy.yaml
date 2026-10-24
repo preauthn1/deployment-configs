@@ -1,0 +1,171 @@
+resources:
+  limits:
+    cpu: 1.5
+    memory: 2048Mi
+  requests:
+    cpu: 1
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+php:
+  pm:
+    max_children: 50
+    start_servers: 20
+    min_spare_servers: 10
+    max_spare_servers: 30
+components:
+  agent:
+    resources:
+      limits:
+        cpu: 0.5
+        memory: 1024Mi
+      requests:
+        cpu: 0.2
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 80
+app:
+  site_name: vworldmy
+  name: Laravel
+  env: production
+  key: base64:MtbqZQKechrVyDwRzn/+XvGZnqqsDjpPY9SYxo5k32c=
+  url: http://apis
+  debug: false
+  currency_id: 1
+  timezone:
+    frontend: "Asia/Taipei"
+    backend: "Asia/Taipei"
+  log:
+    channel: stderr
+    level: debug
+  db:
+    connection: mysql
+    read:
+      host: 0.0.0.0
+      username: developer
+      password: [REDACTED]"
+    write:
+      host: 0.0.0.0
+      username: developer
+      password: [REDACTED]"
+    port: 3306
+    database: xsgcasino
+  session:
+    driver: redis
+  queue:
+    # #3967 vworldmy/wintoto 共用 redis+xsgcasino，佇列切 redis 由兩邊 Horizon 統一消費
+    connection: redis
+  redis:
+    host: 0.0.0.0
+    password: [REDACTED]"
+    port: 6379
+    db: 0
+    # 佇列專用 db，避開 db 0 的 session/cache
+    queue_db: "3"
+  # Horizon 儀表板（#3967）：IP 白名單 + trusted proxies
+  horizon:
+    allowed_ips: "0.0.0.0"
+    trusted_proxies: "*"
+    # vworldmy/wintoto 共用 redis，用共同 prefix 讓兩組 Horizon metadata 合併於同一 dashboard
+    prefix: "xsgcasino_horizon:"
+  # target/tickets#4187：resolveClientIp() 信任鏈，同拓樸已在
+  # example.invalid 實測驗證（見 values.yaml 全域說明）。
+  trusted_proxy:
+    skip_last_hop: true
+  api_external_url: "https://example.invalid/"
+  api_cs_url: "https://example.invalid/api/"
+  web_frontend_url: "https://example.invalid/"
+  api:
+    aes_key: "M53B?xKnTVtVnjM^"
+    aes_iv: "3579653693526433"
+    aes_md5: "&zSMvVTK4gbDvCcU"
+  third_party:
+    aes_key: "sWs5FBl5mXq8zAqo7MNz"
+    aes_iv: "5840958296918837"
+    aes_md5: "FIp3mRz8AFg9sGyu2LKJ"
+  frontend:
+    unlimit_prefix: "UA"
+    event_code_prefix: "IE"
+    pgs_layout_lobby_agent: 9999999
+  # 對齊 WEB_AgentBackend _init.php.pro 的 SR11_NO_PRESELECTION（target/tickets#4335）
+  report:
+    sr11_no_preselection: "4,104,181,214,223,232"
+  live_chat:
+    bot_api_key: ""
+  # Office
+  office:
+    ip: "0.0.0.0"
+    password: [REDACTED]"
+  # Olympus Office 365 SSO（#4081）
+  azure:
+    client_id: "ab0f4fe1-5b93-427a-902f-01a6ec5f617e"
+    client_secret: [REDACTED]"
+    tenant: "e16cc667-9473-4fc9-9b30-211cdec6647e"
+    redirect_uri: "https://example.invalid/olympus/auth/callback"
+    force_sso: "true"
+  # Telegram
+  bot:
+    telegram_token: [REDACTED]
+    debug_chat_id: "-1001173896840"
+    error_chat_id: "-1001173896840"
+    warn_chat_id: "-1001173896840"
+  large_amount:
+    chat_id: "-1003978379738"
+    watch_agents: "66829"
+  switch:
+    log_request: true
+    log_sql: false
+    scramble_enabled: false
+    activity_logger_enabled: true
+  mail:
+    driver: smtp
+    scheme: null
+    host: example.invalid
+    port: 587
+    username: "user@example.invalid"
+    password: [REDACTED] utjz qldw pdgr"
+    from:
+      address: "user@example.invalid"
+      name: "VWorld"
+  # TikTok
+  tt:
+    api_url: "https://example.invalid/api/"
+    api_key: ""
+    private_key: ""
+
+# CronJob configuration
+cronjob:
+  enabled: true
+  schedule: "* * * * *"  # Every minute
+  timeZone: "UTC"
+  concurrencyPolicy: "Forbid"
+  failedJobsHistoryLimit: 1
+  successfulJobsHistoryLimit: 3
+  startingDeadlineSeconds: 300
+  backoffLimit: 6
+  restartPolicy: "OnFailure"
+  command: "php artisan schedule:run 2>&1"
+  resources:
+    limits:
+      memory: 1024Mi
+    requests:
+      cpu: 0.1
+
+# Horizon queue worker (#3967)
+# vworldmy 與 wintoto 各跑一組 Horizon，共同消費同一條 redis 佇列（原子 pop 不重複），互為 HA
+# maxProcesses 沿用 apis config production=20 不減量；3Gi 為 20 worker 上限保護
+horizon:
+  enabled: true
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 3Gi

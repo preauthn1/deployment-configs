@@ -1,0 +1,82 @@
+.release_dev_rule:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger" && $SRC_PROJECT == $TRIGGER_FROM_PROJECT && ($SRC_COMMIT_BRANCH == "develop" || $SRC_COMMIT_BRANCH == "cicd/stage-build")'
+      when: on_success
+    - when: never
+
+choose to dev:
+  extends: .release_dev_rule
+  stage: choose-env
+  image: alpine:3.12.12
+  tags:
+    - php
+  needs:
+    - "info"
+  script:
+    - echo "choose to dev"
+
+migration to dev:
+  extends: .release_dev_rule
+  image: google/cloud-sdk:latest
+  stage: deploy
+  tags:
+    - php
+  needs:
+    - "choose to dev"
+  variables:
+    # 應用名
+    DEPLOYMENT_NAME: gffpay-migration
+    APP_NAME: gffpay-migration
+    APP_PORT: 80
+    # GKE 叢集
+    GKE_CLUSTER_NAME: cluster-1
+    GKE_CLUSTER_ZONE: asia-east1-a
+    GCP_PROJECT: tp-wz3-rd
+    # 部署命名空間
+    DEPLOY_NS: gffpay
+    # 部署金鑰
+    DEPLOY_KEY_FILE: deploy-keys/tp-wz3-rd-deploy.json
+    # HELM 圖表路徑
+    HELM_CHART_PATH: helm-charts/laravel-migration
+    # 部署值檔案
+    DEPLOY_VALUES_FILE: helm-charts/laravel-migration/values_dev.yaml
+  before_script:
+    - apt-get update && apt-get install -y make
+    - make setup-tools
+    - make debug-info
+  script:
+    - make deploy-gcp
+    - make wait-job-deployment
+
+deploy to dev (DEV):
+  extends: .release_dev_rule
+  image: google/cloud-sdk:latest
+  stage: deploy
+  tags:
+    - php
+  needs:
+    - "choose to dev"
+    - "migration to dev"
+  variables:
+    # 應用名
+    DEPLOYMENT_NAME: gffpay
+    APP_NAME: gffpay
+    APP_PORT: 80
+    # GKE 叢集
+    GKE_CLUSTER_NAME: cluster-1
+    GKE_CLUSTER_ZONE: asia-east1-a
+    GCP_PROJECT: tp-wz3-rd
+    # 部署命名空間
+    DEPLOY_NS: gffpay
+    # 部署金鑰
+    DEPLOY_KEY_FILE: deploy-keys/tp-wz3-rd-deploy.json
+    # HELM 圖表路徑
+    HELM_CHART_PATH: helm-charts/gffpay
+    # 部署值檔案
+    DEPLOY_VALUES_FILE: helm-charts/gffpay/values_dev.yaml
+  before_script:
+    - apt-get update && apt-get install -y make
+    - make setup-tools
+    - make debug-info
+  script:
+    - make deploy-gcp

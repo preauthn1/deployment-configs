@@ -1,0 +1,144 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "cm.fullname" . }}
+  labels:
+    {{- include "cm.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "cm.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "cm.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "cm.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: shared-files
+          emptyDir: {}
+        - name: config
+          configMap:
+            name: {{ .Release.Name }}-config
+            items:
+              - key: .env
+                path: .env
+              - key: nginx.conf
+                path: nginx.conf
+              - key: .env.schedule
+                path: .env.schedule
+      containers:
+        - name: "{{ .Release.Name }}-app"
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}-app:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+            - name: shared-files
+              mountPath: /var/www/html
+            - name: config
+              mountPath: /var/www/html/.env
+              subPath: .env
+              readOnly: true
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "cp -r /app/. /var/www/html; cd /var/www/html; php artisan migrate --force; chmod -R 777 storage"]
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+        - name: "{{ .Release.Name }}-horizon"
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}-horizon:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+            - name: config
+              mountPath: /app/.env
+              subPath: .env
+              readOnly: true
+          env:
+            - name: LOG_CHANNEL
+              value: stderr
+          command: ["/usr/bin/tini", "--"]
+          args: ["sh", "-c", "php artisan horizon"]
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            exec:
+              command:
+                - php
+                - artisan
+                - horizon:status
+            initialDelaySeconds: 5
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 8
+        - name: "{{ .Release.Name }}-schedule"
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}-schedule:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+            - name: config
+              mountPath: /app/.env
+              subPath: .env.schedule
+              readOnly: true
+          env:
+            - name: LOG_CHANNEL
+              value: stderr
+            - name: SCHEDULE_COMMAND_OUTPUT
+              value: /proc/1/fd/2
+          command: ["/usr/bin/tini", "--"]
+          args: ["sh", "-c", "php artisan schedule:work"]
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "exec 2>/proc/1/fd/2; exec php artisan app:update-tg-api-white-list;"]
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+        - name: nginx-container
+          image: "nginx:1.27"
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          volumeMounts:
+            - name: shared-files
+              mountPath: /var/www/html
+            - name: config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

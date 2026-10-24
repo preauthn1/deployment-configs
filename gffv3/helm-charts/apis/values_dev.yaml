@@ -1,0 +1,153 @@
+resources:
+  limits:
+    memory: 1024Mi
+  requests:
+    cpu: 0.1
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+php:
+  pm:
+    max_children: 50
+    start_servers: 20
+    min_spare_servers: 10
+    max_spare_servers: 30
+app:
+  site_name: dev
+  name: Laravel
+  env: dev
+  key: base64:MtbqZQKechrVyDwRzn/+XvGZnqqsDjpPY9SYxo5k32c=
+  url: http://apis
+  debug: true
+  currency_id: 1
+  timezone:
+    frontend: "Asia/Taipei"
+    backend: "Asia/Taipei"
+  log:
+    channel: stderr
+    level: debug
+  db:
+    connection: mysql
+    read:
+      host: 0.0.0.0
+      username: developer
+      password: [REDACTED]"
+    write:
+      host: 0.0.0.0
+      username: developer
+      password: [REDACTED]"
+    port: 3306
+    database: xsgcasino
+  session:
+    driver: redis
+  queue:
+    # D3 v2.1（#3967）：三 dev 環境共用同一條 redis 佇列（同 db 3），由 dev 的 Horizon 統一消費
+    connection: redis
+  redis:
+    host: 0.0.0.0
+    password: [REDACTED]"
+    port: 6379
+    db: 0
+    queue_db: "3"
+  # Horizon 儀表板（#3967 D1）：IP 白名單 + trusted proxies
+  horizon:
+    allowed_ips: "0.0.0.0"
+    trusted_proxies: "*"
+    # dev/dev2/devwtt 共用 redis，統一 prefix 讓三站 dashboard 讀同一組 metadata
+    prefix: "dev_horizon:"
+  # target/tickets#4187：resolveClientIp() 信任鏈。流量經過 GCLB 才進到後端，
+  # GCLB 附加在 XFF 最後一跳的 VIP 無法枚舉，開 skip_last_hop 無條件
+  # 跳過（已在 example.invalid 實測驗證，見 values.yaml 全域說明）。
+  trusted_proxy:
+    skip_last_hop: true
+  api_external_url: "https://example.invalid/"
+  api_cs_url: "https://example.invalid/api/"
+  web_frontend_url: "https://example.invalid/"
+  api:
+    aes_key: "M53B?xKnTVtVnjM^"
+    aes_iv: "3579653693526433"
+    aes_md5: "&zSMvVTK4gbDvCcU"
+  third_party:
+    aes_key: "sWs5FBl5mXq8zAqo7MNz"
+    aes_iv: "5840958296918837"
+    aes_md5: "FIp3mRz8AFg9sGyu2LKJ"
+  frontend:
+    unlimit_prefix: "UA"
+    event_code_prefix: "IE"
+    pgs_layout_lobby_agent: 9999999
+  # 對齊 WEB_AgentBackend _init.php.rd 的 SR11_NO_PRESELECTION（target/tickets#4335）
+  report:
+    sr11_no_preselection: "4,104,181,214,223,232"
+  live_chat:
+    bot_api_key: [REDACTED]"
+  # Office
+  office:
+    ip: "0.0.0.0"
+    password: [REDACTED]"
+  # Olympus Office 365 SSO（#4081）
+  azure:
+    client_id: "ab0f4fe1-5b93-427a-902f-01a6ec5f617e"
+    client_secret: [REDACTED]"
+    tenant: "e16cc667-9473-4fc9-9b30-211cdec6647e"
+    redirect_uri: "https://example.invalid/olympus/auth/callback"
+    force_sso: "true"
+  # Telegram
+  bot:
+    telegram_token: [REDACTED]
+    debug_chat_id: "-452604221"
+    info_chat_id: "-452604221"
+    error_chat_id: "-452604221"
+    warn_chat_id: "-452604221"
+  large_amount:
+    chat_id: "-1003930271149"
+    watch_agents: "4249"
+    threshold: 100
+  switch:
+    log_request: true
+    log_sql: true
+    scramble_enabled: true
+    activity_logger_enabled: true
+    payout_bank_lookup_providers: "FPay"
+  mail:
+    driver: smtp
+    scheme: null
+    host: example.invalid
+    port: 587
+    username: "user@example.invalid"
+    password: [REDACTED] eoxs wezn aaca"
+    from:
+      address: "user@example.invalid"
+      name: "T-POWER(DEV)"
+  # TikTok
+  tt:
+    api_url: "https://example.invalid/api/"
+    api_key: [REDACTED]"
+    private_key: "MIIEpAIBAAKCAQEAxxA87yBhi9bp6yCN3RnV48hmcQhTjiJcHpoUjrC4N1ciPVcLtcyDy0rDx90c0qZ8F3E5SwMboXvoG0bpLRfaXqNotKYy5b0zEWuGJvI4mCreTCJLj7oCXj9Xj1BZ1dMK/L5PEADFFb5DGrCWx8TTWxgSYoHyyz73psqeJ+H5DUC+Wv9uACHXV6MB5AJoJuAKrW8Px4Y/6fRD+fiGEzFnzUHLBXtJj/2kpEMZnQhMmKfLA3ACP+2JpCYnCpqL28LA3y4iCdESrpBFPASt4XpAU8XuizKn3GD0S38KmANJhx5I5BagZR0bRvmJi9eZTE92owSkaiLl/V8Lb2/GfgEo2QIDAQABAoIBAQC5+N6knMDlLzxMkZZXqOpdqvyhvyComksrv9FS2aDQ+tOfMPJcvxul0kyELXvfBPDLydi3zsiCnkrjKOVxXmaBofKRSvAkGBVcwfKL8iGTcAFMaYHkXegWeuDnoC69iDQsmfMtRTrbLGxuw+mp6qV25k9Ovo7A+SvPJF6Lbh8KE/sT3XsVwwgdj2gst9C8WrCjoNZbYPVpU8dNCKSghTFQO5wtGuGzZfyEYd9cf7rwL0uct9EOHE60W6SfJ3OD1smwHvnbkEr7s3IaO78fXhSyNGG8t0G4Jq1914/CXDtZ+N+TUSloWyFjQrVpfzipxoHtGiR27N4xZwO3iG0jsc+9AoGBAO5xKKeS+34a/dAZIQ0tBS4shHUjctxA+nAjLhb02dMswKM+nW3OPiQ3nWxwCyZCGpQqcz/JjH0xJf4+sy1ODxuDA+Rgukl9Ux10MKuA0BEhC/0F7j47qrN3C16tcttcr5p2SabYGwXc8C3vx0vvGBUD0r7pOFkV4RC/uP5fxSA3AoGBANW4whZAiUvZu8lTXbJx+DV9a0IrumCegWYnx7SGbtH2fHqoMYHvmZh5EEfLJjgwFX3gi4sGUouB/RcpRNHX+pO/1TAQttwB8agvdovZe5fqBiMSNLPA/0hsxXcRE6/DXaL7+UzqtbyYqQiateRr0PTnqIjba5WyNN3wSHehVtdvAoGAeFUfQUKKLSAOC2FDLtUTkjPhPQSAyOr5+HGopuk2rL4fEcNdy7aT4c83YSxCVDJ0G2Y4924Nunh9Rgv6fNiyAx5hbnXqTYAz299xWHwPhTV6SV0e2MVf5mYjlMpP9qiV7ovXq53QNWtEwsoJeCbXrnNZfgNQ7pR+GufGwokugI0CgYByxvKU+LvDXH+ZM4hSWRqvv1dnBgzl7roXnq2FqdzCLdnUFZfg7EhUtk+j/tnbuxcPrxPB6fdSrNC7K5KmD5Om3ZMkaRWLOhAJ/tNvb7EMeMYq95AOKUvwHVo/A5DLB+S1rxTH1hUb3/CHim686ZoirHa6aPxyPG5f8rc4aBE3SQKBgQCXT3Hvdw0CnnMb0NxBzdGjuJRHQ/epSwTE4lWsULQNOUb8puWI+XY25qhQdSph5vM580ZKTnqFZD5Sq4OD8660GmhvgYzMtCnZ3IwyUoww99rDigdng2qgffgnTi/bIYuAD9yxJsF4JQd56LzJRkG61ZXBy8pyKUvCBta36ecF1w=="
+    
+# CronJob configuration
+cronjob:
+  enabled: true
+  schedule: "* * * * *"  # Every minute
+  timeZone: "UTC"
+  concurrencyPolicy: "Forbid"
+  failedJobsHistoryLimit: 1
+  successfulJobsHistoryLimit: 3
+  startingDeadlineSeconds: 100
+  backoffLimit: 6
+  restartPolicy: "OnFailure"
+  command: "php artisan schedule:run 2>&1"
+  resources:
+    limits:
+      memory: 1024Mi
+    requests:
+      cpu: 0.1
+
+# Horizon queue worker (#3967)
+# 只有 dev 開啟——dev 這組 Horizon 統一消費 dev/dev2/devwtt 共用佇列（D3 v2.1）
+horizon:
+  enabled: true
+  replicas: 2  # D5：多 worker 併發行為在 dev 先受測

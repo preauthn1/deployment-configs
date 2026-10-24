@@ -1,0 +1,348 @@
+game:
+  tgw:
+    id: 1024
+    name: 糖果屋
+    group: slot
+    room:
+      - serverid: 102400410
+        proto: tgw
+        configs: 
+          gameserver.dat: |
+            [gameserver]
+            gameid=1024				 	                                              // 遊戲ID
+            gamename=糖果屋  		 	                                            // 遊戲名稱
+            flag=41                                                           // 顯示名稱,客戶端可根據此名稱將房間分類顯示
+            minplayer=1                                                       // 遊戲最小人數
+            maxplayer=1                                                       // 遊戲最大人數
+            tablecount=480                                                    // 桌子數
+            seatcount=1                                                       // 椅子數
+            loginmoney=0                                                      // 進入遊戲最小積分
+            scoremode=0                                                       // 0 即時寫分 1 退房間寫分 2 比賽 3 分段寫分
+            maxuser=480                                                       // 最大人數
+            taxscale=0                                                        // 抽水比例
+            readywaittime=10                                                  // 舉手超時時間,單位秒
+            reghallserverinterval=5                                           // 註冊廣場時間間隔,單位秒
+            basescore=100                                                     // 底分
+            deallog=2                                                         // 牌局記錄器類型 0 不記錄 ,1 文本, 2 db, 3 fish, 4分段寫分
+            mincarrymoney=0                                                   // 下注攜帶金額限制
+
+            [gamequeue]
+            gamematchwaitmintime=1                                            // 撮合時間間隔範圍小值,單位秒
+            gamematchwaitmaxtime=3                                            // 撮合時間間隔範圍大值,單位秒
+            againstsameip=0                                                   // 同IP不分配一起
+            againstlastgame=0                                                 // 最後一次遊戲過的用戶不分配一起
+            gameendaction=0                                                   // 遊戲結束後動作,0 無動作 1 準備
+            queuetype=1                                                       // 撮合類型 0 時間隨機 1 固定人數
+            queueusercount=1                                                  // 排隊人數
+            queuetimeout=2                                                    // 排隊人數超時
+          slotconfig.dat: |
+            [slotsetting]
+            endactiontime=1                                                   // 結算動畫超時
+            betcount=6,10,16,20,30,40,66,80,100,120,200,300,400               // 一次下注的數量
+            slotpattern=2                                                     // 參考csv SlotPattern類型
+            releasepattern=2                                                  // 放分
+            bitepattern=2                                                     // 咬分
+            bigwinrule=5,15,45,105                                            // client動畫播放階段,以TotalBet為主
+            bigwinnotify=15                                                   // 當下注16, Total=12,000‬(16*750) 得獎超過12,000才廣播.
+            isSlideShow=0                                                     // 中獎時，是否逐條派彩線輪播(未實做)
+            isRetriggered=0                                                   // Free Spin 過程中，是否能再觸發Free Spin(未實做)
+            freeSpinLimit=0                                                   // Free Spin最多可累積的數量(未實做)
+
+            [symbols]
+            w1.title=百搭
+            w1.desc=可以代表任何符号，除了奖励符号。如果转到百搭5连线您将获得Jackpot大奖。
+            b1.title=奖励符号
+            b1.desc=画面出现3或更多奖励符号时，会进入糖果游戏，并获得高额彩金，符号只出现在1、3、5转轴。
+
+            [bonus]
+            size=12
+
+            [description]
+            payline=只赔付每条线中赢取最高的奖金，奖金派发按照赔付线从最左至最右转轴的顺序，游戏出现故障时，所有赔付和游戏都视为无效。
+            pickgame=点击糖果即可获得奖金，每颗糖果最大可获得1000倍的奖金。\n总奖金 = 选中倍数总和 X 底注          
+            
+      - serverid: 102418810
+        proto: tgw-msc
+        configs: 
+          gameserver.dat: |
+            [gameserver]
+            gameid=1024				 	                                                // 遊戲ID
+            gamename=糖果屋  		 	                                              // 遊戲名稱
+            flag=1881                                                           // 顯示名稱,客戶端可根據此名稱將房間分類顯示
+            minplayer=1                                                         // 遊戲最小人數
+            maxplayer=1                                                         // 遊戲最大人數
+            tablecount=480                                                      // 桌子數
+            seatcount=1                                                         // 椅子數
+            loginmoney=0                                                        // 進入遊戲最小積分
+            scoremode=0                                                         // 0 即時寫分 1 退房間寫分 2 比賽 3 分段寫分
+            maxuser=480                                                         // 最大人數
+            taxscale=0                                                          // 抽水比例
+            readywaittime=10                                                    // 舉手超時時間,單位秒
+            reghallserverinterval=5                                             // 註冊廣場時間間隔,單位秒
+            basescore=100                                                       // 底分
+            deallog=2                                                           // 牌局記錄器類型 0 不記錄 ,1 文本, 2 db, 3 fish, 4分段寫分
+            mincarrymoney=0                                                     // 下注攜帶金額限制
+
+            [gamequeue]
+            gamematchwaitmintime=1                                              // 撮合時間間隔範圍小值,單位秒
+            gamematchwaitmaxtime=3                                              // 撮合時間間隔範圍大值,單位秒
+            againstsameip=0                                                     // 同IP不分配一起
+            againstlastgame=0                                                   // 最後一次遊戲過的用戶不分配一起
+            gameendaction=0                                                     // 遊戲結束後動作,0 無動作 1 準備
+            queuetype=1                                                         // 撮合類型 0 時間隨機 1 固定人數
+            queueusercount=1                                                    // 排隊人數
+            queuetimeout=2                                                      // 排隊人數超時
+          slotconfig.dat: |
+            [slotsetting]
+            endactiontime=1                                                     // 結算動畫超時
+            betcount=60,100,160,200,300,400,660,800,1000,1200,2000,3000,4000    // 一次下注的數量
+
+            slotpattern=2                                                       // 參考csv SlotPattern類型
+            releasepattern=2                                                    // 放分
+            bitepattern=2                                                       // 咬分
+            bigwinrule=5,15,45,105                                              // client動畫播放階段,以TotalBet為主
+            bigwinnotify=15                                                     // 當下注16, Total=12,000‬(16*750) 得獎超過12,000才廣播.
+            isSlideShow=0                                                       // 中獎時，是否逐條派彩線輪播(未實做)
+            isRetriggered=0                                                     // Free Spin 過程中，是否能再觸發Free Spin(未實做)
+            freeSpinLimit=0                                                     // Free Spin最多可累積的數量(未實做)
+
+            [symbols]
+            w1.title=百搭
+            w1.desc=可以代表任何符号，除了奖励符号。如果转到百搭5连线您将获得Jackpot大奖。
+            b1.title=奖励符号
+            b1.desc=画面出现3或更多奖励符号时，会进入糖果游戏，并获得高额彩金，符号只出现在1、3、5转轴。
+
+            [bonus]
+            size=12
+
+            [description]
+            payline=只赔付每条线中赢取最高的奖金，奖金派发按照赔付线从最左至最右转轴的顺序，游戏出现故障时，所有赔付和游戏都视为无效。
+            pickgame=点击糖果即可获得奖金，每颗糖果最大可获得1000倍的奖金。\n总奖金 = 选中倍数总和 X 底注                  
+      - serverid: 102408810
+        proto: tgw
+        configs: 
+          gameserver.dat: |
+            [gameserver]
+            gameid=1024				 	                                              // 遊戲ID
+            gamename=糖果屋  		 	                                            // 遊戲名稱
+            flag=881                                                           // 顯示名稱,客戶端可根據此名稱將房間分類顯示
+            minplayer=1                                                       // 遊戲最小人數
+            maxplayer=1                                                       // 遊戲最大人數
+            tablecount=480                                                    // 桌子數
+            seatcount=1                                                       // 椅子數
+            loginmoney=0                                                      // 進入遊戲最小積分
+            scoremode=0                                                       // 0 即時寫分 1 退房間寫分 2 比賽 3 分段寫分
+            maxuser=480                                                       // 最大人數
+            taxscale=0                                                        // 抽水比例
+            readywaittime=10                                                  // 舉手超時時間,單位秒
+            reghallserverinterval=5                                           // 註冊廣場時間間隔,單位秒
+            basescore=100                                                     // 底分
+            deallog=2                                                         // 牌局記錄器類型 0 不記錄 ,1 文本, 2 db, 3 fish, 4分段寫分
+            mincarrymoney=0                                                   // 下注攜帶金額限制
+
+            [gamequeue]
+            gamematchwaitmintime=1                                            // 撮合時間間隔範圍小值,單位秒
+            gamematchwaitmaxtime=3                                            // 撮合時間間隔範圍大值,單位秒
+            againstsameip=0                                                   // 同IP不分配一起
+            againstlastgame=0                                                 // 最後一次遊戲過的用戶不分配一起
+            gameendaction=0                                                   // 遊戲結束後動作,0 無動作 1 準備
+            queuetype=1                                                       // 撮合類型 0 時間隨機 1 固定人數
+            queueusercount=1                                                  // 排隊人數
+            queuetimeout=2                                                    // 排隊人數超時
+          slotconfig.dat: |
+            [slotsetting]
+            endactiontime=1                                                   // 結算動畫超時
+            betcount=6,10,16,20,30,40,66,80,100,120,200,300,400               // 一次下注的數量
+            slotpattern=2                                                     // 參考csv SlotPattern類型
+            releasepattern=2                                                  // 放分
+            bitepattern=2                                                     // 咬分
+            bigwinrule=5,15,45,105                                            // client動畫播放階段,以TotalBet為主
+            bigwinnotify=15                                                   // 當下注16, Total=12,000‬(16*750) 得獎超過12,000才廣播.
+            isSlideShow=0                                                     // 中獎時，是否逐條派彩線輪播(未實做)
+            isRetriggered=0                                                   // Free Spin 過程中，是否能再觸發Free Spin(未實做)
+            freeSpinLimit=0                                                   // Free Spin最多可累積的數量(未實做)
+
+            [symbols]
+            w1.title=百搭
+            w1.desc=可以代表任何符号，除了奖励符号。如果转到百搭5连线您将获得Jackpot大奖。
+            b1.title=奖励符号
+            b1.desc=画面出现3或更多奖励符号时，会进入糖果游戏，并获得高额彩金，符号只出现在1、3、5转轴。
+
+            [bonus]
+            size=12
+
+            [description]
+            payline=只赔付每条线中赢取最高的奖金，奖金派发按照赔付线从最左至最右转轴的顺序，游戏出现故障时，所有赔付和游戏都视为无效。
+            pickgame=点击糖果即可获得奖金，每颗糖果最大可获得1000倍的奖金。\n总奖金 = 选中倍数总和 X 底注          
+            
+      - serverid: 102400010
+        proto: tgw
+        configs: 
+          gameserver.dat: |
+            [gameserver]
+            gameid=1024				 	                                              // 遊戲ID
+            gamename=糖果屋  		 	                                            // 遊戲名稱
+            flag=1                                                           // 顯示名稱,客戶端可根據此名稱將房間分類顯示
+            minplayer=1                                                       // 遊戲最小人數
+            maxplayer=1                                                       // 遊戲最大人數
+            tablecount=480                                                    // 桌子數
+            seatcount=1                                                       // 椅子數
+            loginmoney=0                                                      // 進入遊戲最小積分
+            scoremode=0                                                       // 0 即時寫分 1 退房間寫分 2 比賽 3 分段寫分
+            maxuser=480                                                       // 最大人數
+            taxscale=0                                                        // 抽水比例
+            readywaittime=10                                                  // 舉手超時時間,單位秒
+            reghallserverinterval=5                                           // 註冊廣場時間間隔,單位秒
+            basescore=100                                                     // 底分
+            deallog=2                                                         // 牌局記錄器類型 0 不記錄 ,1 文本, 2 db, 3 fish, 4分段寫分
+            mincarrymoney=0                                                   // 下注攜帶金額限制
+
+            [gamequeue]
+            gamematchwaitmintime=1                                            // 撮合時間間隔範圍小值,單位秒
+            gamematchwaitmaxtime=3                                            // 撮合時間間隔範圍大值,單位秒
+            againstsameip=0                                                   // 同IP不分配一起
+            againstlastgame=0                                                 // 最後一次遊戲過的用戶不分配一起
+            gameendaction=0                                                   // 遊戲結束後動作,0 無動作 1 準備
+            queuetype=1                                                       // 撮合類型 0 時間隨機 1 固定人數
+            queueusercount=1                                                  // 排隊人數
+            queuetimeout=2                                                    // 排隊人數超時
+          slotconfig.dat: |
+            [slotsetting]
+            endactiontime=1                                                   // 結算動畫超時
+            betcount=6,10,16,20,30,40,66,80,100,120,200,300,400               // 一次下注的數量
+            slotpattern=2                                                     // 參考csv SlotPattern類型
+            releasepattern=2                                                  // 放分
+            bitepattern=2                                                     // 咬分
+            bigwinrule=5,15,45,105                                            // client動畫播放階段,以TotalBet為主
+            bigwinnotify=15                                                   // 當下注16, Total=12,000‬(16*750) 得獎超過12,000才廣播.
+            isSlideShow=0                                                     // 中獎時，是否逐條派彩線輪播(未實做)
+            isRetriggered=0                                                   // Free Spin 過程中，是否能再觸發Free Spin(未實做)
+            freeSpinLimit=0                                                   // Free Spin最多可累積的數量(未實做)
+
+            [symbols]
+            w1.title=百搭
+            w1.desc=可以代表任何符号，除了奖励符号。如果转到百搭5连线您将获得Jackpot大奖。
+            b1.title=奖励符号
+            b1.desc=画面出现3或更多奖励符号时，会进入糖果游戏，并获得高额彩金，符号只出现在1、3、5转轴。
+
+            [bonus]
+            size=12
+
+            [description]
+            payline=只赔付每条线中赢取最高的奖金，奖金派发按照赔付线从最左至最右转轴的顺序，游戏出现故障时，所有赔付和游戏都视为无效。
+            pickgame=点击糖果即可获得奖金，每颗糖果最大可获得1000倍的奖金。\n总奖金 = 选中倍数总和 X 底注          
+
+      - serverid: 102402110
+        proto: tgw
+        configs: 
+          gameserver.dat: |
+            [gameserver]
+            gameid=1024				 	                                              // 遊戲ID
+            gamename=糖果屋  		 	                                            // 遊戲名稱
+            flag=211                                                           // 顯示名稱,客戶端可根據此名稱將房間分類顯示
+            minplayer=1                                                       // 遊戲最小人數
+            maxplayer=1                                                       // 遊戲最大人數
+            tablecount=480                                                    // 桌子數
+            seatcount=1                                                       // 椅子數
+            loginmoney=0                                                      // 進入遊戲最小積分
+            scoremode=0                                                       // 0 即時寫分 1 退房間寫分 2 比賽 3 分段寫分
+            maxuser=480                                                       // 最大人數
+            taxscale=0                                                        // 抽水比例
+            readywaittime=10                                                  // 舉手超時時間,單位秒
+            reghallserverinterval=5                                           // 註冊廣場時間間隔,單位秒
+            basescore=100                                                     // 底分
+            deallog=2                                                         // 牌局記錄器類型 0 不記錄 ,1 文本, 2 db, 3 fish, 4分段寫分
+            mincarrymoney=0                                                   // 下注攜帶金額限制
+
+            [gamequeue]
+            gamematchwaitmintime=1                                            // 撮合時間間隔範圍小值,單位秒
+            gamematchwaitmaxtime=3                                            // 撮合時間間隔範圍大值,單位秒
+            againstsameip=0                                                   // 同IP不分配一起
+            againstlastgame=0                                                 // 最後一次遊戲過的用戶不分配一起
+            gameendaction=0                                                   // 遊戲結束後動作,0 無動作 1 準備
+            queuetype=1                                                       // 撮合類型 0 時間隨機 1 固定人數
+            queueusercount=1                                                  // 排隊人數
+            queuetimeout=2                                                    // 排隊人數超時
+          slotconfig.dat: |
+            [slotsetting]
+            endactiontime=1                                                   // 結算動畫超時
+            betcount=6,10,16,20,30,40,66,80,100,120,200,300,400               // 一次下注的數量
+            slotpattern=2                                                     // 參考csv SlotPattern類型
+            releasepattern=2                                                  // 放分
+            bitepattern=2                                                     // 咬分
+            bigwinrule=5,15,45,105                                            // client動畫播放階段,以TotalBet為主
+            bigwinnotify=15                                                   // 當下注16, Total=12,000‬(16*750) 得獎超過12,000才廣播.
+            isSlideShow=0                                                     // 中獎時，是否逐條派彩線輪播(未實做)
+            isRetriggered=0                                                   // Free Spin 過程中，是否能再觸發Free Spin(未實做)
+            freeSpinLimit=0                                                   // Free Spin最多可累積的數量(未實做)
+
+            [symbols]
+            w1.title=百搭
+            w1.desc=可以代表任何符号，除了奖励符号。如果转到百搭5连线您将获得Jackpot大奖。
+            b1.title=奖励符号
+            b1.desc=画面出现3或更多奖励符号时，会进入糖果游戏，并获得高额彩金，符号只出现在1、3、5转轴。
+
+            [bonus]
+            size=12
+
+            [description]
+            payline=只赔付每条线中赢取最高的奖金，奖金派发按照赔付线从最左至最右转轴的顺序，游戏出现故障时，所有赔付和游戏都视为无效。
+            pickgame=点击糖果即可获得奖金，每颗糖果最大可获得1000倍的奖金。\n总奖金 = 选中倍数总和 X 底注   
+
+      - serverid: 102404010
+        proto: tgw
+        configs: 
+          gameserver.dat: |
+            [gameserver]
+            gameid=1024				 	                                              // 遊戲ID
+            gamename=糖果屋  		 	                                            // 遊戲名稱
+            flag=401                                                           // 顯示名稱,客戶端可根據此名稱將房間分類顯示
+            minplayer=1                                                       // 遊戲最小人數
+            maxplayer=1                                                       // 遊戲最大人數
+            tablecount=480                                                    // 桌子數
+            seatcount=1                                                       // 椅子數
+            loginmoney=0                                                      // 進入遊戲最小積分
+            scoremode=0                                                       // 0 即時寫分 1 退房間寫分 2 比賽 3 分段寫分
+            maxuser=480                                                       // 最大人數
+            taxscale=0                                                        // 抽水比例
+            readywaittime=10                                                  // 舉手超時時間,單位秒
+            reghallserverinterval=5                                           // 註冊廣場時間間隔,單位秒
+            basescore=100                                                     // 底分
+            deallog=2                                                         // 牌局記錄器類型 0 不記錄 ,1 文本, 2 db, 3 fish, 4分段寫分
+            mincarrymoney=0                                                   // 下注攜帶金額限制
+
+            [gamequeue]
+            gamematchwaitmintime=1                                            // 撮合時間間隔範圍小值,單位秒
+            gamematchwaitmaxtime=3                                            // 撮合時間間隔範圍大值,單位秒
+            againstsameip=0                                                   // 同IP不分配一起
+            againstlastgame=0                                                 // 最後一次遊戲過的用戶不分配一起
+            gameendaction=0                                                   // 遊戲結束後動作,0 無動作 1 準備
+            queuetype=1                                                       // 撮合類型 0 時間隨機 1 固定人數
+            queueusercount=1                                                  // 排隊人數
+            queuetimeout=2                                                    // 排隊人數超時
+          slotconfig.dat: |
+            [slotsetting]
+            endactiontime=1                                                   // 結算動畫超時
+            betcount=6,10,16,20,30,40,66,80,100,120,200,300,400               // 一次下注的數量
+            slotpattern=2                                                     // 參考csv SlotPattern類型
+            releasepattern=2                                                  // 放分
+            bitepattern=2                                                     // 咬分
+            bigwinrule=5,15,45,105                                            // client動畫播放階段,以TotalBet為主
+            bigwinnotify=15                                                   // 當下注16, Total=12,000‬(16*750) 得獎超過12,000才廣播.
+            isSlideShow=0                                                     // 中獎時，是否逐條派彩線輪播(未實做)
+            isRetriggered=0                                                   // Free Spin 過程中，是否能再觸發Free Spin(未實做)
+            freeSpinLimit=0                                                   // Free Spin最多可累積的數量(未實做)
+
+            [symbols]
+            w1.title=百搭
+            w1.desc=可以代表任何符号，除了奖励符号。如果转到百搭5连线您将获得Jackpot大奖。
+            b1.title=奖励符号
+            b1.desc=画面出现3或更多奖励符号时，会进入糖果游戏，并获得高额彩金，符号只出现在1、3、5转轴。
+
+            [bonus]
+            size=12
+
+            [description]
+            payline=只赔付每条线中赢取最高的奖金，奖金派发按照赔付线从最左至最右转轴的顺序，游戏出现故障时，所有赔付和游戏都视为无效。
+            pickgame=点击糖果即可获得奖金，每颗糖果最大可获得1000倍的奖金。\n总奖金 = 选中倍数总和 X 底注       
+                                    

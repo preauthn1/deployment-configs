@@ -1,0 +1,29 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "AllowedHosts": "*",
+
+  "ConnectionStrings": {
+    "MasterDB": "Server=0.0.0.0;Initial Catalog=PGS_Master;Persist Security Info=False;User ID=backend;Password=[REDACTED];MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;",
+    "TransactionDB": "Server=0.0.0.0;Initial Catalog=PGS_Transaction;Persist Security Info=False;User ID=backend;Password=[REDACTED];MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;",
+    "SystemLogDB": "Server=0.0.0.0;Initial Catalog=PGS_SystemLog;Persist Security Info=False;User ID=backend;Password=[REDACTED];MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;"
+  },
+
+  "SlackNotify": {
+
+    "NotifyChannel_When_SystemException": "n_error_public",
+    "IsNotifyEnable_When_SystemException": true
+  },
+
+  "ApiRequestLogTableName": "[dbo].[ApiRequestLogPublicAPI]",
+  "ApiRequestErrorLogTableName": "[dbo].[ApiRequestLogPublicAPIError]",
+  "WebSiteName": "target.API.Public.Local",
+  "IsEnableCache": true
+
+
+}

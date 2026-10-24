@@ -1,0 +1,26 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: docker-registry
+  annotations:
+    example.invalid/ingress.class: nginx
+    example.invalid/proxy-body-size: "0"
+spec:
+  tls:
+  - hosts:
+    - example.invalid
+    - example.invalid
+    secretName: docker-registry-tls-certificate
+  rules:
+  - host: example.invalid
+    http:
+      paths:
+      - backend:
+          serviceName: docker-registry
+          servicePort: 5000
+  - host: example.invalid
+    http:
+      paths:
+      - backend:
+          serviceName: docker-registry
+          servicePort: 8080

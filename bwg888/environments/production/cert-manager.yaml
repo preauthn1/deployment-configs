@@ -1,0 +1,17 @@
+apiVersion: example.invalid/v2beta1
+kind: HelmRelease
+metadata:
+  name: cert-manager
+  namespace: cert-manager
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: cert-manager
+      version: "v1.13.x"  # 使用最新的稳定版本
+      sourceRef:
+        kind: HelmRepository
+        name: jetstack
+        namespace: flux-system
+  values:
+    # 引用 values.yaml 中的配置 

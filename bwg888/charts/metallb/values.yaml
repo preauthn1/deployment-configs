@@ -1,0 +1,16 @@
+# MetalLB 配置
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: metallb-system
+  name: config
+spec:
+  template:
+    spec:
+      strictARP: true
+
+# 控制器和 speaker 配置
+controller:
+  enabled: true
+speaker:
+  enabled: true 

@@ -1,0 +1,10 @@
+{{- if .Values.hall }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}
+data:
+  config.yaml: | 
+    {{- toYaml .Values.hall | nindent 4 }}
+---
+{{- end }}

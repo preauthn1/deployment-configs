@@ -1,0 +1,118 @@
+# Default values for cm.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+deployname: tgbot-php-dev
+replicaCount: 1
+
+image:
+  repository: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024/sre/gff-cicd/cm/tgbot-php
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # example.invalid/ingress.class: nginx
+    # example.invalid/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+app:
+  name: tgbot
+  env: production
+  key: base64:Kj8mP9nX5vR3tY7wZ2qL4uE1cV6bN0sA8hD4fG9kM3p=
+  url: https://example.invalid
+  api_external_url:
+  web_frontend_url:
+  log:
+    channel: stderr
+  db:
+    connection: mysql
+    read:
+      host: 0.0.0.0
+      username: developer
+      password: [REDACTED]"
+    write:
+      host: 0.0.0.0
+      username: developer
+      password: [REDACTED]"
+    port: 3306
+    database: tgbot
+  session:
+    driver: redis
+  redis:
+    host: 0.0.0.0
+    password: [REDACTED]"
+    port: 6379
+    prefix: tgbot
+    db: 15
+  api:
+    url: http://apis-frontend.default.svc.cluster.local/frontend/api
+    md5_key: "&QmvpjLcT7nhA2Yw"
+    aes_key: "KfRzYaQNt6JpXwH^"
+    iv: "8094635217902485"
+    secret_key: [REDACTED]"

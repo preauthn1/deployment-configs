@@ -1,0 +1,125 @@
+.api:
+  stage: upgrade-target
+  tags:
+    - dotnet
+  image: alpine/k8s:1.18.2
+  only:
+    - master
+  before_script:
+    - mkdir -p $HOME/.kube
+    - echo $KUBE_CONFIG | base64 -d > $HOME/.kube/config
+    - chmod 600 $HOME/.kube/config
+    - kubectl config view
+  script:
+    - echo "Deploy start ..."
+    - echo ${APP_TAG}
+    - helm upgrade backend-api-${APP_NAME} ./api -f ./api/${DEPLOY_VALUES_FILE} --install --namespace ${DEPLOY_NS}
+      --set image.repository=${APP_IMAGE}
+      --set image.tag=${APP_TAG}
+      --set service.port=${APP_PORT}
+      --set app.name=${APP_NAME}
+      --set app.scaleble=${SCALEBLE}
+      --set app.min_replicas=${MIN_REPLICAS}
+    - echo "Deploy completed!"
+  when: manual
+
+Adminsys API:
+  extends: .api
+  variables:
+    APP_NAME: adminsys
+    APP_IMAGE: example.invalid/target/backend/target.api.adminsys
+    APP_TAG: gh-39969237019-1
+    APP_PORT: 3102
+    DEPLOY_NS: target
+    DEPLOY_VALUES_FILE: values.yaml
+    SCALEBLE: 1
+    MIN_REPLICAS: 2
+
+ExternalVendor API:
+  extends: .api
+  variables:
+    APP_NAME: externalvendor
+    APP_IMAGE: example.invalid/target/backend/target.api.externalvendor
+    APP_TAG: 54082
+    APP_PORT: 3108
+    DEPLOY_NS: target
+    DEPLOY_VALUES_FILE: values-externalvendor.yaml
+    SCALEBLE: 1
+    MIN_REPLICAS: 7
+
+File API:
+  extends: .api
+  variables:
+    APP_NAME: file
+    APP_IMAGE: example.invalid/target/backend/target.api.file
+    APP_TAG: 40141
+    APP_PORT: 3107
+    DEPLOY_NS: target
+    DEPLOY_VALUES_FILE: values.yaml
+
+Job API:
+  extends: .api
+  variables:
+    APP_NAME: job
+    APP_IMAGE: example.invalid/target/backend/target.api.job
+    APP_TAG: 51133
+    APP_PORT: 3106
+    DEPLOY_NS: target
+    DEPLOY_VALUES_FILE: values.yaml
+
+Game API:
+  extends: .api
+  variables:
+    APP_NAME: game
+    APP_IMAGE: example.invalid/target/backend/target.api.game
+    APP_TAG: 51133
+    APP_PORT: 3100
+    DEPLOY_NS: target
+    DEPLOY_VALUES_FILE: values-game.yaml
+    SCALEBLE: 1
+
+Public API:
+  extends: .api
+  variables:
+    APP_NAME: public
+    APP_IMAGE: example.invalid/target/backend/target.api.public
+    APP_TAG: 51133
+    APP_PORT: 3109
+    DEPLOY_NS: target
+    DEPLOY_VALUES_FILE: values-public.yaml
+    SCALEBLE: 1
+    MIN_REPLICAS: 3
+
+Vendor API:
+  extends: .api
+  variables:
+    APP_NAME: vendor
+    APP_IMAGE: example.invalid/target/backend/target.api.vendor
+    APP_TAG: 53950
+    APP_PORT: 3101
+    DEPLOY_NS: target
+    DEPLOY_VALUES_FILE: values-vendor.yaml
+    SCALEBLE: 1
+    MIN_REPLICAS: 3
+
+管理後台 Portal:
+  variables:
+    APP_TAG: 54118
+  stage: upgrade-target
+  tags:
+    - dotnet
+  image: alpine/k8s:1.18.2
+  only:
+    - master
+  before_script:
+    - mkdir -p $HOME/.kube
+    - echo $KUBE_CONFIG | base64 -d > $HOME/.kube/config
+    - chmod 600 $HOME/.kube/config
+    - kubectl config view
+  script:
+    - echo "Deploy start ..."
+    - ls -al $HOME/.kube
+    - helm upgrade backend-portal ./portal -f ./portal/values.yaml --install --namespace target
+      --set image.tag=${APP_TAG}
+    - echo "Deploy completed!"
+  when: manual

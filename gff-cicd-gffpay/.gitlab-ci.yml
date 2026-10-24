@@ -1,0 +1,31 @@
+image: google/cloud-sdk:latest
+
+variables:
+  TRIGGER_FROM_PROJECT: target/gffpay
+  AR_PATH: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024
+  SRC_TITLE: ${SRC_COMMIT_BRANCH}${SRC_COMMIT_TAG}
+
+workflow:
+  name: "[${SRC_PROJECT}:${SRC_TITLE}] ${SRC_SHORT_SHA}"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "trigger"
+      variables:
+        CI_PIPELINE_DESCRIPTION: "desc_${CI_PIPELINE_NAME}"
+
+stages:
+  - info
+  - choose-env
+  - deploy
+
+info:
+  stage: info
+  tags:
+    - php
+  before_script:
+    - apt-get update && apt-get install -y make
+  script:
+    - make debug-info
+
+include:
+  - .gitlab-ci-jobs/deploy-to-rd.yml
+  - .gitlab-ci-jobs/deploy-to-prod.yml

@@ -1,0 +1,89 @@
+# Default values for bwg-portal.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+minReadySeconds: 60
+
+image:
+  repository: example.invalid/target/backend/portal
+  tag: latest
+  pullPolicy: Always
+
+imagePullSecrets:
+  - name: regcred
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 9527
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    example.invalid/proxy-body-size: "0"
+    example.invalid/ssl-redirect: "false"
+    example.invalid/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: example.invalid
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: wildcard-target-com-tls
+      hosts:
+        - example.invalid
+
+
+resources:
+  limits:
+    cpu: 2
+    memory: 4096Mi
+  requests:
+    cpu: 0.5
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 60
+  targetMemoryUtilizationPercentage: 90
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+env:
+  VUE_APP_HOST: production
+  VUE_APP_API: http://backend-api-adminsys-bwg-api:3102/
+  VUE_APP_API_RAW: https://example.invalid/
+  VUE_APP_LOCALE: 'en'
+  VUE_APP_FILE_API: 'http://backend-api-file-bwg-api:3107/'

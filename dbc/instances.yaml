@@ -1,0 +1,140 @@
+# port 規則：
+#   34xx = 從庫（replica），同仁日常查詢用
+#   35xx = 主庫（primary）
+#
+# 注意：chatrrom-online（拼字如此，不是 chatroom）在三個專案重複出現，
+# 查找 key 一律用 project:instance，不要只用 instance 名稱。
+#
+# no_replica: true 表示這個主庫沒有從庫可用（目前是 chat 系列資料庫），
+# `dbc start` 預設模式會把它一起掛上去，也不會印「請改用從庫」的警告。
+#
+# 每個專案底下的實例都在同一個 region，region 寫在專案層級，不用每筆
+# 實例都重複。
+
+projects:
+  tp-wz3-rd:
+    region: asia-east1
+    instances:
+      # db_prod_user_cloudsqlsuperuser: true 全部 5 筆都有加：
+      # tp-wz3-rd 是開發環境，允許大部份用戶讀跟寫，不比照正式環境的
+      # SELECT-only 限制。
+      # TODO 補上「誰核准」。
+      - port: 3401
+        role: replica
+        instance: mysql84-new-replica
+        db_prod_user_cloudsqlsuperuser: true
+
+      - port: 3402
+        role: replica
+        instance: xsgcasino8-replica
+        db_prod_user_cloudsqlsuperuser: true
+
+      - port: 3501
+        role: primary
+        no_replica: true
+        instance: chatroom8
+        db_prod_user_cloudsqlsuperuser: true
+
+      - port: 3502
+        role: primary
+        instance: mysql84-new
+        always_start: true
+        db_prod_user_cloudsqlsuperuser: true
+
+      - port: 3503
+        role: primary
+        instance: xsgcasino8
+        always_start: true
+        db_prod_user_cloudsqlsuperuser: true
+
+      # 裸機 MySQL 只透過 dbc-gateway；client 不保存 backend address。
+      # no_replica: true 是因為這是單機、沒有從庫可用（跟 chat db 系列
+      # 一樣的情況），這樣 dbc start 預設就會把它一起掛上，也不會誤印
+      # 「請改用從庫」的警告。
+      - port: 3701
+        role: primary
+        no_replica: true
+        instance: baremetal-vplus33
+        gateway:
+          endpoint: "example.invalid:8443"
+          server_name: "example.invalid"
+          # 已知、刻意接受的風險：這不是 dbc 專屬的 audience，是 gcloud
+          # CLI 全世界共用的固定 client ID——真人帳號的 gcloud
+          # print-identity-token 沒辦法自訂 audience（只有服務帳號能自訂），
+          # 詳細原因跟風險說明見 internal/auth/idtoken.go 的註解跟
+          # docs/SESSION-2026-09-03-DBC-GATEWAY.md。
+          audience: "example.invalid"
+          target: "baremetal-vplus33"
+
+  tp-wz3-online:
+    region: asia-southeast1
+    instances:
+      - port: 3403
+        role: replica
+        instance: xsgcasino-online-replicas
+
+      - port: 3504
+        role: primary
+        no_replica: true
+        instance: chatrrom-online
+
+      - port: 3505
+        role: primary
+        instance: xsgcasino-online
+
+  tp-wz3-tpower:
+    region: asia-southeast1
+    instances:
+      - port: 3404
+        role: replica
+        instance: xsgcasino-online-replica
+
+      - port: 3506
+        role: primary
+        no_replica: true
+        instance: chatrrom-online
+
+      - port: 3507
+        role: primary
+        instance: xsgcasino-online
+
+  gff-yes2win:
+    region: asia-southeast1
+    instances:
+      - port: 3405
+        role: replica
+        instance: xsgcasino-online-replica
+
+      - port: 3508
+        role: primary
+        no_replica: true
+        instance: chatrrom-online
+
+      - port: 3509
+        role: primary
+        instance: xsgcasino-online
+  gff-alfawin77:
+    region: asia-southeast1
+    instances:
+      - port: 3510
+        role: primary
+        no_replica: true
+        instance: chatrrom-online
+      - port: 3511
+        role: primary
+        no_replica: true
+        instance: xsgcasino-online
+  gff-vwb2c:
+    region: asia-southeast1
+    instances:
+      - port: 3406
+        role: replica
+        instance: xsgcasino-online-replica
+      - port: 3512
+        role: primary
+        no_replica: true
+        instance: chatrrom-online
+      - port: 3513
+        role: primary
+        instance: xsgcasino-online
+        

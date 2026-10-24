@@ -1,0 +1,55 @@
+# 定义阶段
+stages:
+  - validate  # 验证集群连接
+  - deploy    # 部署基础设施
+  - config    # 更新配置
+
+# 定义变量
+variables:
+  KUBECONFIG: bwg_online.txt
+
+# 基础镜像设置
+default:
+  image: dtzar/helm-kubectl:3.8.2
+  tags:
+    - docker    # 指定使用带有 docker tag 的 runner
+  before_script:
+    - echo "$KUBE_CONFIG" | base64 -d > $KUBECONFIG
+    - chmod 600 $KUBECONFIG
+    - kubectl config set-cluster $(kubectl config current-context) --insecure-skip-tls-verify=true
+    - kubectl version
+    - helm version
+
+# 验证集群连接
+validate:
+  stage: validate
+  script:
+    - kubectl --kubeconfig=$KUBECONFIG cluster-info
+    - kubectl --kubeconfig=$KUBECONFIG get nodes
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+
+# 部署基础设施
+deploy-infra:
+  stage: deploy
+  script:
+    - chmod +x scripts/deploy.sh
+    - ./scripts/deploy.sh -k $KUBECONFIG
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual  # 手动触发
+  environment:
+    name: production
+
+# 更新配置
+update-config:
+  stage: config
+  script:
+    - chmod +x scripts/update-config.sh
+    - ./scripts/update-config.sh -k $KUBECONFIG
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual  # 手动触发
+  needs: []  # 移除对其他阶段的依赖
+  environment:
+    name: production

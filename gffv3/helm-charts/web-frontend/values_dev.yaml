@@ -1,0 +1,31 @@
+# dev 環境 values
+# 對外網域：https://example.invalid/ → Service web-frontend:3000（入口由叢集側設定）
+# 前提：dev apis 必須有 example.invalid 的站台 template，否則 site middleware 會回 siteError
+
+replicaCount: 2
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 2
+
+resources:
+  limits:
+    memory: 512Mi
+  requests:
+    cpu: 0.1
+
+config:
+  NUXT_PUBLIC_CHAT_BASE_URL: "https://example.invalid/"
+  # dev 開啟 BFF 回應 zod 驗證（'on'；'dev' 只在 nuxt dev 生效）
+  NUXT_PUBLIC_API_SCHEMA_VALIDATION: "on"
+
+secrets:
+  # apis 於 dev 為 allinone 模式（deploy-to-rd.yml DEPLOY_MODE: allinone）
+  NUXT_API_BASE_URL: "http://apis-allinone/"
+  # 與 helm-charts/apis/values_dev.yaml 的 app.api.* 一致
+  NUXT_API_AES_KEY: "M53B?xKnTVtVnjM^"
+  NUXT_API_AES_IV: "3579653693526433"
+  NUXT_API_MD5_KEY: "&zSMvVTK4gbDvCcU"
+  # 2026-09-29 新產生之 32 字元隨機值（dev 專用）
+  NUXT_SESSION_PASSWORD: [REDACTED]"

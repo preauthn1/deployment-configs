@@ -1,0 +1,90 @@
+{{- if .Values.qwork.enabled }}
+{{- $fullname := include "laravel-app.fullname" . -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "%s-qwork" $fullname }}
+    example.invalid/component: qwork
+spec:
+  # {{- if not .Values.qwork.autoscaling.enabled }}
+  # replicas: {{ .Values.qwork.replicaCount }}
+  # {{- end }}
+  replicas: 1
+  selector:
+    matchLabels:
+      example.invalid/component: qwork
+  template:
+    metadata:
+      labels:
+        example.invalid/component: qwork
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "laravel-app.serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        {{- if .example.invalid.gcs.enabled }}
+        - name: gcs-key
+          secret:
+            [REDACTED] {{ printf "%s-gcs-key" $fullname }}
+            items:
+              - key: gcs-key.json
+                path: gcs-key.json
+        {{- end }}
+        - name: config
+          configMap:
+            name: {{ printf "%s-config" $fullname }}
+            items:
+              - key: .env
+                path: .env
+              - key: nginx.conf
+                path: nginx.conf
+              - key: www.conf
+                path: www.conf
+      containers:
+        - name: {{ printf "%s-qwork" .Chart.Name }}
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/sh"]
+          args: ["-c", "php artisan queue:work --sleep=3 --tries=3 --max-time=3600 --queue=notifications,default"]
+          volumeMounts:
+            {{- if .example.invalid.gcs.enabled }}
+            - name: gcs-key
+              mountPath: {{ .example.invalid.gcs.key_file.mount_path }}
+              subPath: {{ .example.invalid.gcs.key_file.name }}
+              readOnly: true
+            {{- end }}
+            - name: config
+              mountPath: /var/www/html/.env
+              subPath: .env
+              readOnly: true
+            - name: config
+              mountPath: /usr/local/etc/php-fpm.d/www.conf
+              subPath: www.conf
+              readOnly: true
+          {{- with .Values.qwork.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

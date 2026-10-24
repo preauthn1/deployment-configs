@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-game-tfserver
+  namespace: target-dev
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 10080
+      protocol: TCP
+  selector:
+    name: game-tfserver

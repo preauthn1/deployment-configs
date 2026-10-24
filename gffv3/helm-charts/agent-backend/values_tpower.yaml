@@ -1,0 +1,78 @@
+# tpower（prod）環境 values
+# 目標叢集：tp-wz3-tpower / cluster-1（asia-southeast1-a）/ ns default
+#   （比照 .gitlab-ci-jobs/deploy-to-prods/tpower.yaml 的 apis 部署目標）
+# 慣例來源：helm-charts/apis/values_tpower.yaml 與本 chart values_yes2win.yaml
+
+# autoscaling 啟用時 replicaCount 不生效，此值僅供關閉 HPA 時 fallback
+replicaCount: 2
+
+# 比照本 chart 其他 prod values 的 autoscaling 配置
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+# 比照本 chart 其他 prod values 的資源規格
+# （agent-backend 為單容器：nginx 靜態檔 + Nitro gateway，負載遠輕於 PHP-FPM）
+resources:
+  limits:
+    cpu: 0.5
+    memory: 1024Mi
+  requests:
+    cpu: 0.2
+
+# 對外入口：apis 各 prod values 均未啟用 chart ingress（對外流量入口由叢集側管理），此處比照維持關閉
+# TODO(拍板)：tpower 代理後台的對外網域尚無現成慣例可推導
+#   （apis tpower 既有網域：example.invalid / example.invalid /
+#    example.invalid，無 agent/代理後台前綴慣例），待決定網域與入口管理方式
+ingress:
+  enabled: false
+
+# gateway runtime secrets for tpower (prod)
+# 與 dev 同樣由本 chart secret.yaml 建 Secret、deployment 以 secretKeyRef 注入。
+gateway:
+  # gateway server-side session 加密密碼（h3 useSession 要求 >= 32 字元，僅 gateway 自用不需對齊他系統）
+  # 本值為 2026-08-04 新產生之 32 字元隨機密鑰（tpower 專用，未沿用其他環境）
+  SESSION_PASSWORD: [REDACTED]"
+  # 與 apis values_tpower.yaml 之 app.api.* 一致（gateway 加簽轉發用）：
+  #   AES_KEY ← app.api.aes_key、AES_IV ← app.api.aes_iv、MD5_KEY ← app.api.aes_md5
+  AES_KEY: "M53B?gQhkRtSeQZ^"
+  AES_IV: "4339794120398193"
+  MD5_KEY: "&W7e1vRWRH02jZIB"
+  # API_URL：agent-console API（dev 慣例為 agent-console-api-service:60003；此處比照其他 prod 環境
+  # 定案的叢集內 service 名稱 agent-webapi-service）
+  # TODO(確認)：tpower 叢集內該 service 名稱/port 與是否已部署，待維運確認
+  API_URL: "http://agent-webapi-service:60003/"
+  # apis 於 tpower 為 split 模式（deploy job DEPLOY_MODE: split），代理後台面向的 Service 為
+  # apis-agent（ClusterIP:80；service 名由 apis chart service.yaml 之 {{ .Release.Name }}-agent 推導）
+  APIS_URL: "http://apis-agent/"
+  # TODO(確認)：tpower 叢集內是否存在 api-internal service（dev 值為 http://api-internal/，
+  # 且 dev 環境本就不可達）
+  API_INTERNAL: "http://api-internal/"
+  # 客服系統 API 加簽三鍵，來源：html/gsrc/WEB_CustomerServiceSocket/_release/.env.tpower_new
+  #   基準：branch origin/tpower-new 的 server-build-tpower_new（tpower 現行 CS build 以此為準，
+  #   非同 branch 下的舊 server-build-tpower）
+  #   （server-build-tpower_new/Dockerfile-php:11 COPY _release/.env.tpower_new /app/.env）
+  #   對應：CS_AES_KEY ← API_AES_KEY、CS_MD5_KEY ← API_MD5_KEY、CS_IV ← API_IV
+  #   註：.env.tpower_new 與 .env.tpower 的這三鍵值相同（已 diff 驗證）
+  CS_AES_KEY: "aJSWD90PkQHMY4iT"
+  CS_MD5_KEY: "01OEqipXxQ8UK7x1"
+  CS_IV: "3710175532732503"
+  # CS_API_URL：走叢集內 CS API service，與其他品牌慣例一致。已確認：
+  #   origin/tpower-new:server-build-tpower_new/cloudbuild.yaml 的 4 個 kubectl step
+  #   （cs-socket-deployment ×3、cs-api-deployment ×1）env 皆為
+  #   CLOUDSDK_CORE_PROJECT=tp-wz3-tpower / CLOUDSDK_CONTAINER_CLUSTER=cluster-1、
+  #   substitutions _NAMESPACE: default —— 與本檔目標叢集/namespace 完全一致。
+  #   Service 定義：同目錄 webapi-service.yaml → cs-api-service，NodePort port 60003 → targetPort 80。
+  #   （外網域備援值為 apis api_cs_url：https://example.invalid/api/，該 host 亦由同目錄
+  #    webapi-ingress.yaml 導向 cs-api-service:60003）
+  CS_API_URL: "http://cs-api-service:60003/"
+  # 比照 apis values_tpower.yaml 的 api_cs_url 網域
+  #   （webapi-ingress.yaml 中此 host 與 example.invalid、example.invalid 並列，
+  #    皆導向同一組 cs-socket-service:6001 / cs-api-service:60003）
+  CS_SOCKET_URL: "https://example.invalid/"
+
+  # target/tickets#4187：GKE+GCLB 拓樸，X-Forwarded-For 最後一格是 GCLB 自己的
+  # 前端 VIP（無法枚舉），跟 apis/WEB_AgentBackend 同品牌設定一致。
+  TRUSTED_PROXY_SKIP_LAST_HOP: "true"

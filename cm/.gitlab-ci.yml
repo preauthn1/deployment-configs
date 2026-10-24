@@ -1,0 +1,190 @@
+image: google/cloud-sdk:522.0.0
+
+services:
+  - name: docker:18-dind
+    command: ["--mtu=1450"]
+
+variables:
+  DOCKER_HOST: tcp://localhost:2375
+  REGISTRY: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024
+  IMAGE_PATH: $REGISTRY/${CI_PROJECT_PATH}
+
+workflow:
+  name: "[${SRC_PROJECT}:${SRC_COMMIT_BRANCH}] ${SRC_SHORT_SHA}"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "trigger"
+      variables:
+        CI_PIPELINE_DESCRIPTION: "desc_${CI_PIPELINE_NAME}"
+
+stages:
+  - info
+  - build
+  - deploy-to-gke
+
+info:
+  stage: info
+  tags:
+    - php
+  script:
+    - uname -r
+    - curl -s example.invalid
+    - echo $SRC_COMMIT_BRANCH
+    - echo $SRC_SHA
+    - echo $SRC_PROJECT
+    - echo $BUILD_NAME
+    - echo $CI_BUILD_TARGETS
+.project_rule:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger" && $SRC_PROJECT == $TRIGGER_FROM_PROJECT'
+      when: on_success
+    - when: never
+############################################################
+# extends required variables
+# 建置用的專案
+# TRIGGER_FROM_PROJECT: cm/api-fronted
+# 定義鏡像名
+# IMAGE_NAME: api-frontend
+# 建置用 Dockerfile
+# BUILD_DOCKERFILE: build-dev/api-frontend/Dockerfile-php
+############################################################
+.build:
+  extends: .project_rule
+  stage: build
+  tags:
+    - php
+  before_script:
+    - docker info
+    - gcloud --version && docker --version && kubectl version --client
+    - gcloud auth activate-service-account --key-file ./tp-wz3-rd-gcr-rw.json
+    - docker login -u _json_key --password-stdin https://asia-east1-docker.pkg.dev < ./tp-wz3-rd-gcr-rw.json
+  script:
+    - mkdir app
+    - cd app
+    - git init
+    - git remote add origin http://gitlab-ci-token:[REDACTED]
+    - git fetch --depth 1 origin $SRC_SHA
+    - git checkout FETCH_HEAD
+    - cd ..
+    - export SRC_COMMIT_TIME=$(TZ='Asia/Taipei' git -C app log -1 --format="%cd" --date=format:"%Y-%m-%d %H:%M:%S" $SRC_SHA)
+    - export CI_TIME=$(TZ='Asia/Taipei' date '+%Y-%m-%d %H:%M:%S')
+    - |
+      echo "{
+        \"SRC_PROJECT\": \"${SRC_PROJECT}\",
+        \"SRC_COMMIT_BRANCH\": \"${SRC_COMMIT_BRANCH}\",
+        \"SRC_SHA\": \"${SRC_SHA}\",
+        \"SRC_SHORT_SHA\": \"${SRC_SHORT_SHA}\",
+        \"SRC_COMMIT_TIME\": \"${SRC_COMMIT_TIME}\",
+        \"CI_PIPELINE_ID\": \"${CI_PIPELINE_ID}\",
+        \"CI_COMMIT_SHORT_SHA\": \"${CI_COMMIT_SHORT_SHA}\",
+        \"CI_TIME\": \"${CI_TIME}\"
+      }" > app/version.json
+    # 使用 BuildKit 啟用更好的緩存功能
+    - DOCKER_BUILDKIT=1 docker buildx build --progress=plain --push -f ${BUILD_DOCKERFILE} --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from ${IMAGE_PATH}/${IMAGE_NAME}:latest -t ${IMAGE_PATH}/${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID} -t ${IMAGE_PATH}/${IMAGE_NAME}:latest .
+    - cd app
+    - ls
+############################################################
+# Extends required variables
+# 建置來源專案
+# TRIGGER_FROM_PROJECT: cm/api-fronted
+# GKE_CLUSTER_NAME: cluster-1
+# GKE_CLUSTER_ZONE: asia-east1-a
+# GCP_PROJECT: tp-wz3-rd
+# 應用名
+# APP_NAME: cm-api-frontend
+# 應用鏡像位置
+# APP_IMAGE: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024/sre/gff-cicd/cm/api-frontend
+# APP_PORT: 80
+# DEPLOY_NS: cm
+# DEPLOY_VALUES_FILE: values.yaml
+# DEPLOY_KEY_FILE: deploy-keys/tp-wz3-rd-deploy.json
+# HELM_CHART_PATH: ./helm-charts/cm
+############################################################
+.deploy:
+  extends: .project_rule
+  stage: deploy-to-gke
+  image: google/cloud-sdk:latest
+  tags:
+    - php
+  before_script:
+    # No helm in google/cloud-sdk, need to install it
+    - apt-get update && apt-get install vim wget -y
+    - wget -q -O helm3.tar.gz https://get.helm.sh/helm-v3.2.3-linux-amd64.tar.gz
+    - tar -zxvf helm3.tar.gz && mv linux-amd64/helm /usr/local/bin/helm
+    # No kubectl in google/cloud-sdk, need to install it
+    - apt-get install kubectl
+    - gcloud auth activate-service-account --key-file=${DEPLOY_KEY_FILE}
+    - gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_CLUSTER_ZONE --project $GCP_PROJECT
+    - kubectl get nodes
+  script:
+    - kubectl config get-contexts
+    - echo "Deploy to gke start ..."
+    - helm upgrade ${APP_NAME} ${HELM_CHART_PATH} -f ${DEPLOY_VALUES_FILE} --install --namespace ${DEPLOY_NS} 
+      --set image.repository=${APP_IMAGE}
+      --set image.tag=${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID}
+      --set service.port=${APP_PORT}
+      --set app.name=${APP_NAME}
+    - echo "Deploy to gke completed!"
+    # Pass the image name & tag name into yaml file
+    # - sed -i "s|<IMAGE_NAME>|$IMAGE_NAME|g" deploy/gke/deploy.yaml
+    # - sed -i "s|<IMAGE_TAG>|$IMAGE_TAG|g" deploy/gke/deploy.yaml
+    # - kubectl apply -f deploy/gke/deploy.yaml
+############################################################
+# Extends required variables
+# 建置來源專案
+# TRIGGER_FROM_PROJECT: cm/api-fronted
+# AWS_ACCESS_KEY_ID: 
+# AWS_SECRET_ACCESS_KEY: 
+# AWS_DEFAULT_REGION: 
+# AWS_CLUSTER_NAME: cluster-1
+# ACR_HOST: asia-east1-docker.pkg.dev
+# 應用名
+# APP_NAME: cm-api-frontend
+# 應用鏡像位置
+# APP_IMAGE: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024/sre/gff-cicd/cm/api-frontend
+# APP_PORT: 80
+# DEPLOY_NS: cm
+# DEPLOY_VALUES_FILE: values.yaml
+# HELM_CHART_PATH: ./helm-charts/cm
+############################################################
+.deploy-aws:
+  extends: .project_rule
+  stage: deploy-to-gke
+  image: alpine/k8s:1.24.13
+  tags:
+    - php
+  before_script:
+    # 安裝必要工具
+    - apk add --no-cache curl python3 py3-pip openssl ca-certificates git bash
+    - pip install awscli
+    - curl -fsSL -o get_helm.sh https://example.invalid/helm/helm/master/scripts/get-helm-3
+    - chmod 700 get_helm.sh
+    - ./get_helm.sh
+    # 配置 AWS 和 kubectl
+    - aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_DEFAULT_REGION
+    - kubectl get nodes
+     # 創建 image pull secret
+    - |
+      kubectl create secret docker-registry gcr-secret \
+        --docker-server=$ACR_HOST \
+        --docker-username=_json_key \
+        --docker-password=[REDACTED] ./tp-wz3-rd-gcr-rw.json)" \
+        --docker-email=user@example.invalid \
+        --namespace=${DEPLOY_NS}  \
+        --dry-run=client -o yaml | kubectl apply -f -
+  script:
+    - kubectl config get-contexts
+    - echo "Deploy to gke start ..."
+    - helm upgrade ${APP_NAME} ${HELM_CHART_PATH} -f ${DEPLOY_VALUES_FILE} --install --namespace ${DEPLOY_NS} 
+      --set image.repository=${APP_IMAGE}
+      --set image.tag=${CI_COMMIT_SHORT_SHA}_${CI_PIPELINE_ID}
+      --set imagePullSecrets[0].name=gcr-secret
+      --set service.port=${APP_PORT}
+      --set app.name=${APP_NAME}
+    - echo "Deploy to aws completed!"
+
+include:
+  - ci-jobs/api-frontend.yml
+  - ci-jobs/app-frontend.yml
+  - ci-jobs/backend.yml
+  - ci-jobs/tgbot-php.yml
+

@@ -1,0 +1,93 @@
+{{- if .Values.migration.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "laravel-migration.fullname" . }}-{{ .Values.version | default "default" }}
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation
+  labels:
+    {{- include "laravel-migration.labels" . | nindent 4 }}
+    example.invalid/component: migration
+    version: "{{ .Values.version | default "default" }}"
+spec:
+  ttlSecondsAfterFinished: {{ .Values.job.ttlSecondsAfterFinished }}
+  backoffLimit: {{ .Values.job.backoffLimit }}
+  activeDeadlineSeconds: {{ .Values.job.activeDeadlineSeconds }}
+  template:
+    metadata:
+      labels:
+        {{- include "laravel-migration.selectorLabels" . | nindent 8 }}
+        example.invalid/component: migration
+    spec:
+      restartPolicy: Never
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.waitForDatabase.enabled }}
+      initContainers:
+      - name: wait-for-database
+        image: {{ .Values.waitForDatabase.image }}
+        command:
+        - /bin/sh
+        - -c
+        - |
+          echo "Waiting for database {{ .Values.env.DB_HOST }}:{{ .Values.env.DB_PORT }}..."
+          until nc -z {{ .Values.env.DB_HOST }} {{ .Values.env.DB_PORT }}; do
+            echo "Database not ready, waiting 5 seconds..."
+            sleep 5
+          done
+          echo "Database is ready!"
+      {{- end }}
+      containers:
+      - name: migration
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          echo "🚀 Starting Laravel Migration..."
+          echo "Environment: {{ .Values.environment }}"
+          echo "Image: {{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          
+          # Test database connection
+          echo "Testing database connection..."
+          php artisan tinker --execute="DB::connection()->getPdo(); echo 'Connected!';"
+          
+          # Run migrations
+          echo "Running migrations..."
+          php artisan migrate --force --silent 2>&1
+          # echo "Running app:upgrade..."
+          # php artisan app:upgrade --silent 2>&1
+          
+          {{- if .Values.migration.seedDatabase }}
+          echo "Running seeders..."
+          php artisan db:seed --force
+          {{- end }}
+          
+          {{- if .Values.migration.clearCache }}
+          echo "Clearing caches..."
+          php artisan cache:clear
+          php artisan config:clear
+          {{- end }}
+          
+          echo "✅ Migration completed successfully!"
+        env:
+        {{- range $key, $value := .Values.env }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+        {{- end }}
+        {{- if .Values.envFrom }}
+        envFrom:
+        {{- toYaml .Values.envFrom | nindent 8 }}
+        {{- end }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

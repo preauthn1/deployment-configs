@@ -1,0 +1,65 @@
+build backend:
+  extends: .build
+  variables:
+    # 建置來源專案
+    TRIGGER_FROM_PROJECT: cm/backend
+    # 定義鏡像名
+    IMAGE_NAME: backend
+    # 建置用 Dockerfile
+    BUILD_DOCKERFILE: build-dev/backend/Dockerfile-php
+
+deploy backend (DEV):
+  extends: .deploy
+  stage: deploy-to-gke
+  image: google/cloud-sdk:latest
+  tags:
+    - php
+  needs:
+    - "build backend"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger" && $SRC_PROJECT == $TRIGGER_FROM_PROJECT && $SRC_COMMIT_BRANCH == "dev"'
+      when: on_success
+    - when: never
+  variables:
+    # 建置來源專案
+    TRIGGER_FROM_PROJECT: cm/backend
+    GKE_CLUSTER_NAME: cluster-1
+    GKE_CLUSTER_ZONE: asia-east1-a
+    GCP_PROJECT: tp-wz3-rd
+    # 應用名
+    APP_NAME: cm-backend
+    # 應用鏡像位置
+    APP_IMAGE: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024/sre/gff-cicd/cm/backend
+    APP_PORT: 80
+    DEPLOY_NS: cm
+    DEPLOY_VALUES_FILE: ./helm-charts/cm-backend/values.yaml
+    DEPLOY_KEY_FILE: deploy-keys/tp-wz3-rd-deploy.json
+    HELM_CHART_PATH: ./helm-charts/cm-backend
+
+deploy backend (Online-aws):
+  extends: .deploy-aws
+  stage: deploy-to-gke
+  needs:
+    - "build backend"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger" && $SRC_PROJECT == $TRIGGER_FROM_PROJECT && $SRC_COMMIT_BRANCH == "main"'
+      when: on_success
+    - when: never
+  allow_failure: true
+  variables:
+    # 建置來源專案
+    TRIGGER_FROM_PROJECT: cm/backend
+    AWS_ACCESS_KEY_ID: AKIA[REDACTED]
+    AWS_SECRET_ACCESS_KEY: [REDACTED]
+    AWS_DEFAULT_REGION: ap-southeast-1
+    CLUSTER_NAME: mybit-cluster
+    # 應用名
+    APP_NAME: cm-backend
+    ACR_HOST: asia-east1-docker.pkg.dev
+    # 應用鏡像位置
+    APP_IMAGE: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024/sre/gff-cicd/cm/backend
+    APP_PORT: 80
+    DEPLOY_NS: default
+    DEPLOY_VALUES_FILE: ./helm-charts/cm-backend/values_online.yaml
+    DEPLOY_KEY_FILE: deploy-keys/tp-wz3-rd-deploy.json
+    HELM_CHART_PATH: ./helm-charts/cm-backend

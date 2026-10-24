@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    example.invalid/auto: "true"
+  name: {{ include "bwg-api.fullname" . }}
+  labels:
+    {{- include "bwg-api.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "bwg-api.selectorLabels" . | nindent 6 }}
+  {{- if .Values.minReadySeconds }}
+  minReadySeconds: {{ .Values.minReadySeconds }}
+  {{- end }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "bwg-api.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: appsettings
+          configMap:
+            name: {{ .Release.Name }}-appsettings
+            items:
+              - key: appsettings-adminsys.json
+                path: appsettings-adminsys.json
+              - key: appsettings-game.json
+                path: appsettings-game.json
+              - key: appsettings-public.json
+                path: appsettings-public.json
+              - key: appsettings-vendor.json
+                path: appsettings-vendor.json
+              - key: appsettings-sandbox_vendor.json
+                path: appsettings-sandbox_vendor.json
+              - key: appsettings-externalvendor.json
+                path: appsettings-externalvendor.json
+              - key: appsettings-job-console.json
+                path: appsettings-job-console.json
+              - key: appsettings-job.json
+                path: appsettings-job.json
+              - key: appsettings-file.json
+                path: appsettings-file.json
+
+      serviceAccountName: {{ include "bwg-api.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Dev
+          volumeMounts:
+            - name: appsettings
+              mountPath: /app/appsettings.Dev.json
+              subPath: "appsettings-{{ .example.invalid.name }}.json"
+              readOnly: true
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

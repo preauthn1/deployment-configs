@@ -1,0 +1,56 @@
+apiVersion: example.invalid/v1
+kind: Ingress
+metadata:
+  name: default-ingress
+  namespace: default
+  annotations:
+    # cert-manager 自動申請 SSL 憑證
+    example.invalid/cluster-issuer: "letsencrypt-prod"
+    # nginx 配置
+    example.invalid/ssl-redirect: "true"
+    example.invalid/force-ssl-redirect: "true"
+    # 可選：設置上傳文件大小限制
+    example.invalid/proxy-body-size: "100m"
+    # 可選：設置超時時間
+    example.invalid/proxy-read-timeout: "300"
+    example.invalid/proxy-send-timeout: "300"
+spec:
+  ingressClassName: nginx  # 使用標準字段（無廢棄警告）
+  tls:
+  - hosts:
+    - example.invalid
+    - example.invalid
+    - example.invalid
+    - example.invalid
+    secretName: fon666-tls-prod  # cert-manager 會自動創建此 Secret
+  rules:
+  - host: example.invalid
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-web-service
+            port:
+              number: 80
+  - host: example.invalid
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-web-service
+            port:
+              number: 80
+  - host: example.invalid
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webapi-service
+            port:
+              number: 80

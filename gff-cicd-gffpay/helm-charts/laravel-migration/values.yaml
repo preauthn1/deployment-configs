@@ -1,0 +1,67 @@
+# Default values for laravel-migration
+
+# Image configuration
+image:
+  repository: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024/target/gffpay/develop
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# Version for job naming (usually CI_COMMIT_SHA)
+version: "default"
+
+# Environment
+environment: "development"
+
+# Migration settings
+migration:
+  enabled: true
+  seedDatabase: false
+  clearCache: true
+
+# Job configuration
+job:
+  ttlSecondsAfterFinished: 3600  # 1 hour
+  backoffLimit: 3
+  activeDeadlineSeconds: 1800    # 30 minutes
+
+# Wait for database
+waitForDatabase:
+  enabled: true
+  image: busybox:1.35
+
+# Environment variables
+env:
+  APP_ENV: production
+  DB_CONNECTION: mysql
+  DB_HOST: mysql-service
+  DB_PORT: "3306"
+  DB_DATABASE: laravel_app
+  LOG_CHANNEL: stderr
+
+# Environment from secrets/configmaps
+envFrom: []
+# Example:
+# envFrom:
+#   - secretRef:
+#       name: laravel-secrets
+#   - configMapRef:
+#       name: laravel-config
+
+# Resource limits
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

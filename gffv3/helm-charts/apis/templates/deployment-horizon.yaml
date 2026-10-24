@@ -1,0 +1,93 @@
+{{- if .Values.horizon.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-horizon
+  labels:
+    {{- include "cm.horizonLabels" . | nindent 4 }}
+    example.invalid/component: horizon
+spec:
+  replicas: {{ .Values.horizon.replicas }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      {{- include "cm.horizonSelectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "cm.horizonSelectorLabels" . | nindent 8 }}
+        example.invalid/component: horizon
+    spec:
+      # job timeout 60s + 收尾緩衝（30s 會攔腰砍斷執行中 job）
+      terminationGracePeriodSeconds: 90
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "cm.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ .Release.Name }}-config
+            items:
+              - key: .env
+                path: .env
+      containers:
+        - name: {{ .Release.Name }}-horizon
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/sh"]
+          args: ["-c", "exec {{ .Values.horizon.command }}"]
+          volumeMounts:
+            - name: config
+              mountPath: /app/.env
+              subPath: .env
+              readOnly: true
+          # containerd 停止容器時送的是 image 的 STOPSIGNAL（SIGQUIT，為 php-fpm 的
+          # FINISHING 而設），但本容器覆寫了 ENTRYPOINT，args 的 exec 讓 php 直接成為
+          # PID 1，而 Horizon master 只註冊 SIGTERM/SIGUSR1/SIGUSR2/SIGCONT
+          # （vendor/laravel/horizon/src/ListensForSignals.php）——PID 1 對未註冊 handler
+          # 的信號一律由 kernel 丟棄，SIGQUIT 因此完全無效：worker 會一路領新 job 直到
+          # 寬限期用盡被 SIGKILL，手上那個 job 卡在 redis reserved 沒被 delete，
+          # retry_after(90s) 後被下一個 worker 判 MaxAttemptsExceededException。
+          # preStop 主動送 Horizon 認得的 SIGTERM（horizon:terminate 對 master pid
+          # posix_kill）：停止領新 job、把手上的跑完才退，之後才進寬限期。
+          lifecycle:
+            preStop:
+              exec:
+                command: ["php", "artisan", "horizon:terminate"]
+          livenessProbe:
+            exec:
+              command: ["php", "artisan", "horizon:status"]
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            timeoutSeconds: 10
+            failureThreshold: 3
+          resources:
+            {{- toYaml .Values.horizon.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

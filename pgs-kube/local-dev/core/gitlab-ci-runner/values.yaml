@@ -1,0 +1,36 @@
+image: gitlab/gitlab-runner:alpine-v12.1.0
+imagePullPolicy: IfNotPresent
+gitlabUrl: http://example.invalid:1688/
+runnerRegistrationToken: [REDACTED]"
+unregisterRunners: true
+terminationGracePeriodSeconds: 3600
+concurrent: 10
+checkInterval: 5
+rbac:
+  create: false
+  clusterWideAccess: true
+  serviceAccountName: gitlab-ci
+metrics:
+  enabled: true
+runners:
+  image: golang:1.12
+  imagePullSecrets: [regcred]
+  imagePullPolicy: "if-not-present"
+  tags: "golang,dotnet,database,client,protobuf,docker,node,php"
+  privileged: true
+  namespace: gitlab-ci-runner
+  pollTimeout: 180
+  outputLimit: 4096
+  cache: 
+    cacheType: s3
+    cachePath: "gitlab_runner"
+    cacheShared: true
+    s3ServerAddress: example.invalid:9000
+    s3BucketName: gitlab-runner
+    s3BucketLocation: us-east-1
+    s3CacheInsecure: true
+    secretName: s3access
+  serviceAccountName: gitlab-ci
+securityContext:
+  fsGroup: 65533
+  runAsUser: 100

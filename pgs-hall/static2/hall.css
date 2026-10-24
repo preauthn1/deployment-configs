@@ -1,0 +1,167 @@
+body, html {
+    min-height: 100%;
+    margin: 0;
+}
+
+#app nav.header, #app header {
+    /* Permalink - use to edit and share this gradient: https://example.invalid/gradient-editor/#154881+0,171e2a+83,23365a+100 */
+    background: #154881; /* Old browsers */
+    background: -moz-linear-gradient(top,  #154881 0%, #171e2a 77%, #23365a 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  #154881 0%,#171e2a 77%,#23365a 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  #154881 0%,#171e2a 77%,#23365a 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#154881', endColorstr='#23365a',GradientType=0 ); /* IE6-9 */
+    box-shadow: 2px 1px 10px #555;
+    /*position: fixed;*/
+    width: 100%;
+    z-index: 100;
+    color: #EEE;
+}
+
+#app nav.header #logo, header #logo {
+    height: 2em;
+}
+
+header #lang {
+    width: 6em;
+    height: 2em;
+    padding: 0 .15rem;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+
+
+#app {
+    background-image: url("./bg.png");
+    background-repeat: repeat;
+    background-attachment: fixed;
+    background-size: 100%;
+}
+
+#version {
+    position: fixed;
+    bottom: 2em;
+    right: 2em;
+    /* Permalink - use to edit and share this gradient: https://example.invalid/gradient-editor/#154881+0,3c66bb+83,23365a+100 */
+    background: #154881; /* Old browsers */
+    background: -moz-linear-gradient(top,  #154881 0%, #3c66bb 30%, #23365a 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  #154881 0%,#3c66bb 30%,#23365a 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  #154881 0%,#3c66bb 30%,#23365a 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#154881', endColorstr='#23365a',GradientType=0 ); /* IE6-9 */
+
+    padding: .2rem .5rem;
+    border-radius: 5px;
+    color: #FFF;
+    box-shadow: 1px 1px 2px #555;
+}
+
+#content {
+    padding-top: calc(2em + .75rem + .75rem + 1rem);
+}
+
+.game-group .header {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #fdff90;
+    /* Permalink - use to edit and share this gradient: https://example.invalid/gradient-editor/#35317c+0,1c1041+30,292661+47,23365a+47,141947+76,141947+87,17153d+100;Black+Gloss+Pipe */
+    background: #35317c; /* Old browsers */
+    background: -moz-linear-gradient(top,  #35317c 0%, #1c1041 30%, #292661 60%, #141947 87%, #17153d 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  #35317c 0%,#1c1041 30%,#292661 60%,#141947 87%,#17153d 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  #35317c 0%,#1c1041 30%,#292661 60%,#141947 87%,#17153d 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#35317c', endColorstr='#17153d',GradientType=0 ); /* IE6-9 */
+
+    position: relative;
+    border: 1px solid transparent;
+    border-radius: .5rem .5rem 0 0;
+}
+
+.game-group .row {
+    margin-right: -5px;
+    margin-left: -5px;
+}
+
+.game {
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.game .option {
+    border-radius: .5rem;
+    overflow: hidden;
+    position: relative;
+}
+
+.game .option .img-wrapper {
+    width: 100%;
+    overflow: hidden;
+}
+
+.game .option p {
+    color: #FFF;
+    font-size: 80%;
+    font-weight: 700;
+    /* Permalink - use to edit and share this gradient: https://example.invalid/gradient-editor/#154881+0,3c66bb+83,23365a+100 */
+    background: #154881; /* Old browsers */
+    background: -moz-linear-gradient(top,  #154881 0%, #3c66bb 30%, #23365a 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  #154881 0%,#3c66bb 30%,#23365a 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  #154881 0%,#3c66bb 30%,#23365a 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#154881', endColorstr='#23365a',GradientType=0 ); /* IE6-9 */
+}
+
+.game:hover .option {
+    border: 1px solid #e0d356;
+    box-shadow: 1px 1px 2px #e0d356;
+}
+
+.game:hover .option .img-wrapper img {
+    transform: scale(1.2) rotate(10deg);
+    transition-duration: 1s;
+}
+
+.game:hover .option p {
+    color: #154881;
+    /* Permalink - use to edit and share this gradient: https://example.invalid/gradient-editor/#e0d356+0,3c66bb+83,c7b82f+100 */
+    background: #e0d356; /* Old browsers */
+    background: -moz-linear-gradient(top,  #e0d356 0%, #ebe47c 30%, #c7b82f 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  #e0d356 0%,#ebe47c 30%,#c7b82f 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  #e0d356 0%,#ebe47c 30%,#c7b82f 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e0d356', endColorstr='#c7b82f',GradientType=0 ); /* IE6-9 */
+}
+
+.room-wrapper {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 80%;
+    padding: 0;
+    margin: 0;
+}
+
+.game:hover .room-wrapper {
+    left: 10%;
+    transition-duration: .5s;
+}
+
+.room-wrapper li {
+    cursor: pointer;
+    padding: .5rem;
+    margin: .5rem;
+    border-radius: 1rem;
+    list-style-type: none;
+    /* Permalink - use to edit and share this gradient: https://example.invalid/gradient-editor/#36ca7b+0,3c66bb+83,267261+100 */
+    background: #36ca7b; /* Old browsers */
+    background: -moz-linear-gradient(top,  #36ca7b 0%, #d0eeb7 30%, #267261 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  #36ca7b 0%,#d0eeb7 30%,#267261 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  #36ca7b 0%,#d0eeb7 30%,#267261 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#36ca7b', endColorstr='#267261',GradientType=0 ); /* IE6-9 */
+}
+
+.room-wrapper li:hover {
+    /* Permalink - use to edit and share this gradient: https://example.invalid/gradient-editor/#3694ca+0,3c66bb+83,263a72+100 */
+    background: #3694ca; /* Old browsers */
+    background: -moz-linear-gradient(top,  #3694ca 0%, #b7d1ee 30%, #263a72 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  #3694ca 0%,#b7d1ee 30%,#263a72 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  #3694ca 0%,#b7d1ee 30%,#263a72 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3694ca', endColorstr='#263a72',GradientType=0 ); /* IE6-9 */
+}
+

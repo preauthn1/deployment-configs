@@ -1,0 +1,78 @@
+app:
+  site_name: prod
+  name: Laravel
+  env: prod
+  key: base64:Xv85pZ29OyOBC6RJNDrw9Dgib5QuF0q0Zn1u4gqYbL0=
+  url: http://apis
+  debug: true
+  timezone:
+    frontend: "Asia/Taipei"
+    backend: "Asia/Taipei"
+  log:
+    channel: stderr
+    level: debug
+  db:
+    connection: mysql
+    read:
+      host: 0.0.0.0
+      username: developer
+      password: [REDACTED]"
+    write:
+      host: 0.0.0.0
+      username: developer
+      password: [REDACTED]"
+    port: 3306
+    database: gffpay
+  session:
+    driver: redis
+  redis:
+    host: 0.0.0.0
+    password: [REDACTED]"
+    port: 6379
+    db: 8
+  # Office
+  office:
+    ip: "0.0.0.0"
+    password: [REDACTED]"
+  # Telegram
+  bot:
+    telegram_token: [REDACTED]
+    debug_chat_id: "-452604221"
+    error_chat_id: "-452604221"
+    warn_chat_id: "-452604221"
+  switch:
+    log_request: true
+    scramble_enabled: true
+  mail:
+    driver: smtp
+    scheme: null
+    host: example.invalid
+    port: 587
+    username: ""
+    password: ""
+    from:
+      address: ""
+      name: ""
+# ton configuration
+ton:
+  is_main_net: 1
+  wallet_mnemonic: "april rice earn gas general essence output because elbow baby supreme lecture only kit drip observe report slim bleak apple volcano sick shallow wait"
+  center_api_key: [REDACTED]"
+
+# CronJob configuration
+cronjob:
+  enabled: true
+  schedule: "* * * * *"  # Every minute
+  timeZone: "UTC"
+  concurrencyPolicy: "Forbid"
+  failedJobsHistoryLimit: 1
+  successfulJobsHistoryLimit: 3
+  startingDeadlineSeconds: 100
+  backoffLimit: 6
+  restartPolicy: "OnFailure"
+  command: "php artisan schedule:run --silent 2>&1"
+  resources:
+    limits:
+      memory: 1024Mi
+    requests:
+      cpu: 0.1

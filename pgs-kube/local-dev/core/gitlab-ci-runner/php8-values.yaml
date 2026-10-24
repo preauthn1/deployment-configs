@@ -1,0 +1,45 @@
+image: gitlab/gitlab-runner:alpine-v15.8.0
+imagePullPolicy: IfNotPresent
+gitlabUrl: http://example.invalid:1688/
+runnerRegistrationToken: [REDACTED]"
+unregisterRunners: true
+terminationGracePeriodSeconds: 3600
+concurrent: 10
+checkInterval: 5
+
+rbac:
+  create: false
+  clusterWideAccess: true
+  serviceAccountName: gitlab-ci
+
+metrics:
+  enabled: true
+
+runners:
+  image: php:8.2-fpm
+  imagePullSecrets: [regcred, tp-wz3-rd-gcr-rw]
+  imagePullPolicy: "if-not-present"
+  tags: "php8"
+  privileged: true
+  pollTimeout: 180
+  outputLimit: 4096
+  cache: 
+    cacheType: s3
+    cachePath: "gitlab_runner"
+    cacheShared: true
+    s3ServerAddress: example.invalid:9000
+    s3BucketName: gitlab-runner
+    s3BucketLocation: us-east-1
+    s3CacheInsecure: true
+    secretName: s3access
+  serviceAccountName: gitlab-ci
+  config: |
+    [[runners]]
+      [runners.kubernetes]
+        namespace = "{{ .Release.Namespace }}"
+        cpu_request_overwrite_max_allowed = "4"
+        service_cpu_request_overwrite_max_allowed = "2"
+
+podSecurityContext:
+  fsGroup: 65533
+  runAsUser: 100 

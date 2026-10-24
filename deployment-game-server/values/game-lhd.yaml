@@ -1,0 +1,694 @@
+game:
+  lhd:
+    id: 2110
+    name: 龙虎斗
+    group: poker
+    room:
+      - serverid: 211000410
+        configs:
+          gameserver.dat: |
+            [gameserver]
+            gameid=2110				 	//游戏ID
+            gamename=龙虎斗			 	//游戏名称
+            flag=41				     	//显示名称,客户端可根据此名称将房间分类显示
+            minplayer=1              	//游戏最小人数
+            maxplayer=480          		//游戏最大人数
+            tablecount=1			 	//桌子数
+            seatcount=480				//椅子数
+            loginmoney=0			 	//进入游戏最小积分
+            scoremode=0					//0 即时写分 1退房间写分
+            maxuser=480					//最大人数
+            taxscale=5					//抽水比例
+            readywaittime=10			//举手超时时间,单位秒
+            reghallserverinterval=5		//注册广场时间间隔,单位秒
+            bettime=18					//下注时间
+            basescore=100				//底分
+            kaijiangactiontime=5		//开奖动画超时
+            endactiontime=3				//结算动画超时
+            zhuanglimit=50000			//上庄资金限制
+            zhuangturn=6				//上庄局数
+            betcount=100,500,1000,5000,10000,50000,100000,    //一次下注的数量
+            maxclearcount=1				//最大清除次数
+            deallog=2					//牌局记录器类型 0 不记录 1 文本 2 db
+            zhushui=0                 	//注水比例
+            maxrobotzhuang=5			//最多多少个机器人上庄
+            robotxiazhuang=20			//机器人下庄概率百分比
+            robotzhuang=100				//没有人当庄的时候机器人当庄的概率百分比
+            winline=1500000            //机器人赢钱线
+            single=1					//单间房是否可直接入场 0:不可 1：可
+            betlimitmoney=50			//下注攜帶金額限制
+            publiczhuang=0              //是否開放用戶上庄 0:close, 1:open
+            luckystarround=5            //幸運星持續局數
+            HEandKill=1                 //0:開和通殺 1:開和全退 2:開和殺一半
+            syspoolmode=2               //系統水池模式 0:無水池, 1:單機模式, 2:資料庫模式
+            syspoolctrlrate=25          //系統水池，開系統有利獎的機率
+
+            [gamequeue]
+            gamematchwaitmintime=1		//撮合时间间隔范围小值,单位秒
+            gamematchwaitmaxtime=3		//撮合时间间隔范围大值,单位秒
+            againstsameip=0				//同IP不分配一起
+            againstlastgame=0			//最后一次游戏过的用户不分配一起
+            gameendaction=0				//游戏结束后动作,0 无动作 1 准备
+            queuetype=1					//撮合类型 0 时间随机 1 固定人数
+            queueusercount=1			//排队人数
+            queuetimeout=2				//排队人数超时
+
+            [robot]
+            enable=1										//是否开启机器人
+            logoninterval=30								//加载机器人时间间隔
+            minmneyamount=500000								//机器人最小金币数
+            maxmoneyamount=100000000						//机器人最大金币数
+            queuecheckwaitspan=5,10							//配桌检查时间间隔
+            queueagainwaitspan=3,5							//继续配桌时间间隔
+            tablemaxusercount=480							//配桌时桌子上最大人数
+            tableminusercount=0								//配桌时桌子上最小人数
+            gameendleaveodds=0.5							//游戏结束时离开游戏几率
+            maxusergameendleaveodds=1						//人数达到上限时离开游戏几率
+            autositwaitspan=1,3							//主动入座时间间隔
+            gameactionwaitspan=1,5						//游戏动作响应时间间隔
+            gamereadywaitspan=3,5							//游戏准备相应时间间隔
+            maxcardsrndlvl=1								//机器人换牌概率值
+            matchtablemode=0                            //配桌方式, 0輪詢桌子每次放一個機器人 1輪詢桌子每次放N個機率機器人 2固定配機器人可配置上限
+            tablematchrobotrate=50,100     //為機器人人數,100機率%.  桌子隨機配N個機器人. 機率要設滿100%
+
+            [longhudou]
+            count=3
+            1=2,1,10000000    //1类型=倍率,下注翻倍倍率,区域下注限制
+            2=9,1,1250000
+            3=2,1,10000000  
+            
+            [supertool]
+            ctrlbetlimit=10000 // 監控名單會控制的最低注額(分)
+          robot.dat: |
+            [csize]
+            cn=6
+
+            [c1]
+            //正常机器人
+            betcount=5,500    //一次下注的数量随机
+            bettype=1,3        //下注类型
+            line=50000       //龙，虎平衡线
+
+            [c2]
+            //正常机器人
+            betcount=500,500    //一次下注的数量随机
+            bettype=1,3        //下注类型
+            line=50000       //龙，虎平衡线
+
+            [c3]
+            //补差机器人1
+            betcount=100,100    //一次下注的数量随机
+            bettype=1,3        //下注类型
+            line=10000            //龙，虎平衡线
+
+            [c4]
+            //补差机器人2
+            betcount=50,1000    //一次下注的数量随机
+            bettype=1,3            //下注类型
+            line=50000            //龙，虎平衡线
+
+            [c5]
+            //和机器人
+            betcount=5,25    //一次下注的数量随机
+            bettype=2        //下注类型
+            line=5000            //龙，虎平衡线
+
+            [c6]
+            //补差机器人2
+            betcount=5,5    //一次下注的数量随机
+            bettype=1,3            //下注类型
+            line=5000            //龙，虎平衡线
+
+      - serverid: 211018810
+        configs:
+          gameserver.dat: |
+            [gameserver]
+            gameid=2110				 	//游戏ID
+            gamename=龙虎斗			 	//游戏名称
+            flag=1881				     	//显示名称,客户端可根据此名称将房间分类显示
+            minplayer=1              	//游戏最小人数
+            maxplayer=480          		//游戏最大人数
+            tablecount=1			 	//桌子数
+            seatcount=480				//椅子数
+            loginmoney=0			 	//进入游戏最小积分
+            scoremode=0					//0 即时写分 1退房间写分
+            maxuser=480					//最大人数
+            taxscale=5					//抽水比例
+            readywaittime=10			//举手超时时间,单位秒
+            reghallserverinterval=5		//注册广场时间间隔,单位秒
+            bettime=18					//下注时间
+            basescore=100				//底分
+            kaijiangactiontime=5		//开奖动画超时
+            endactiontime=3				//结算动画超时
+            zhuanglimit=5000000			//上庄资金限制
+            zhuangturn=6				//上庄局数
+            betcount=100,500,1000,5000,10000,50000,100000,    //一次下注的数量
+            maxclearcount=1				//最大清除次数
+            deallog=2					//牌局记录器类型 0 不记录 1 文本 2 db
+            zhushui=0                 	//注水比例
+            maxrobotzhuang=5			//最多多少个机器人上庄
+            robotxiazhuang=20			//机器人下庄概率百分比
+            robotzhuang=100				//没有人当庄的时候机器人当庄的概率百分比
+            winline=1500000            //机器人赢钱线
+            single=1					//单间房是否可直接入场 0:不可 1：可
+            betlimitmoney=50			//下注攜帶金額限制
+            publiczhuang=0              //是否開放用戶上庄 0:close, 1:open
+            luckystarround=5            //幸運星持續局數
+            HEandKill=1                 //0:開和通殺 1:開和全退 2:開和殺一半
+            syspoolmode=2               //系統水池模式 0:無水池, 1:單機模式, 2:資料庫模式
+            syspoolctrlrate=25          //系統水池，開系統有利獎的機率
+
+            [gamequeue]
+            gamematchwaitmintime=1		//撮合时间间隔范围小值,单位秒
+            gamematchwaitmaxtime=3		//撮合时间间隔范围大值,单位秒
+            againstsameip=0				//同IP不分配一起
+            againstlastgame=0			//最后一次游戏过的用户不分配一起
+            gameendaction=0				//游戏结束后动作,0 无动作 1 准备
+            queuetype=1					//撮合类型 0 时间随机 1 固定人数
+            queueusercount=1			//排队人数
+            queuetimeout=2				//排队人数超时
+
+            [robot]
+            enable=1										//是否开启机器人
+            logoninterval=30								//加载机器人时间间隔
+            minmneyamount=5000000								//机器人最小金币数
+            maxmoneyamount=100000000						//机器人最大金币数
+            queuecheckwaitspan=5,10							//配桌检查时间间隔
+            queueagainwaitspan=3,5							//继续配桌时间间隔
+            tablemaxusercount=480							//配桌时桌子上最大人数
+            tableminusercount=0								//配桌时桌子上最小人数
+            gameendleaveodds=0.5							//游戏结束时离开游戏几率
+            maxusergameendleaveodds=1						//人数达到上限时离开游戏几率
+            autositwaitspan=1,3							//主动入座时间间隔
+            gameactionwaitspan=1,5						//游戏动作响应时间间隔
+            gamereadywaitspan=3,5							//游戏准备相应时间间隔
+            maxcardsrndlvl=1								//机器人换牌概率值
+            matchtablemode=0                            //配桌方式, 0輪詢桌子每次放一個機器人 1輪詢桌子每次放N個機率機器人 2固定配機器人可配置上限
+            tablematchrobotrate=50,100     //為機器人人數,100機率%.  桌子隨機配N個機器人. 機率要設滿100%
+
+            [longhudou]
+            count=3
+            1=2,1,10000000    //1类型=倍率,下注翻倍倍率,区域下注限制
+            2=9,1,1250000
+            3=2,1,10000000  
+            
+            [supertool]
+            ctrlbetlimit=10000 // 監控名單會控制的最低注額(分)
+          robot.dat: |
+            [csize]
+            cn=6
+
+            [c1]
+            //正常机器人
+            betcount=5,500    //一次下注的数量随机
+            bettype=1,3        //下注类型
+            line=50000       //龙，虎平衡线
+
+            [c2]
+            //正常机器人
+            betcount=500,500    //一次下注的数量随机
+            bettype=1,3        //下注类型
+            line=50000       //龙，虎平衡线
+
+            [c3]
+            //补差机器人1
+            betcount=100,100    //一次下注的数量随机
+            bettype=1,3        //下注类型
+            line=10000            //龙，虎平衡线
+
+            [c4]
+            //补差机器人2
+            betcount=50,1000    //一次下注的数量随机
+            bettype=1,3            //下注类型
+            line=50000            //龙，虎平衡线
+
+            [c5]
+            //和机器人
+            betcount=5,25    //一次下注的数量随机
+            bettype=2        //下注类型
+            line=5000            //龙，虎平衡线
+
+            [c6]
+            //补差机器人2
+            betcount=5,5    //一次下注的数量随机
+            bettype=1,3            //下注类型
+            line=5000            //龙，虎平衡线
+            
+      - serverid: 211008810
+        configs:
+          gameserver.dat: |
+            [gameserver]
+            gameid=2110				 	//游戏ID
+            gamename=龙虎斗			 	//游戏名称
+            flag=881				     	//显示名称,客户端可根据此名称将房间分类显示
+            minplayer=1              	//游戏最小人数
+            maxplayer=480          		//游戏最大人数
+            tablecount=1			 	//桌子数
+            seatcount=480				//椅子数
+            loginmoney=0			 	//进入游戏最小积分
+            scoremode=0					//0 即时写分 1退房间写分
+            maxuser=480					//最大人数
+            taxscale=5					//抽水比例
+            readywaittime=10			//举手超时时间,单位秒
+            reghallserverinterval=5		//注册广场时间间隔,单位秒
+            bettime=18					//下注时间
+            basescore=100				//底分
+            kaijiangactiontime=5		//开奖动画超时
+            endactiontime=3				//结算动画超时
+            zhuanglimit=5000000			//上庄资金限制
+            zhuangturn=6				//上庄局数
+            betcount=100,500,1000,5000,10000,50000,100000,    //一次下注的数量
+            maxclearcount=1				//最大清除次数
+            deallog=2					//牌局记录器类型 0 不记录 1 文本 2 db
+            zhushui=0                 	//注水比例
+            maxrobotzhuang=5			//最多多少个机器人上庄
+            robotxiazhuang=20			//机器人下庄概率百分比
+            robotzhuang=100				//没有人当庄的时候机器人当庄的概率百分比
+            winline=1500000            //机器人赢钱线
+            single=1					//单间房是否可直接入场 0:不可 1：可
+            betlimitmoney=50			//下注攜帶金額限制
+            publiczhuang=0              //是否開放用戶上庄 0:close, 1:open
+            luckystarround=5            //幸運星持續局數
+            HEandKill=1                 //0:開和通殺 1:開和全退 2:開和殺一半
+            syspoolmode=2               //系統水池模式 0:無水池, 1:單機模式, 2:資料庫模式
+            syspoolctrlrate=25          //系統水池，開系統有利獎的機率
+
+            [gamequeue]
+            gamematchwaitmintime=1		//撮合时间间隔范围小值,单位秒
+            gamematchwaitmaxtime=3		//撮合时间间隔范围大值,单位秒
+            againstsameip=0				//同IP不分配一起
+            againstlastgame=0			//最后一次游戏过的用户不分配一起
+            gameendaction=0				//游戏结束后动作,0 无动作 1 准备
+            queuetype=1					//撮合类型 0 时间随机 1 固定人数
+            queueusercount=1			//排队人数
+            queuetimeout=2				//排队人数超时
+
+            [robot]
+            enable=1										//是否开启机器人
+            logoninterval=30								//加载机器人时间间隔
+            minmneyamount=5000000								//机器人最小金币数
+            maxmoneyamount=100000000						//机器人最大金币数
+            queuecheckwaitspan=5,10							//配桌检查时间间隔
+            queueagainwaitspan=3,5							//继续配桌时间间隔
+            tablemaxusercount=480							//配桌时桌子上最大人数
+            tableminusercount=0								//配桌时桌子上最小人数
+            gameendleaveodds=0.5							//游戏结束时离开游戏几率
+            maxusergameendleaveodds=1						//人数达到上限时离开游戏几率
+            autositwaitspan=1,3							//主动入座时间间隔
+            gameactionwaitspan=1,5						//游戏动作响应时间间隔
+            gamereadywaitspan=3,5							//游戏准备相应时间间隔
+            maxcardsrndlvl=1								//机器人换牌概率值
+            matchtablemode=0                            //配桌方式, 0輪詢桌子每次放一個機器人 1輪詢桌子每次放N個機率機器人 2固定配機器人可配置上限
+            tablematchrobotrate=50,100     //為機器人人數,100機率%.  桌子隨機配N個機器人. 機率要設滿100%
+
+            [longhudou]
+            count=3
+            1=2,1,10000000    //1类型=倍率,下注翻倍倍率,区域下注限制
+            2=9,1,1250000
+            3=2,1,10000000  
+            
+            [supertool]
+            ctrlbetlimit=10000 // 監控名單會控制的最低注額(分)
+          robot.dat: |
+            [csize]
+            cn=6
+
+            [c1]
+            //正常机器人
+            betcount=5,500    //一次下注的数量随机
+            bettype=1,3        //下注类型
+            line=50000       //龙，虎平衡线
+
+            [c2]
+            //正常机器人
+            betcount=500,500    //一次下注的数量随机
+            bettype=1,3        //下注类型
+            line=50000       //龙，虎平衡线
+
+            [c3]
+            //补差机器人1
+            betcount=100,100    //一次下注的数量随机
+            bettype=1,3        //下注类型
+            line=10000            //龙，虎平衡线
+
+            [c4]
+            //补差机器人2
+            betcount=50,1000    //一次下注的数量随机
+            bettype=1,3            //下注类型
+            line=50000            //龙，虎平衡线
+
+            [c5]
+            //和机器人
+            betcount=5,25    //一次下注的数量随机
+            bettype=2        //下注类型
+            line=5000            //龙，虎平衡线
+
+            [c6]
+            //补差机器人2
+            betcount=5,5    //一次下注的数量随机
+            bettype=1,3            //下注类型
+            line=5000            //龙，虎平衡线
+      - serverid: 211000010
+        configs:
+          gameserver.dat: |
+            [gameserver]
+            gameid=2110				 	//游戏ID
+            gamename=龙虎斗			 	//游戏名称
+            flag=1				     	//显示名称,客户端可根据此名称将房间分类显示
+            minplayer=1              	//游戏最小人数
+            maxplayer=480          		//游戏最大人数
+            tablecount=1			 	//桌子数
+            seatcount=480				//椅子数
+            loginmoney=0			 	//进入游戏最小积分
+            scoremode=0					//0 即时写分 1退房间写分
+            maxuser=480					//最大人数
+            taxscale=5					//抽水比例
+            readywaittime=10			//举手超时时间,单位秒
+            reghallserverinterval=5		//注册广场时间间隔,单位秒
+            bettime=18					//下注时间
+            basescore=100				//底分
+            kaijiangactiontime=5		//开奖动画超时
+            endactiontime=3				//结算动画超时
+            zhuanglimit=50000			//上庄资金限制
+            zhuangturn=6				//上庄局数
+            betcount=100,500,1000,5000,10000,50000,100000,    //一次下注的数量
+            maxclearcount=1				//最大清除次数
+            deallog=2					//牌局记录器类型 0 不记录 1 文本 2 db
+            zhushui=0                 	//注水比例
+            maxrobotzhuang=5			//最多多少个机器人上庄
+            robotxiazhuang=20			//机器人下庄概率百分比
+            robotzhuang=100				//没有人当庄的时候机器人当庄的概率百分比
+            winline=1500000            //机器人赢钱线
+            single=1					//单间房是否可直接入场 0:不可 1：可
+            betlimitmoney=50			//下注攜帶金額限制
+            publiczhuang=0              //是否開放用戶上庄 0:close, 1:open
+            luckystarround=5            //幸運星持續局數
+            HEandKill=1                 //0:開和通殺 1:開和全退 2:開和殺一半
+            syspoolmode=2               //系統水池模式 0:無水池, 1:單機模式, 2:資料庫模式
+            syspoolctrlrate=25          //系統水池，開系統有利獎的機率
+
+            [gamequeue]
+            gamematchwaitmintime=1		//撮合时间间隔范围小值,单位秒
+            gamematchwaitmaxtime=3		//撮合时间间隔范围大值,单位秒
+            againstsameip=0				//同IP不分配一起
+            againstlastgame=0			//最后一次游戏过的用户不分配一起
+            gameendaction=0				//游戏结束后动作,0 无动作 1 准备
+            queuetype=1					//撮合类型 0 时间随机 1 固定人数
+            queueusercount=1			//排队人数
+            queuetimeout=2				//排队人数超时
+
+            [robot]
+            enable=1										//是否开启机器人
+            logoninterval=30								//加载机器人时间间隔
+            minmneyamount=500000								//机器人最小金币数
+            maxmoneyamount=100000000						//机器人最大金币数
+            queuecheckwaitspan=5,10							//配桌检查时间间隔
+            queueagainwaitspan=3,5							//继续配桌时间间隔
+            tablemaxusercount=480							//配桌时桌子上最大人数
+            tableminusercount=0								//配桌时桌子上最小人数
+            gameendleaveodds=0.5							//游戏结束时离开游戏几率
+            maxusergameendleaveodds=1						//人数达到上限时离开游戏几率
+            autositwaitspan=1,3							//主动入座时间间隔
+            gameactionwaitspan=1,5						//游戏动作响应时间间隔
+            gamereadywaitspan=3,5							//游戏准备相应时间间隔
+            maxcardsrndlvl=1								//机器人换牌概率值
+            matchtablemode=0                            //配桌方式, 0輪詢桌子每次放一個機器人 1輪詢桌子每次放N個機率機器人 2固定配機器人可配置上限
+            tablematchrobotrate=50,100     //為機器人人數,100機率%.  桌子隨機配N個機器人. 機率要設滿100%
+
+            [longhudou]
+            count=3
+            1=2,1,10000000    //1类型=倍率,下注翻倍倍率,区域下注限制
+            2=9,1,1250000
+            3=2,1,10000000  
+            
+            [supertool]
+            ctrlbetlimit=10000 // 監控名單會控制的最低注額(分)
+          robot.dat: |
+            [csize]
+            cn=6
+
+            [c1]
+            //正常机器人
+            betcount=5,500    //一次下注的数量随机
+            bettype=1,3        //下注类型
+            line=50000       //龙，虎平衡线
+
+            [c2]
+            //正常机器人
+            betcount=500,500    //一次下注的数量随机
+            bettype=1,3        //下注类型
+            line=50000       //龙，虎平衡线
+
+            [c3]
+            //补差机器人1
+            betcount=100,100    //一次下注的数量随机
+            bettype=1,3        //下注类型
+            line=10000            //龙，虎平衡线
+
+            [c4]
+            //补差机器人2
+            betcount=50,1000    //一次下注的数量随机
+            bettype=1,3            //下注类型
+            line=50000            //龙，虎平衡线
+
+            [c5]
+            //和机器人
+            betcount=5,25    //一次下注的数量随机
+            bettype=2        //下注类型
+            line=5000            //龙，虎平衡线
+
+            [c6]
+            //补差机器人2
+            betcount=5,5    //一次下注的数量随机
+            bettype=1,3            //下注类型
+            line=5000            //龙，虎平衡线
+            
+      - serverid: 211002110
+        configs:
+          gameserver.dat: |
+            [gameserver]
+            gameid=2110				 	//游戏ID
+            gamename=龙虎斗			 	//游戏名称
+            flag=211				     	//显示名称,客户端可根据此名称将房间分类显示
+            minplayer=1              	//游戏最小人数
+            maxplayer=480          		//游戏最大人数
+            tablecount=1			 	//桌子数
+            seatcount=480				//椅子数
+            loginmoney=0			 	//进入游戏最小积分
+            scoremode=0					//0 即时写分 1退房间写分
+            maxuser=480					//最大人数
+            taxscale=5					//抽水比例
+            readywaittime=10			//举手超时时间,单位秒
+            reghallserverinterval=5		//注册广场时间间隔,单位秒
+            bettime=18					//下注时间
+            basescore=100				//底分
+            kaijiangactiontime=5		//开奖动画超时
+            endactiontime=3				//结算动画超时
+            zhuanglimit=50000			//上庄资金限制
+            zhuangturn=6				//上庄局数
+            betcount=100,500,1000,5000,10000,50000,100000,    //一次下注的数量
+            maxclearcount=1				//最大清除次数
+            deallog=2					//牌局记录器类型 0 不记录 1 文本 2 db
+            zhushui=0                 	//注水比例
+            maxrobotzhuang=5			//最多多少个机器人上庄
+            robotxiazhuang=20			//机器人下庄概率百分比
+            robotzhuang=100				//没有人当庄的时候机器人当庄的概率百分比
+            winline=1500000            //机器人赢钱线
+            single=1					//单间房是否可直接入场 0:不可 1：可
+            betlimitmoney=50			//下注攜帶金額限制
+            publiczhuang=0              //是否開放用戶上庄 0:close, 1:open
+            luckystarround=5            //幸運星持續局數
+            HEandKill=1                 //0:開和通殺 1:開和全退 2:開和殺一半
+            syspoolmode=2               //系統水池模式 0:無水池, 1:單機模式, 2:資料庫模式
+            syspoolctrlrate=25          //系統水池，開系統有利獎的機率
+
+            [gamequeue]
+            gamematchwaitmintime=1		//撮合时间间隔范围小值,单位秒
+            gamematchwaitmaxtime=3		//撮合时间间隔范围大值,单位秒
+            againstsameip=0				//同IP不分配一起
+            againstlastgame=0			//最后一次游戏过的用户不分配一起
+            gameendaction=0				//游戏结束后动作,0 无动作 1 准备
+            queuetype=1					//撮合类型 0 时间随机 1 固定人数
+            queueusercount=1			//排队人数
+            queuetimeout=2				//排队人数超时
+
+            [robot]
+            enable=1										//是否开启机器人
+            logoninterval=30								//加载机器人时间间隔
+            minmneyamount=500000								//机器人最小金币数
+            maxmoneyamount=100000000						//机器人最大金币数
+            queuecheckwaitspan=5,10							//配桌检查时间间隔
+            queueagainwaitspan=3,5							//继续配桌时间间隔
+            tablemaxusercount=480							//配桌时桌子上最大人数
+            tableminusercount=0								//配桌时桌子上最小人数
+            gameendleaveodds=0.5							//游戏结束时离开游戏几率
+            maxusergameendleaveodds=1						//人数达到上限时离开游戏几率
+            autositwaitspan=1,3							//主动入座时间间隔
+            gameactionwaitspan=1,5						//游戏动作响应时间间隔
+            gamereadywaitspan=3,5							//游戏准备相应时间间隔
+            maxcardsrndlvl=1								//机器人换牌概率值
+            matchtablemode=0                            //配桌方式, 0輪詢桌子每次放一個機器人 1輪詢桌子每次放N個機率機器人 2固定配機器人可配置上限
+            tablematchrobotrate=50,100     //為機器人人數,100機率%.  桌子隨機配N個機器人. 機率要設滿100%
+
+            [longhudou]
+            count=3
+            1=2,1,10000000    //1类型=倍率,下注翻倍倍率,区域下注限制
+            2=9,1,1250000
+            3=2,1,10000000  
+            
+            [supertool]
+            ctrlbetlimit=10000 // 監控名單會控制的最低注額(分)
+          robot.dat: |
+            [csize]
+            cn=6
+
+            [c1]
+            //正常机器人
+            betcount=5,500    //一次下注的数量随机
+            bettype=1,3        //下注类型
+            line=50000       //龙，虎平衡线
+
+            [c2]
+            //正常机器人
+            betcount=500,500    //一次下注的数量随机
+            bettype=1,3        //下注类型
+            line=50000       //龙，虎平衡线
+
+            [c3]
+            //补差机器人1
+            betcount=100,100    //一次下注的数量随机
+            bettype=1,3        //下注类型
+            line=10000            //龙，虎平衡线
+
+            [c4]
+            //补差机器人2
+            betcount=50,1000    //一次下注的数量随机
+            bettype=1,3            //下注类型
+            line=50000            //龙，虎平衡线
+
+            [c5]
+            //和机器人
+            betcount=5,25    //一次下注的数量随机
+            bettype=2        //下注类型
+            line=5000            //龙，虎平衡线
+
+            [c6]
+            //补差机器人2
+            betcount=5,5    //一次下注的数量随机
+            bettype=1,3            //下注类型
+            line=5000            //龙，虎平衡线
+
+      - serverid: 211004010
+        configs:
+          gameserver.dat: |
+            [gameserver]
+            gameid=2110				 	//游戏ID
+            gamename=龙虎斗			 	//游戏名称
+            flag=401				     	//显示名称,客户端可根据此名称将房间分类显示
+            minplayer=1              	//游戏最小人数
+            maxplayer=480          		//游戏最大人数
+            tablecount=1			 	//桌子数
+            seatcount=480				//椅子数
+            loginmoney=0			 	//进入游戏最小积分
+            scoremode=0					//0 即时写分 1退房间写分
+            maxuser=480					//最大人数
+            taxscale=5					//抽水比例
+            readywaittime=10			//举手超时时间,单位秒
+            reghallserverinterval=5		//注册广场时间间隔,单位秒
+            bettime=18					//下注时间
+            basescore=100				//底分
+            kaijiangactiontime=5		//开奖动画超时
+            endactiontime=3				//结算动画超时
+            zhuanglimit=50000			//上庄资金限制
+            zhuangturn=6				//上庄局数
+            betcount=100,500,1000,5000,10000,50000,100000,    //一次下注的数量
+            maxclearcount=1				//最大清除次数
+            deallog=2					//牌局记录器类型 0 不记录 1 文本 2 db
+            zhushui=0                 	//注水比例
+            maxrobotzhuang=5			//最多多少个机器人上庄
+            robotxiazhuang=20			//机器人下庄概率百分比
+            robotzhuang=100				//没有人当庄的时候机器人当庄的概率百分比
+            winline=1500000            //机器人赢钱线
+            single=1					//单间房是否可直接入场 0:不可 1：可
+            betlimitmoney=50			//下注攜帶金額限制
+            publiczhuang=0              //是否開放用戶上庄 0:close, 1:open
+            luckystarround=5            //幸運星持續局數
+            HEandKill=1                 //0:開和通殺 1:開和全退 2:開和殺一半
+            syspoolmode=2               //系統水池模式 0:無水池, 1:單機模式, 2:資料庫模式
+            syspoolctrlrate=25          //系統水池，開系統有利獎的機率
+
+            [gamequeue]
+            gamematchwaitmintime=1		//撮合时间间隔范围小值,单位秒
+            gamematchwaitmaxtime=3		//撮合时间间隔范围大值,单位秒
+            againstsameip=0				//同IP不分配一起
+            againstlastgame=0			//最后一次游戏过的用户不分配一起
+            gameendaction=0				//游戏结束后动作,0 无动作 1 准备
+            queuetype=1					//撮合类型 0 时间随机 1 固定人数
+            queueusercount=1			//排队人数
+            queuetimeout=2				//排队人数超时
+
+            [robot]
+            enable=1										//是否开启机器人
+            logoninterval=30								//加载机器人时间间隔
+            minmneyamount=500000								//机器人最小金币数
+            maxmoneyamount=100000000						//机器人最大金币数
+            queuecheckwaitspan=5,10							//配桌检查时间间隔
+            queueagainwaitspan=3,5							//继续配桌时间间隔
+            tablemaxusercount=480							//配桌时桌子上最大人数
+            tableminusercount=0								//配桌时桌子上最小人数
+            gameendleaveodds=0.5							//游戏结束时离开游戏几率
+            maxusergameendleaveodds=1						//人数达到上限时离开游戏几率
+            autositwaitspan=1,3							//主动入座时间间隔
+            gameactionwaitspan=1,5						//游戏动作响应时间间隔
+            gamereadywaitspan=3,5							//游戏准备相应时间间隔
+            maxcardsrndlvl=1								//机器人换牌概率值
+            matchtablemode=0                            //配桌方式, 0輪詢桌子每次放一個機器人 1輪詢桌子每次放N個機率機器人 2固定配機器人可配置上限
+            tablematchrobotrate=50,100     //為機器人人數,100機率%.  桌子隨機配N個機器人. 機率要設滿100%
+
+            [longhudou]
+            count=3
+            1=2,1,10000000    //1类型=倍率,下注翻倍倍率,区域下注限制
+            2=9,1,1250000
+            3=2,1,10000000  
+            
+            [supertool]
+            ctrlbetlimit=10000 // 監控名單會控制的最低注額(分)
+          robot.dat: |
+            [csize]
+            cn=6
+
+            [c1]
+            //正常机器人
+            betcount=5,500    //一次下注的数量随机
+            bettype=1,3        //下注类型
+            line=50000       //龙，虎平衡线
+
+            [c2]
+            //正常机器人
+            betcount=500,500    //一次下注的数量随机
+            bettype=1,3        //下注类型
+            line=50000       //龙，虎平衡线
+
+            [c3]
+            //补差机器人1
+            betcount=100,100    //一次下注的数量随机
+            bettype=1,3        //下注类型
+            line=10000            //龙，虎平衡线
+
+            [c4]
+            //补差机器人2
+            betcount=50,1000    //一次下注的数量随机
+            bettype=1,3            //下注类型
+            line=50000            //龙，虎平衡线
+
+            [c5]
+            //和机器人
+            betcount=5,25    //一次下注的数量随机
+            bettype=2        //下注类型
+            line=5000            //龙，虎平衡线
+
+            [c6]
+            //补差机器人2
+            betcount=5,5    //一次下注的数量随机
+            bettype=1,3            //下注类型
+            line=5000            //龙，虎平衡线

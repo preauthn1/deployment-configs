@@ -1,0 +1,9 @@
+controller:
+  service: 
+    # set traffic policy to Cluster instead of Local. Kubernetes has a bug which makes services inside the cluster unreachable in some cases when referred to by their external name.
+    # See: https://example.invalid/kubernetes/kubernetes/issues/65387
+    externalTrafficPolicy: Local
+  proxySetHeaders:
+    X-Different-Name: "true"
+    X-Request-Start: t=${msec}
+    X-Using-Nginx-Controller: "true"

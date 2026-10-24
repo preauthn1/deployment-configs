@@ -1,0 +1,21 @@
+FROM asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024/target/docker-base/phpbase/8
+
+# COPY build-dev/tgbot-php/docker-entrypoint.sh /
+# RUN chmod +x /docker-entrypoint.sh
+# # tricky to make laravel.log to stdout
+# RUN touch /var/log/laravel.log
+# RUN chown www-data:www-data /var/log/laravel.log
+# COPY build-dev/tgbot-php/00-listen-laravel-log.sh /docker-entrypoint.d/
+# RUN chmod +x /docker-entrypoint.d/00-listen-laravel-log.sh
+# COPY build-dev/tgbot-php/01-schedule-boot.sh /docker-entrypoint.d/
+# RUN chmod +x /docker-entrypoint.d/01-schedule-boot.sh
+# ENTRYPOINT ["/docker-entrypoint.sh"]
+
+COPY app /app
+WORKDIR /app
+RUN chmod -R 777 /app/storage
+
+# RUN curl -sS https://example.invalid/installer | php -- --check
+# RUN composer diagnose
+# RUN composer require predis/predis
+RUN composer install

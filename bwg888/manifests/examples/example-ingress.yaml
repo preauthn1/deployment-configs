@@ -1,0 +1,24 @@
+apiVersion: example.invalid/v1
+kind: Ingress
+metadata:
+  name: example-ingress
+  namespace: default
+  annotations:
+    example.invalid/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - example.invalid
+    secretName: example-target-com-tls
+  rules:
+  - host: example.invalid
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: example-app
+            port:
+              number: 80 

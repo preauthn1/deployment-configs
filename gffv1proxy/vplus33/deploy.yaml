@@ -1,0 +1,120 @@
+.vplus33_deploy_rule: &vplus33_deploy_rule
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger" && $SRC_REF_NAME == "vplus33"'
+      when: on_success
+    - when: never
+
+variables:
+  SLACK_WEBHOOK_URL: https://example.invalid/services/TMMQKK3S8/B098XN07XFS/KhmqMy2gSe9fIxpr7ohjpe5k
+  KUBECONFIG: ${SRC_REF_NAME}/.kubeconfig
+
+# 部署阶段
+vplus33_deploy_job:
+  <<: *vplus33_deploy_rule
+  stage: deploy
+  image: example.invalid/alpine/helm:3.16.1
+  before_script:
+    - apk add --no-cache curl jq
+    - curl -LO "https://example.invalid/release/$(curl -L -s https://example.invalid/release/stable.txt)/bin/linux/amd64/kubectl"
+    - chmod +x kubectl
+    - mv kubectl /usr/local/bin/
+  script:
+    - echo "Deploying to production..."
+    - echo "Using Helm version:"
+    - helm version
+    - echo "Setting up kubeconfig..."
+    - echo "Checking Kubernetes cluster info:"
+    - kubectl cluster-info
+    - echo "Checking nodes:"
+    - kubectl get nodes
+    - echo "Checking namespaces:"
+    - kubectl get namespaces
+    - echo "Deployment completed successfully!"
+    - echo base64 -d $KUBECTL_ARGS
+    - KUBECTL_ARGS_DECODED=$(echo $KUBECTL_ARGS | base64 -d | jq -r 'join(" ")')
+    - echo "KUBECTL_ARGS_DECODED = $KUBECTL_ARGS_DECODED"
+    - echo "kubectl $KUBECTL_ARGS_DECODED"
+    - kubectl $KUBECTL_ARGS_DECODED
+  dependencies:
+    - info_job
+  tags:
+    - golang
+
+# Slack 成功通知
+vplus33_slack_success_notification:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger" && $SRC_REF_NAME == "vplus33"'
+      when: on_success
+    - when: never
+  stage: notify
+  image: example.invalid/curlimages/curl:latest
+  script:
+    - |
+      # 获取当前 UTC 时间戳，加上 8 小时（28800 秒）
+      utc_timestamp=$(date -u +%s)
+      taipei_timestamp=$((utc_timestamp + 28800))
+      now=$(date -u -d "@${taipei_timestamp}" '+%Y-%m-%d %H:%M:%S')
+      echo "台北时间: ${now}"
+      echo "==============="
+      curl -X POST -H 'Content-type: application/json' \
+        --data "{
+          \"text\": \"✅ *部署成功*\",
+          \"blocks\": [
+            {
+              \"type\": \"section\", 
+              \"text\": {
+                \"type\": \"mrkdwn\",
+                \"text\": \"✅ *部署成功*\\n\\n*项目:* ${SRC_REPO_NAME}\\n*分支:* ${SRC_REF_NAME}\\n*提交:* ${SRC_SHORT_SHA}\\n*时间:* ${now}\"
+              }
+            },
+            {
+              \"type\": \"section\",
+              \"text\": {
+                \"type\": \"mrkdwn\",
+                \"text\": \"*Pipeline:* <${CI_PIPELINE_URL}|查看详情>\"
+              }
+            }
+          ]
+        }" \
+        $SLACK_WEBHOOK_URL
+  dependencies:
+    - vplus33_deploy_job
+  tags:
+    - golang
+
+# Slack 失败通知
+vplus33_slack_failure_notification:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger" && $SRC_REF_NAME == "vplus33"'
+      when: on_failure
+    - when: never
+  stage: notify
+  image: example.invalid/curlimages/curl:latest
+  script:
+    - |
+      now=$(TZ='Asia/Taipei' date '+%Y-%m-%d %H:%M:%S')
+      curl -X POST -H 'Content-type: application/json' \
+        --data "{
+          \"text\": \"❌ *部署失败*\",
+          \"blocks\": [
+            {
+              \"type\": \"section\",
+              \"text\": {
+                \"type\": \"mrkdwn\",
+                \"text\": \"❌ *部署失败*\\n\\n*项目:* ${SRC_REPO_NAME}\\n*分支:* ${SRC_REF_NAME}\\n*提交:* ${SRC_SHORT_SHA}\\n*时间:* ${now}\"
+              }
+            },
+            {
+              \"type\": \"section\",
+              \"text\": {
+                \"type\": \"mrkdwn\",
+                \"text\": \"*Pipeline:* <${CI_PIPELINE_URL}|查看详情>\"
+              }
+            }
+          ]
+        }" \
+        $SLACK_WEBHOOK_URL
+  dependencies:
+    - vplus33_deploy_job
+  tags:
+    - golang

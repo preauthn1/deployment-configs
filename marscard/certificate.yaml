@@ -1,0 +1,14 @@
+apiVersion: example.invalid/v1alpha2
+kind: Certificate
+metadata:
+  name: ma66s-com
+  namespace: msc
+spec:
+  secretName: ma66s-com-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: example.invalid
+  dnsNames:
+  - "example.invalid"
+  - "*.example.invalid"

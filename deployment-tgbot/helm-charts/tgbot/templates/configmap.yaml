@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-appsettings
+data:
+  appsettings-tghookapi.json: | 
+    {{ tpl ($.Files.Get "appsettings-tghookapi.json") . | nindent 4 }}

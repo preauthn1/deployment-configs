@@ -1,0 +1,9 @@
+FROM asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024/target/docker-base/phpbase/8.3
+
+COPY app /app
+WORKDIR /app
+
+# RUN curl -sS https://example.invalid/installer | php -- --check
+# RUN composer diagnose
+# RUN composer require predis/predis
+RUN composer install

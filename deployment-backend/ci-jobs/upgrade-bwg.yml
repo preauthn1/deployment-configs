@@ -1,0 +1,132 @@
+.api-bwg:
+  stage: upgrade-bwg
+  tags:
+    - dotnet
+  image: alpine/k8s:1.18.2
+  only:
+    - master
+  before_script:
+    - mkdir -p $HOME/.kube
+    - echo $KUBE_CONFIG_BWG | base64 -d > $HOME/.kube/config
+    - chmod 600 $HOME/.kube/config
+    - kubectl config view
+  script:
+    - echo "Deploy start ..."
+    - echo ${APP_TAG}
+    - helm upgrade backend-api-${APP_NAME} ${HELM_PATH} -f ${DEPLOY_VALUES_FILE} --install --namespace ${DEPLOY_NS}
+      --set image.repository=${APP_IMAGE}
+      --set image.tag=${APP_TAG}
+      --set service.port=${APP_PORT}
+      --set app.name=${APP_NAME}
+      --set autoscaling.enabled=${SCALEBLE}
+      --set autoscaling.minReplicas=${MIN_REPLICAS}
+    - echo "Deploy completed!"
+  needs: [] # 移除对其他阶段的依赖
+  when: manual
+
+BWG AdminSys API:
+  extends: .api-bwg
+  variables:
+    HELM_PATH: ./bwg-api
+    APP_NAME: adminsys
+    APP_IMAGE: example.invalid/target/backend/target.api.adminsys
+    APP_TAG: gh-39969237019-1
+    APP_PORT: 3102
+    DEPLOY_NS: bwg
+    DEPLOY_VALUES_FILE: ./values/bwg/values.yaml
+
+BWG ExternalVendor:
+  extends: .api-bwg
+  variables:
+    HELM_PATH: ./bwg-api
+    APP_NAME: externalvendor
+    APP_IMAGE: example.invalid/target/backend/target.api.externalvendor
+    APP_TAG: 54082
+    APP_PORT: 3108
+    DEPLOY_NS: bwg
+    DEPLOY_VALUES_FILE: ./values/bwg/values-externalvendor.yaml
+    SCALEBLE: true
+    MIN_REPLICAS: 2
+
+BWG File API:
+  extends: .api-bwg
+  variables:
+    HELM_PATH: ./bwg-api
+    APP_NAME: file
+    APP_IMAGE: example.invalid/target/backend/target.api.file
+    APP_TAG: 40141
+    APP_PORT: 3107
+    DEPLOY_NS: bwg
+    DEPLOY_VALUES_FILE: ./values/bwg/values.yaml
+
+BWG Game API:
+  extends: .api-bwg
+  variables:
+    HELM_PATH: ./bwg-api
+    APP_NAME: game
+    APP_IMAGE: example.invalid/target/backend/target.api.game
+    APP_TAG: 51133
+    APP_PORT: 3100
+    DEPLOY_NS: bwg
+    DEPLOY_VALUES_FILE: ./values/bwg/values-game.yaml
+    SCALEBLE: true
+    MIN_REPLICAS: 2
+
+BWG Job API:
+  extends: .api-bwg
+  variables:
+    HELM_PATH: ./bwg-api
+    APP_NAME: job
+    APP_IMAGE: example.invalid/target/backend/target.api.job
+    APP_TAG: 51133
+    APP_PORT: 3106
+    DEPLOY_NS: bwg
+    DEPLOY_VALUES_FILE: ./values/bwg/values.yaml
+
+BWG Public API:
+  extends: .api-bwg
+  variables:
+    HELM_PATH: ./bwg-api
+    APP_NAME: public
+    APP_IMAGE: example.invalid/target/backend/target.api.public
+    APP_TAG: gh-39959951798-1
+    APP_PORT: 3109
+    DEPLOY_NS: bwg
+    DEPLOY_VALUES_FILE: ./values/bwg/values-public.yaml
+    SCALEBLE: true
+    MIN_REPLICAS: 2
+
+BWG Vendor API:
+  extends: .api-bwg
+  variables:
+    HELM_PATH: ./bwg-api
+    APP_NAME: vendor
+    APP_IMAGE: example.invalid/target/backend/target.api.vendor
+    APP_TAG: 53950
+    APP_PORT: 3101
+    DEPLOY_NS: bwg
+    DEPLOY_VALUES_FILE: ./values/bwg/values-vendor.yaml
+    SCALEBLE: true
+    MIN_REPLICAS: 2
+
+BWG 管理後台 Portal:
+  variables:
+    APP_TAG: 54118
+  stage: upgrade-bwg
+  tags:
+    - dotnet
+  image: alpine/k8s:1.18.2
+  only:
+    - master
+  before_script:
+    - mkdir -p $HOME/.kube
+    - echo $KUBE_CONFIG_BWG | base64 -d > $HOME/.kube/config
+    - chmod 600 $HOME/.kube/config
+    - kubectl config view
+  script:
+    - echo "Deploy start ..."
+    - ls -al $HOME/.kube
+    - helm upgrade backend-portal ./bwg-portal -f ./values/bwg/values-portal.yaml --install --namespace bwg
+      --set image.tag=${APP_TAG}
+    - echo "Deploy completed!"
+  when: manual

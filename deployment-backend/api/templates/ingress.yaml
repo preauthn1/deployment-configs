@@ -1,0 +1,61 @@
+{{- if .Values.ingress.enabled -}}
+{{- $fullName := include "backend-api.fullname" . -}}
+{{- $svcPort := .Values.service.port -}}
+{{- $appName := .example.invalid.name -}}
+{{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: example.invalid/v1beta1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "backend-api.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+{{- if .Values.ingress.tls }}
+  tls:
+  {{- range .Values.ingress.tls }}
+    - hosts:
+      {{- range .hosts }}
+        - {{ printf "%s-%s" $appName . | quote }}
+      {{- end }}
+      secretName: {{ printf "%s-%s-tls" $appName .secretName }}
+  {{- end }}
+  {{- if .Values.ingress.otherTls }}
+    {{- range .Values.ingress.otherTls }}
+      {{- range .hosts }}
+        - {{ . }}
+      {{- end }}
+      secretName: {{ printf "%s-tls" .secretName }}
+    {{- end}}
+  {{- end}}
+{{- end }}
+  rules:
+  {{- range .Values.ingress.hosts }}
+    - host: {{ printf "%s-%s" $appName .host | quote }}
+      http:
+        paths:
+        {{- range .paths }}
+          - path: {{ . }}
+            backend:
+              serviceName: {{ $fullName }}
+              servicePort: {{ $svcPort }}
+        {{- end }}
+  {{- end }}
+  {{- range .Values.ingress.otherHosts }}
+    - host: {{ .host }}
+      http:
+        paths:
+        {{- range .paths }}
+          - path: {{ . }}
+            backend:
+              serviceName: {{ $fullName }}
+              servicePort: {{ $svcPort }}
+        {{- end }}
+  {{- end }}
+{{- end }}

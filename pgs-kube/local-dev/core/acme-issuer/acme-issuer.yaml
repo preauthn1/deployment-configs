@@ -1,0 +1,17 @@
+apiVersion: example.invalid/v1alpha2
+kind: Issuer
+metadata:
+  name: acme-issuer
+spec:
+  acme:
+    email: user@example.invalid
+    server: https://example.invalid/directory
+    privateKeySecretRef:
+      name: acme-issuer-account-key
+    solvers:
+    - dns01:
+        cloudflare:
+          email: user@example.invalid
+          apiKeySecretRef:
+            name: cloudflare-apikey
+            key: apikey

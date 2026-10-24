@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-appsettings
+data:
+  appsettings-api-adminsys.json: | 
+    {{ tpl ($.Files.Get "appsettings-api-adminsys.json") . | nindent 4 }}
+  appsettings-api-point.json: | 
+    {{ tpl ($.Files.Get "appsettings-api-point.json") . | nindent 4 }}
+  appsettings-api-vendor.json: | 
+    {{ tpl ($.Files.Get "appsettings-api-vendor.json") . | nindent 4 }}
+  appsettings-web-adminsys.json: | 
+    {{ tpl ($.Files.Get "appsettings-web-adminsys.json") . | nindent 4 }}
+  appsettings-web-point.json: | 
+    {{ tpl ($.Files.Get "appsettings-web-point.json") . | nindent 4 }}

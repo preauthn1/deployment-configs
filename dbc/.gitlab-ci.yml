@@ -1,0 +1,171 @@
+stages:
+  - test
+  - release
+  - deploy
+  - pages
+
+variables:
+  GOFLAGS: -mod=readonly
+  GOPATH: "$CI_PROJECT_DIR/.cache/go-path"
+  GOCACHE: "$CI_PROJECT_DIR/.cache/go-build"
+
+# Kubernetes executor 每次都是全新的 pod，沒有 cache 的話 Go module／
+# build cache 都是空的：goreleaser 要對 5 個平台各重新下載、重新編譯一次
+# cloudsqlconn 那堆依賴（grpc、opentelemetry、GCP SDK...），這是先前
+# release job 花將近 9 分鐘的主因。用 go.sum 當 cache key，依賴沒變的話
+# 之後的 pipeline 可以重複利用，不用整包重編。
+.go_cache: &go_cache
+  key:
+    files:
+      - go.sum
+  paths:
+    - .cache/go-path/pkg/mod
+    - .cache/go-build
+
+test:
+  stage: test
+  image: golang:1.25
+  tags:
+    - newoci
+  cache:
+    <<: *go_cache
+    # test job 只編 host 平台（go vet/go test），不像 release job 要編
+    # 5 個平台；它每次跑完把整包 cache（已經含 5 個平台的編譯結果）重新
+    # 上傳一次的價值很低，卻要花時間傳一樣大的內容。test 跑得比 release
+    # 頻繁很多（每次 push main/開 MR 都跑），只下載不上傳，省掉這個
+    # 重複上傳的成本。
+    policy: pull
+  script:
+    - go vet ./...
+    # gofmt（跟 go vet/go build 不同）不會自動跳過 . 開頭的目錄，只掃
+    # 真正的原始碼目錄，避免掃到 .cache/go-path 裡第三方套件的原始碼。
+    - test -z "$(gofmt -l main.go internal)"
+    - go test ./...
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+
+# 需要有 GitLab 專案權限的人手動設定：
+#   1. 專案 Settings > Access Tokens，建立一個 Project Access Token，
+#      scope 只需勾 api（Project Access Token 沒有獨立的
+#      write_package_registry scope，package registry 讀寫已經包含在 api
+#      裡面。Project token 綁在專案上，不是綁個人帳號，人員異動不受影響；
+#      搭配 .goreleaser.yaml 的 use_package_registry 設定）。
+#   2. 專案 Settings > CI/CD > Variables 新增 GITLAB_TOKEN，值填上面的
+#      token，記得勾 masked + protected。
+release:
+  stage: release
+  image: goreleaser/goreleaser:latest
+  tags:
+    - newoci
+  variables:
+    GIT_DEPTH: 0 # 淺層 clone 會讓 goreleaser 產生 changelog 失敗
+  cache:
+    <<: *go_cache
+  script:
+    - goreleaser release --clean
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 day
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/
+
+# build/push dbc-gateway 的 container image 到 Google Artifact Registry。
+# 跟 release job 一樣只在 v*.*.* tag 觸發；放在同一個 stage 讓兩者平行跑
+# （互不依賴，縮短 pipeline 總時間）。
+#
+# Kubernetes executor 沒有 Docker daemon，不能直接 `docker build`，改用
+# Kaniko（daemonless，不需要 privileged container）。
+#
+# 需要有 GCP 專案權限的人手動設定：
+#   1. 建立/指定一組 service account，在 asia-east1-docker.pkg.dev/tp-wz3-rd
+#      的 bucket2024 repository 上有 roles/artifactregistry.writer（或範圍
+#      更小、只涵蓋這個 repository 的 writer 權限）。
+#   2. 匯出這組 SA 的 JSON key，跑 `base64 -w0 key.json` 轉成單行（GitLab
+#      masked 變數不能是多行字串，JSON key 本身是多行的，所以要編碼一次；
+#      下面 script 會在 job 裡解碼回真正的 JSON 檔案）。
+#   3. 專案 Settings > CI/CD > Variables 新增 GCP_ARTIFACT_REGISTRY_KEY，
+#      值填上一步驟的 base64 字串，記得勾 masked + protected。
+release-dbc-gateway-image:
+  stage: release
+  image:
+    name: example.invalid/kaniko-project/executor:v1.23.2-debug
+    entrypoint: [""]
+  tags:
+    - newoci
+  variables:
+    GOOGLE_APPLICATION_CREDENTIALS: /kaniko/gcp-key.json
+  before_script:
+    - echo "$GCP_ARTIFACT_REGISTRY_KEY" | base64 -d > /kaniko/gcp-key.json
+  script:
+    - >-
+      /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Containerfile"
+      --build-arg VERSION=${CI_COMMIT_TAG#v}
+      --destination "asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024/${CI_PROJECT_PATH}/dbc-gateway:${CI_COMMIT_TAG}"
+      --destination "asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024/${CI_PROJECT_PATH}/dbc-gateway:latest"
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/
+
+# 部署 dbc-gateway 到 vplus33 叢集。需要有人在 GitLab pipeline 介面上手動
+# 按下這個 job 才會執行（when: manual）——這組 kubeconfig 是正式環境的真實
+# 部署權限，比 image push 那組 key 敏感很多，刻意不做成打 tag 就全自動，
+# 保留一個人工確認的檢查點（部署過程中已經發生過幾次意外，包括一次誤把
+# dry-run 當成真的執行）。
+#
+# 需要有 vplus33 叢集權限的人手動設定：
+#   1. 準備一份能操作 dbc-gateway namespace 的 kubeconfig（範圍越小越好，
+#      不要整份 cluster-admin 等級的 kubeconfig）。
+#   2. 跑 `base64 -w0 kubeconfig` 轉成單行（原因跟 GCP_ARTIFACT_REGISTRY_KEY
+#      一樣：masked 變數不能是多行字串）。
+#   3. 專案 Settings > CI/CD > Variables 新增 KUBECONFIG_VPLUS33，值填上一
+#      步驟的 base64 字串，記得勾 masked + protected。
+deploy-dbc-gateway:
+  stage: deploy
+  image:
+    name: bitnami/kubectl:latest
+    entrypoint: [""]
+  tags:
+    - newoci
+  needs:
+    - release-dbc-gateway-image
+  before_script:
+    - echo "$KUBECONFIG_VPLUS33" | base64 -d > /tmp/kubeconfig
+    - export KUBECONFIG=/tmp/kubeconfig
+  script:
+    - ./deploy/kubernetes/deploy.sh "$CI_COMMIT_TAG"
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/
+      when: manual
+
+# 讓 install.sh / install.ps1 免 GITLAB_TOKEN 就能下載：把這次 release
+# 的壓縮檔複製進 public/，透過 GitLab Pages 公開發布（repo 本身仍是
+# private，這個 Pages 可見度是分開的設定，已經在專案 Settings > General
+# > Visibility... > Pages 設成 Everyone）。網址：
+# http://example.invalid:1688 —— install.sh / install.ps1
+# 裡的 DBC_PAGES_URL 預設值已經對應這個網址。
+pages:
+  stage: pages
+  image: alpine:3
+  tags:
+    - newoci
+  needs:
+    - release
+  script:
+    - mkdir -p public/releases/$CI_COMMIT_TAG public/releases/latest
+    - cp dist/*.tar.gz dist/*.zip dist/checksums.txt public/releases/$CI_COMMIT_TAG/
+    - cp install.sh install.ps1 public/
+    - cp dist/dbc_*_linux_amd64.tar.gz public/releases/latest/dbc_linux_amd64.tar.gz
+    - cp dist/dbc_*_linux_arm64.tar.gz public/releases/latest/dbc_linux_arm64.tar.gz
+    - cp dist/dbc_*_darwin_amd64.tar.gz public/releases/latest/dbc_darwin_amd64.tar.gz
+    - cp dist/dbc_*_darwin_arm64.tar.gz public/releases/latest/dbc_darwin_arm64.tar.gz
+    - cp dist/dbc_*_windows_amd64.zip public/releases/latest/dbc_windows_amd64.zip
+    # 供 dbc 自己輕量比對版本用（自動更新提醒），純文字、不帶開頭的 v。
+    - echo -n "${CI_COMMIT_TAG#v}" > public/releases/latest/VERSION
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/

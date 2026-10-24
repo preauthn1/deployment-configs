@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-game-poker-bjl-1
+  namespace: target-dev
+spec:
+  type: ClusterIP
+  ports:
+    - port: 12201
+      protocol: TCP
+  selector:
+    name: gs-game-bjl
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    example.invalid/auto: "true"
+  name: deployment-game-poker-bjl-1
+  namespace: target-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: game-poker-bjl-1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      annotations:
+        version/config: "20200316002"
+      labels:
+        name: game-poker-bjl-1
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      volumes:
+        - name: api
+          configMap:
+            name: game-apiserver
+            items:
+              - key: apiserver-api.dat
+                path: api.dat
+        - name: bjl-1
+          configMap:
+            name: game-poker-bjl
+            items:
+              - key: bjl-1-robot.dat
+                path: robot.dat
+              - key: bjl-1-gameserver.dat
+                path: gameserver.dat
+              - key: bjl-1-serverinfo.dat
+                path: serverinfo.dat
+        - name: storage
+          emptyDir: {}
+      containers:
+        - name: game-poker-bjl
+          image: example.invalid/gameserver:beta
+          #imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
+          env:
+            - name: ENV_API_PATH
+              value: "/app/apiserver"
+            - name: ENV_API_NAME
+              value: "apiserver"
+            - name: ENV_APP_PATH
+              value: "/app/gameserver/bjl"
+            - name: ENV_APP_NAME
+              value: "bjl"
+          ports:
+            - name: bjl-1
+              containerPort: 12201
+              protocol: TCP
+          volumeMounts:
+            - name: api
+              mountPath: /app/apiserver/config
+              readOnly: true
+            - name: bjl-1
+              mountPath: /app/gameserver/bjl/config
+              readOnly: true

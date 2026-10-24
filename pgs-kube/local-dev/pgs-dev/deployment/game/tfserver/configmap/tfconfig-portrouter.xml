@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items>
+  <item key="12101" value="svc-game-poker-lhd-1.target-dev.svc.cluster.local:12101" />
+  <item key="12201" value="svc-game-poker-bjl-1.target-dev.svc.cluster.local:12201" />
+  <item key="12601" value="svc-game-poker-brnn-1.target-dev.svc.cluster.local:12601" />
+  <item key="13101" value="svc-game-slot-dfdc-1.target-dev.svc.cluster.local:13101" />
+  <item key="13201" value="svc-game-slot-tgw-1.target-dev.svc.cluster.local:13201" />
+  <item key="11301" value="svc-game-poker-tbnn-1.target-dev.svc.cluster.local:11301" />
+  <item key="12701" value="svc-game-poker-hhdz-1.target-dev.svc.cluster.local:12701" />
+  <item key="13301" value="svc-game-slot-ald-1.target-dev.svc.cluster.local:13301" />
+  <item key="46101" value="svc-game-poker-hbsl-1.target-dev.svc.cluster.local:46101" />
+</items>

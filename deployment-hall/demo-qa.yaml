@@ -1,0 +1,168 @@
+image:
+  repository: example.invalid/target/hall
+  tag: latest
+  pullPolicy: Always
+
+imagePullSecrets: 
+  - name: regcred
+
+ingress:
+  enabled: true
+  annotations: {}
+    # example.invalid/ingress.class: nginx
+    # example.invalid/tls-acme: "true"
+  hosts:
+    - host: example.invalid
+      paths: [/]
+  tls:
+    - secretName: docker-registry-tls-certificate
+      hosts:
+        - example.invalid
+
+hall:
+  server:
+    http:
+      port: 80
+
+  target:
+    api:
+      uri: http://example.invalid/v1
+    merchant:
+      id: 175013
+      api-key: PgSeXpErIeNcE
+    brand:
+      name: target
+      title: target Demo Hall
+    groups:
+      - name: TableGame
+        games:
+          - gid: 13
+            code: bjl
+            rooms: 
+              - id: 1
+                name: Normal
+          - gid: 11
+            code: lhd
+            rooms: 
+              - id: 1
+                name: Normal
+          - gid: 20
+            code: hhdz
+            rooms: 
+              - id: 1
+                name: Normal
+          - gid: 2007
+            code: fgsb
+            rooms: 
+              - id: 1
+                name: Normal
+              - id: 2
+                name: LongTerm
+          - gid: 2009
+            code: hljbp
+            rooms: 
+              - id: 1
+                name: Normal
+      - name: Slots
+        games:
+          - gid: 25
+            code: dfdc
+            rooms: 
+              - id: 1
+                name: Normal
+              - id: 2
+                name: LongTerm
+              - id: 3
+                name: Feature                    
+          - gid: 26
+            code: tgw
+            rooms: 
+              - id: 1
+                name: Normal
+              - id: 2
+                name: LongTerm
+              - id: 3
+                name: Feature                 
+          - gid: 27
+            code: ald
+            rooms: 
+              - id: 1
+                name: Normal
+              - id: 2
+                name: LongTerm
+              - id: 3
+                name: Feature  
+          - gid: 1013
+            code: s88f
+            rooms: 
+              - id: 1
+                name: Normal
+              - id: 2
+                name: LongTerm
+              - id: 3
+                name: Feature                 
+          - gid: 1014
+            code: jkjl
+            rooms: 
+              - id: 1
+                name: Normal
+              - id: 2
+                name: LongTerm
+          - gid: 1015
+            code: lkb
+            rooms: 
+              - id: 1
+                name: Normal
+              - id: 2
+                name: LongTerm
+          - gid: 1016
+            code: faf
+            rooms: 
+              - id: 1
+                name: Normal
+              - id: 2
+                name: LongTerm
+          - gid: 1017
+            code: qow
+            rooms: 
+              - id: 1
+                name: Normal
+              - id: 2
+                name: LongTerm
+          - gid: 1018
+            code: bb
+            rooms: 
+              - id: 1
+                name: Normal
+              - id: 2
+                name: LongTerm
+          - gid: 1019
+            code: s888
+            rooms: 
+              - id: 1
+                name: Normal
+              - id: 2
+                name: LongTerm
+          - gid: 1020
+            code: s5ll
+            rooms: 
+              - id: 1
+                name: Normal
+              - id: 2
+                name: LongTerm
+          - gid: 1021
+            code: hhf
+            rooms: 
+              - id: 1
+                name: Normal
+              - id: 2
+                name: LongTerm
+              - id: 3
+                name: Feature                   
+          - gid: 1022
+            code: dgno
+            rooms: 
+              - id: 1
+                name: Normal
+              - id: 2
+                name: LongTerm

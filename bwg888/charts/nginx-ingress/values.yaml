@@ -1,0 +1,17 @@
+controller:
+  service:
+    annotations:
+      metallb.universe.tf/address-pool: first-pool
+    loadBalancerIP: "0.0.0.0"
+  
+  config:
+    use-forwarded-headers: "true"
+  
+  ingressClassResource:
+    name: nginx
+    enabled: true
+    default: true
+    controllerValue: "example.invalid/ingress-nginx"
+
+  admissionWebhooks:
+    enabled: true 

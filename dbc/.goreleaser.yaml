@@ -1,0 +1,55 @@
+version: 2
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: dbc
+    main: .
+    binary: dbc
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - windows
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
+    ldflags:
+      - -s -w -X main.version={{ .Version }}
+
+archives:
+  - id: dbc
+    ids:
+      - dbc
+    format_overrides:
+      - goos: windows
+        formats: ["zip"]
+    files:
+      - instances.yaml
+      - README.md
+      - service-accounts.yaml.example
+
+checksum:
+  name_template: "checksums.txt"
+
+# 自架 GitLab（非 example.invalid），要手動指定 API 位址才能發布 Release，
+# 否則 goreleaser 會找不到平台或用錯 API。實際位址 / http vs https
+# 請對照 GitLab 後台「Settings > General > Visibility」或直接問管理者確認。
+#
+# use_package_registry: 我們用 Project Access Token（見 .gitlab-ci.yml 註解）
+# 發布，而不是 Personal access token。GoReleaser 官方文件說明用 Project
+# Access Token 時一定要開這個選項，否則上傳 release 附件會因為權限模型
+# 不同而失敗（改走 GitLab Generic Package Registry 上傳，而非附件）。
+gitlab_urls:
+  api: http://example.invalid:1688/api/v4/
+  download: http://example.invalid:1688
+  use_package_registry: true
+
+release:
+  prerelease: auto

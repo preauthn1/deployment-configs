@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+
+  <!-- <meta name="viewport" content="width=device-width,initial-scale=1.0"> -->
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"> -->
+
+  <link rel="icon" href="<%= BASE_URL %>../static2/{{.brandName}}/favicon.ico">
+  <link rel="preconnect" href="https://example.invalid">
+  <link href="https://example.invalid/css2?family=Roboto&display=swap" rel="stylesheet">
+  <title>
+    <%= htmlWebpackPlugin.options.title %>
+  </title>
+</head>
+
+<body>
+  <noscript>
+    <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled.
+        Please enable it to continue.</strong>
+  </noscript>
+  <div id="app"></div>
+  <!-- built files will be auto injected -->
+
+
+
+  <script>
+    window.fixedUser = "{{.fixedUser}}";
+    window.title = "{{.title}}";
+    window.brandName = "{{.brandName}}";
+    window.brandLink = "{{.brandLink}}";
+    window.gameItemStyle = "{{.gameItemStyle}}";
+    window.isShowDescription = "{{.showDescription}}";
+
+    // 提供給全域呼叫的
+    function setDocumentTitle(title)
+    {
+      document.title = title;
+    }
+
+
+  </script>
+
+</body>
+
+</html>

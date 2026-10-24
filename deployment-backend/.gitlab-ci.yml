@@ -1,0 +1,7 @@
+stages:
+  - upgrade-target
+  - upgrade-bwg
+
+include:
+  - local: '/ci-jobs/upgrade-target.yml'
+  - local: '/ci-jobs/upgrade-bwg.yml'

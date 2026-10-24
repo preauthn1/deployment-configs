@@ -1,0 +1,92 @@
+variables:
+  DOCKER_REGISTRY_DOMAIN: example.invalid
+  DOCKER_REGISTRY_USERNAME: admin
+  DOCKER_REGISTRY_PASSWORD: [REDACTED]
+
+.go-env:
+  image: golang:1.14
+  tags:
+    - golang
+  variables:
+    GOPATH: $CI_PROJECT_DIR/.go
+    GO111MODULE: "on"
+    GOPROXY: "http://0.0.0.0:3000"
+
+stages:
+  - test
+  - build
+  - docker
+  - deploy
+
+go lint:
+  image: cytopia/golint
+  stage: test
+  allow_failure: true
+  tags:
+    - golang
+  script:
+    - golint -set_exit_status ./...
+
+go test:
+  extends: .go-env
+  stage: test
+  allow_failure: true
+  cache:
+    untracked: false
+    policy: pull-push
+    key: mod
+    paths:
+      - ${GOPATH}/pkg/mod
+  retry: 2
+  script:
+    - go test ./...
+
+binary:
+  extends: .go-env
+  stage: build
+  cache:
+    untracked: false
+    policy: pull
+    key: mod
+    paths:
+      - ${GOPATH}/pkg/mod
+  artifacts:
+    untracked: false
+    expire_in: 30 days
+    paths:
+      - bin
+  script:
+    - GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o bin/target-hall .
+
+docker:
+  image: docker:19.03.1
+  services:
+    - docker:19.03.1-dind
+  stage: docker
+  dependencies:
+    - binary
+  tags:
+    - docker
+  variables:
+    DOCKER_HOST: tcp://localhost:2375
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    - docker login -u ${DOCKER_REGISTRY_USERNAME} -p ${DOCKER_REGISTRY_PASSWORD} ${DOCKER_REGISTRY_DOMAIN}
+  script:
+    - docker build --build-arg VERSION=${CI_PIPELINE_ID} -t ${DOCKER_REGISTRY_DOMAIN}/target/hall .
+    - docker tag ${DOCKER_REGISTRY_DOMAIN}/target/hall ${DOCKER_REGISTRY_DOMAIN}/target/hall:${CI_PIPELINE_ID}
+    - docker push ${DOCKER_REGISTRY_DOMAIN}/target/hall
+    - docker push ${DOCKER_REGISTRY_DOMAIN}/target/hall:${CI_PIPELINE_ID}
+
+deploy:
+  image: dtzar/helm-kubectl:3.0.0
+  stage: deploy
+  variables:
+    REPO_ENV_TOKEN: [REDACTED]
+    REPO_ENV_URL: http://example.invalid:1688/api/v4/projects/422/trigger/pipeline
+  needs:
+    - docker
+  script:
+    - "curl -X POST -F token=[REDACTED] -F ref=master -F variables[VERSION]=${CI_PIPELINE_ID} ${REPO_ENV_URL}"
+  tags:
+    - docker

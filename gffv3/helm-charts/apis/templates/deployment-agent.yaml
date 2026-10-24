@@ -1,0 +1,157 @@
+{{- if ne .Values.deployMode "allinone" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-agent
+  labels:
+    {{- include "cm.agentLabels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ include "cm.replicaCount" (list . "agent") }}
+  {{- end }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      {{- include "cm.agentSelectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "cm.agentSelectorLabels" . | nindent 8 }}
+    spec:
+      # 時間預算：php preStop 30s + php-fpm process_control_timeout 130s = 160s
+      # < 本值 180s（留 20s 餘裕）。process_control_timeout 定義於 apis image 的
+      # Dockerfile，三者為跨 repo 契約，調整其一必須同步另外兩個。
+      terminationGracePeriodSeconds: 180
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "cm.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: shared-files
+          emptyDir: {}
+        {{- if .example.invalid.gcs.enabled }}
+        - name: gcs-key
+          secret:
+            [REDACTED] {{ .Release.Name }}-gcs-key
+            items:
+              - key: gcs-key.json
+                path: gcs-key.json
+        {{- end }}
+        - name: config
+          configMap:
+            name: {{ .Release.Name }}-config
+            items:
+              - key: .env
+                path: .env
+              - key: nginx.conf
+                path: nginx.conf
+              - key: www.conf
+                path: www.conf
+      containers:
+        - name: {{ .Release.Name }}-agent
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          volumeMounts:
+            - name: shared-files
+              mountPath: /var/www/html
+            {{- if .example.invalid.gcs.enabled }}
+            - name: gcs-key
+              mountPath: {{ .example.invalid.gcs.key_file.mount_path }}
+              subPath: {{ .example.invalid.gcs.key_file.name }}
+              readOnly: true
+            {{- end }}
+            - name: config
+              mountPath: /var/www/html/.env
+              subPath: .env
+              readOnly: true
+            - name: config
+              mountPath: /usr/local/etc/php-fpm.d/www.conf
+              subPath: www.conf
+              readOnly: true
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "cp -r /app/. /var/www/html; cd /var/www/html; chmod -R 777 storage"]
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 30"]
+          env:
+            - name: APP_NAME
+              value: "Agent_API"
+          resources:
+            {{- include "cm.resources" (list . "agent") | nindent 12 }}
+        - name: nginx-container
+          image: "nginx:1.27"
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - name: shared-files
+              mountPath: /var/www/html
+            - name: config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+          # preStop 比 php container 短（20s vs 30s）：nginx 先停止收件並排空，
+          # php-fpm 才後走，避免 upstream 先消失導致 nginx 回 502（且因缺 50x.html
+          # 而偽裝成 404）。這個先後順序是硬約束，兩個值要調必須一起調。
+          #
+          # 本值 10s → 20s 的依據（dev 對等條件 A/B，各起始 10 replicas、
+          # 期間 20 個 endpoint、rollout 約 50s、樣本各約 17k）：
+          #   nginx 10s / php 20s → 滾更窗 5 筆失敗（0.029%）
+          #   nginx 20s / php 30s → 滾更窗 1 筆失敗（0.006%）
+          # 失敗全為 GKE Gateway 的 Envoy 自行回覆的 503（無 server header，
+          # body 為 "upstream connect error ... reset reason: remote connection
+          # failure"），請求從未到達 pod；時間點全落在 pod 從 EndpointSlice
+          # 「移除」後數秒內，且期間 ready endpoint 維持 9-10 從未短缺——
+          # 即 LB 設定裡仍留著已消失的 pod IP。拉長 preStop 是延長「被標記
+          # not-ready」到「pod 真的消失」的間隔，讓 NEG/Envoy 有時間收斂。
+          # 更對症的做法是 GCPBackendPolicy 的 connectionDraining（LB 側排空），
+          # 但該 policy 目前由叢集側另行管理、不在本 chart 範圍內。
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 20"]
+          # 只開 readiness：確保 postStart 已把 /app 複製進 document root、Laravel 能
+          # 正常 bootstrap 之後才進 endpoint，避免新 pod 提早收流量而回 404。
+          # 刻意不開 liveness：PHP 應用在高負載下探測失敗會觸發重啟風暴，弊大於利。
+          readinessProbe:
+            httpGet:
+              path: /up
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

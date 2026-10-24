@@ -1,0 +1,23 @@
+backend:
+  type: es
+  es:
+    host: efk-elasticsearch-client.default.svc.cluster.local
+    port: 9200
+    # Elastic Index Name
+    index: my_kk8s
+    type: flb_type
+    logstash_prefix: my_kk8s
+    replace_dots: "On"
+    time_key: "@timestamp"
+    # Optional username credential for Elastic X-Pack access
+    http_user:
+    # Password for user defined in HTTP_User
+    http_passwd:
+    # Optional TLS encryption to ElasticSearch instance
+    tls: "off"
+    tls_verify: "off"
+    # TLS certificate for the Elastic (in PEM format). Use if tls=on and tls_verify=on.
+    tls_ca: ""
+#    tls_ca: "istio-system/secret/istio-ca-secret"
+    # TLS debugging levels = 1-4
+    tls_debug: 1

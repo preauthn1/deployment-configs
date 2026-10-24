@@ -1,0 +1,5 @@
+web-frontend deployed successfully.
+
+  Service: {{ include "web-frontend.fullname" . }} (port {{ .Values.service.port }})
+  Image:   {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
+  Namespace: {{ .Release.Namespace }}

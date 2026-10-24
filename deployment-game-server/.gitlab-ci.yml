@@ -1,0 +1,26 @@
+stages:
+  - deploy
+
+deploy:
+  stage: deploy
+  tags:
+    - node
+  image: dtzar/helm-kubectl:3.0.0
+  environment:
+    name: target
+  only: 
+    - master
+  before_script:
+    - mkdir -p $HOME/.kube
+    - echo $KUBE_CONFIG | base64 -d > $HOME/.kube/config
+    - kubectl config view
+  when: manual
+  variables:
+    BRANCH: master
+  script: 
+    - echo $BRANCH
+    - git clone -b $BRANCH --single-branch http://gitlab-ci-token:[REDACTED]
+    - echo $BUILD_NAME
+    - echo $CI_BUILD_TARGETS
+    - echo $Message
+    - bash servers/scripts/gitlab-ci-deploy-helm.sh target game-server servers/deployments/game-server-target . $BUILD_NAME

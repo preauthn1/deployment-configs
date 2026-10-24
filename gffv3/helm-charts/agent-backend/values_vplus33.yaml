@@ -1,0 +1,94 @@
+# vplus33（prod）環境 values
+# 目標叢集：vplus33 baremetal（ns default）— ⚠️ 非 GKE
+#   apis / laravel-migration 於此環境走 `make deploy-baremetal`（Makefile: auth-baremetal 將
+#   deploy-keys/vplus33-production 複製為 ~/.kube/config），deploy job 內 GKE_CLUSTER_NAME /
+#   GKE_CLUSTER_ZONE / GCP_PROJECT 皆為註解狀態，不適用。
+#   （比照 .gitlab-ci-jobs/deploy-to-prods/vplus33.yaml）
+# 慣例來源：helm-charts/apis/values_vplus33.yaml 與本 chart values_yes2win.yaml
+
+# ⚠️ baremetal 叢集必需：節點沒有 GCP service account，kubelet 無法自動取得 Artifact Registry
+#   憑證（缺此項時 kubelet 會以匿名身分索取 token，AR 回 403 Forbidden，pod 卡 ImagePullBackOff）。
+#   GKE 品牌靠節點 SA 對 tp-wz3-rd AR 的讀取權，故其 values 均不需此項；
+#   vplus33 是唯一需要的環境 —— 比照 helm-charts/apis/values_vplus33.yaml:1-2 與
+#   helm-charts/laravel-migration/values_vplus33.yaml 使用同一個 ar-secret
+#   （該 Secret 由維運預先建立於 default namespace，非本 chart 產出）
+imagePullSecrets:
+  - name: ar-secret
+
+# autoscaling 啟用時 replicaCount 不生效，此值僅供關閉 HPA 時 fallback
+replicaCount: 2
+
+# 比照本 chart 其他 prod values 的 autoscaling 配置
+# TODO(確認)：baremetal 叢集是否已部署 metrics-server（HPA 需其提供 CPU metric）。
+#   若未部署，HPA 會處於 <unknown> 無法擴縮；屆時改為 autoscaling.enabled: false 並靠 replicaCount。
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+# 比照本 chart 其他 prod values 的資源規格
+# （agent-backend 為單容器：nginx 靜態檔 + Nitro gateway，負載遠輕於 PHP-FPM）
+resources:
+  limits:
+    cpu: 0.5
+    memory: 1024Mi
+  requests:
+    cpu: 0.2
+
+# 對外入口：apis 各 prod values 均未啟用 chart ingress（對外流量入口由叢集側管理），此處比照維持關閉
+# TODO(拍板)：vplus33 代理後台的對外網域尚無現成慣例可推導
+#   （apis vplus33 既有網域：example.invalid / example.invalid / example.invalid，
+#    無 agent/代理後台前綴慣例），待決定網域與入口管理方式
+ingress:
+  enabled: false
+
+# gateway runtime secrets for vplus33 (prod)
+# 與 dev 同樣由本 chart secret.yaml 建 Secret、deployment 以 secretKeyRef 注入。
+gateway:
+  # gateway server-side session 加密密碼（h3 useSession 要求 >= 32 字元，僅 gateway 自用不需對齊他系統）
+  # 本值為 2026-08-04 新產生之 32 字元隨機密鑰（vplus33 專用，未沿用其他環境）
+  SESSION_PASSWORD: [REDACTED]"
+  # 與 apis values_vplus33.yaml 之 app.api.* 一致（gateway 加簽轉發用）：
+  #   AES_KEY ← app.api.aes_key、AES_IV ← app.api.aes_iv、MD5_KEY ← app.api.aes_md5
+  # 注意：vplus33 的 aes_md5 無其他品牌慣有的 "&" 前綴，apis values 原文即如此，未加工
+  AES_KEY: "41XO3vcS87hVZ5do"
+  AES_IV: "5150080462393118"
+  MD5_KEY: "U7zrO7baZpil8Y7B"
+  # API_URL：agent-console API（dev 慣例為 agent-console-api-service:60003；此處比照其他 prod 環境
+  # 定案的叢集內 service 名稱 agent-webapi-service）
+  # TODO(確認)：vplus33 baremetal 叢集內該 service 名稱/port 與是否已部署，待維運確認
+  API_URL: "http://agent-webapi-service/"
+  # apis 於 vplus33 為 split 模式（deploy job DEPLOY_MODE: split），代理後台面向的 Service 為
+  # apis-agent（ClusterIP:80；service 名由 apis chart service.yaml 之 {{ .Release.Name }}-agent 推導）
+  APIS_URL: "http://apis-agent/"
+  # TODO(確認)：vplus33 叢集內是否存在 api-internal service（dev 值為 http://api-internal/，
+  # 且 dev 環境本就不可達）
+  API_INTERNAL: "http://api-internal/"
+  # 客服系統 API 加簽三鍵，來源：html/gsrc/WEB_CustomerServiceSocket/_release/.env.vplus33
+  #   （該檔不在工作樹目前的 branch，以 git show 讀取；已於 origin/vplus33、origin/tpower-master、
+  #    alfawin77-new 三個 branch 交叉比對一致）
+  #   對應：CS_AES_KEY ← API_AES_KEY、CS_MD5_KEY ← API_MD5_KEY、CS_IV ← API_IV
+  CS_AES_KEY: "E0eLH7cVX4CvMwzF"
+  CS_MD5_KEY: "50blGcgRR9Yn5sRR"
+  CS_IV: "6182684455075544"
+  # CS_API_URL：⚠️ vplus33 的 cs-api-service 與其他品牌 port 不同。
+  #   server-build-vplus33/webapi-service.yaml（branch origin/vplus33）→ Service cs-api-service，
+  #   type ClusterIP、port 80 → targetPort 80（其他品牌為 NodePort:60003），故此處不帶 :60003。
+  #   其 cloudbuild 亦非 GKE 直連，而是以 GitLab trigger 傳 KUBECTL_ARGS 由 runner 對 baremetal 下發，
+  #   與本環境 baremetal 部署方式一致。
+  # TODO(確認)：cs-api-service 與 agent-backend 是否確實位於同一 baremetal 叢集同一 namespace；
+  #   若否，改用 apis api_cs_url 外網域 https://example.invalid/api/
+  CS_API_URL: "http://cs-api-service/"
+  # 比照 apis values_vplus33.yaml 的 api_cs_url 網域
+  CS_SOCKET_URL: "https://example.invalid/"
+
+  # target/tickets#4187：實測 newabo(-vplus33).example.invalid / example.invalid
+  # 的 /proxy/detect-ip，目前是 Cloudflare 兩節鏈（0.0.0.0, CF edge），
+  # CF edge 已經落在 trusted-proxies.json 的官方範圍內，resolveClientIp()
+  # 本來就能正確解析，這兩個設定現在零副作用（0.0.0.0 目前不在鏈裡；
+  # skip_last_hop 丟掉的最後一節本來就是已知可信的 CF edge，結果不變）。
+  # 比照 apis values_vplus33.yaml 同品牌已驗證的設定先鋪好，若之後這條路徑
+  # 前面疊上 GCLB（變成三節鏈）也不會誤判。
+  TRUSTED_PROXY_EXTRA_CIDRS: "0.0.0.0/32"
+  TRUSTED_PROXY_SKIP_LAST_HOP: "true"

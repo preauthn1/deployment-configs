@@ -1,0 +1,32 @@
+image:
+  repository: example.invalid/target/hall
+  tag: latest
+  pullPolicy: Always
+
+imagePullSecrets: 
+  - name: regcred
+
+ingress:
+  enabled: true
+  annotations: {}
+    # example.invalid/ingress.class: nginx
+    # example.invalid/tls-acme: "true"
+  hosts:
+    - host: example.invalid
+      paths: [/]
+
+hall:
+  server:
+    http:
+      port: 80
+
+  target:
+    api:
+      uri: http://example.invalid/v1
+    merchant:
+      id: 175034
+      api-key: 84e5283086e711e
+      fixed-user: monitor001
+    brand:
+      name: slots88
+      title: ION Slots Demo Hall

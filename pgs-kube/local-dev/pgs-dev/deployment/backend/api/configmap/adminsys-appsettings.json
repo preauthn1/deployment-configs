@@ -1,0 +1,40 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "AllowedHosts": "*",
+
+
+  "ConnectionStrings": {
+    "MasterDB": "Server=0.0.0.0;Initial Catalog=PGS_Master;Persist Security Info=False;User ID=target;Password=[REDACTED];MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;",
+    "OperationDB": "Server=0.0.0.0;Initial Catalog=PGS_Operation;Persist Security Info=False;User ID=target;Password=[REDACTED];MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;",
+    "TransactionDB": "Server=0.0.0.0;Initial Catalog=PGS_Transaction;Persist Security Info=False;User ID=target;Password=[REDACTED];MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;",
+    "GameLogDB": "Server=0.0.0.0;Initial Catalog=PGS_GameLog;Persist Security Info=False;User ID=target;Password=[REDACTED];MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;",
+    "SystemLogDB": "Server=0.0.0.0;Initial Catalog=PGS_SystemLog;Persist Security Info=False;User ID=target;Password=[REDACTED];MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;",
+    "StatReportDB": "Server=0.0.0.0;Initial Catalog=PGS_StatReport;Persist Security Info=False;User ID=target;Password=[REDACTED];MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;"
+
+  },
+
+
+
+  "SlackNotify": {
+
+    "NotifyChannel_When_SystemException": "n_error_adminsys",
+    "IsNotifyEnable_When_SystemException": true
+  },
+  
+  "ThirdParty": {
+
+    "RedisConn": "example.invalid:6380,password=[REDACTED],ssl=True,abortConnect=False",
+    "RedisDBNumber": 1
+  },
+
+  "ApiRequestLogTableName": "[dbo].[ApiRequestLogAdminSysAPI]",
+  "ApiRequestErrorLogTableName": "[dbo].[ApiRequestLogAdminSysAPIError]",
+  "WebSiteName": "target.API.AdminSys.Local",
+  "IsEnableCache": true
+}

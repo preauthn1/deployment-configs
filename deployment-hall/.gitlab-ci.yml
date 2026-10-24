@@ -1,0 +1,181 @@
+variables:
+  VERSION: latest
+
+stages:
+  - deploy
+
+demo dev:
+  image: dtzar/helm-kubectl:3.0.0
+  stage: deploy
+  environment:
+    name: demo dev
+    url: http://example.invalid
+  script:
+    - helm upgrade -i -n target-dev demo-hall helm -f demo-dev.yaml --set image.tag=${VERSION}
+  tags:
+    - golang
+  only:
+    changes:
+      - demo-dev.yaml
+
+demo qa:
+  image: dtzar/helm-kubectl:3.0.0
+  stage: deploy
+  environment:
+    name: demo qa
+    url: http://example.invalid
+  when: manual
+  script:
+    - helm upgrade -i -n target-qa demo-hall helm -f demo-qa.yaml --set image.tag=${VERSION}
+  tags:
+    - golang
+  only:
+    changes:
+      - demo-qa.yaml
+
+pre-demo 正式:
+  image: dtzar/helm-kubectl:3.0.0
+  stage: deploy
+  environment:
+    name: demo
+    url: http://example.invalid
+  when: manual
+  before_script:
+    - mkdir -p $HOME/.kube
+    - echo $KUBE_CONFIG | base64 -d > $HOME/.kube/config
+    - kubectl config view
+  script:
+    - helm upgrade -i -n target pre-demo-hall helm -f pre-demo.yaml --set image.tag=${VERSION}
+  tags:
+    - golang
+  only:
+    changes:
+      - pre-demo.yaml
+
+demo 正式:
+  image: dtzar/helm-kubectl:3.0.0
+  stage: deploy
+  environment:
+    name: demo
+    url: http://example.invalid
+  when: manual
+  before_script:
+    - mkdir -p $HOME/.kube
+    - echo $KUBE_CONFIG | base64 -d > $HOME/.kube/config
+    - kubectl config view
+  script:
+    - helm upgrade -i -n target demo-hall helm -f demo.yaml --set image.tag=${VERSION}
+  tags:
+    - golang
+  only:
+    changes:
+      - demo.yaml
+promotion:
+  image: dtzar/helm-kubectl:3.0.0
+  stage: deploy
+  environment:
+    name: promotion
+    url: http://example.invalid
+  when: manual
+  before_script:
+    - mkdir -p $HOME/.kube
+    - echo $KUBE_CONFIG | base64 -d > $HOME/.kube/config
+    - kubectl config view
+  script:
+    - helm upgrade -i -n target promotion-hall helm -f promotion.yaml --set image.tag=${VERSION}
+  tags:
+    - golang
+  only:
+    changes:
+      - promotion.yaml
+demo slotsbb:
+  image: dtzar/helm-kubectl:3.0.0
+  stage: deploy
+  environment:
+    name: demo
+    url: http://example.invalid
+  when: manual
+  before_script:
+    - mkdir -p $HOME/.kube
+    - echo $KUBE_CONFIG | base64 -d > $HOME/.kube/config
+    - kubectl config view
+  script:
+    - helm upgrade -i -n target demo-slotsbb-hall helm -f demo-slotsbb.yaml --set image.tag=${VERSION}
+  tags:
+    - golang
+  only:
+    changes:
+      - demo-slotsbb.yaml
+monitor slotsbb:
+  image: dtzar/helm-kubectl:3.0.0
+  stage: deploy
+  environment:
+    name: monitor
+    url: http://example.invalid
+  when: manual
+  before_script:
+    - mkdir -p $HOME/.kube
+    - echo $KUBE_CONFIG | base64 -d > $HOME/.kube/config
+    - kubectl config view
+  script:
+    - helm upgrade -i -n target demo-monitor-slotsbb-hall helm -f demo-monitor-slotsbb.yaml --set image.tag=${VERSION}
+  tags:
+    - golang
+  only:
+    changes:
+      - demo-monitor-slotsbb.yaml
+at demo:
+  image: dtzar/helm-kubectl:3.0.0
+  stage: deploy
+  environment:
+    name: atdemo
+    url: http://example.invalid
+  when: manual
+  before_script:
+    - mkdir -p $HOME/.kube
+    - echo $KUBE_CONFIG | base64 -d > $HOME/.kube/config
+    - kubectl config view
+  script:
+    - helm upgrade -i -n target demo-at-hall helm -f demo-at.yaml --set image.tag=${VERSION}
+  tags:
+    - golang
+  only:
+    changes:
+      - demo-at.yaml
+slot88 demo:
+  image: dtzar/helm-kubectl:3.0.0
+  stage: deploy
+  environment:
+    name: demo
+    url: http://example.invalid
+  when: manual
+  before_script:
+    - mkdir -p $HOME/.kube
+    - echo $KUBE_CONFIG | base64 -d > $HOME/.kube/config
+    - kubectl config view
+  script:
+    - helm upgrade -i -n target slot88-demo-hall helm -f demo-slot88.yaml --set image.tag=${VERSION}
+  tags:
+    - golang
+  only:
+    changes:
+      - demo-slot88.yaml
+
+bwg demo:
+  image: dtzar/helm-kubectl:3.0.0
+  stage: deploy
+  environment:
+    name: demo
+    url: http://example.invalid
+  when: manual
+  before_script:
+    - mkdir -p $HOME/.kube
+    - echo $KUBE_CONFIG_BWG | base64 -d > $HOME/.kube/config
+    - kubectl config view
+  script:
+    - helm upgrade -i -n bwg bwg-demo-hall demo -f demo-bwg.yaml --set image.tag=${VERSION}
+  tags:
+    - golang
+  only:
+    changes:
+      - demo-bwg.yaml

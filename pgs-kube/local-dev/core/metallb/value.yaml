@@ -1,0 +1,26 @@
+configInline:
+  address-pools:
+  - name: default
+    protocol: layer2
+    auto-assign: true
+    addresses:
+    - 0.0.0.0-0.0.0.0
+  - name: target-dev
+    protocol: layer2
+    addresses:
+    - 0.0.0.0/32
+  - name: dd-dev
+    protocol: layer2
+    addresses:
+    - 0.0.0.0/32
+  - name: dd-qa
+    protocol: layer2
+    addresses:
+    - 0.0.0.0/32
+
+  # 多booking 了十個ip 用來手動分派
+  # - name: target-dev
+  #   protocol: layer2
+  #   auto-assign: true
+  #   addresses:
+  #   - 0.0.0.0-0.0.0.0

@@ -1,0 +1,803 @@
+game:
+  bjl:
+    id: 2130
+    name: 百家乐
+    group: poker
+    room:
+      - serverid: 213000410
+        configs:
+          gameserver.dat: |
+            [gameserver]
+            gameid=2130				 			//游戏ID
+            gamename=百家乐			 			//游戏名称
+            flag=41				     			//显示名称,客户端可根据此名称将房间分类显示
+            minplayer=1              			//游戏最小人数
+            maxplayer=500            			//游戏最大人数
+            tablecount=1			 			//桌子数
+            seatcount=500						//椅子数
+            loginmoney=0			 			//进入游戏最小积分
+            scoremode=0							//0 即时写分 1退房间写分
+            maxuser=500							//最大人数
+            taxscale=5							//抽水比例
+            readywaittime=30					//举手超时时间,单位秒
+            reghallserverinterval=5			//注册广场时间间隔,单位秒
+            qiangzhuang=100						//抢庄时间，单位秒
+            bettime=18							//下注时间
+            basescore=100						//底分
+            kaijiangactiontime=12				//开奖动画超时
+            endactiontime=3					//结算动画超时
+            zhuanglimit=5000000						//上庄资金限制
+            zhuangturn=8						//庄局数
+            betcount=100,500,1000,5000,10000,50000,100000    //一次下注的数量
+            maxclearcount=1						//最大清除次数
+            maxrobotzhuang=5			//最多多少个机器人上庄
+            robotxiazhuang=30			//机器人下庄概率百分比
+            robotzhuang=100				//没有人当庄的时候机器人当庄的概率百分比
+            winline=1500000				//机器人赢钱线
+            zhushui=0                  //注水比例
+            poolline=0                  //水池線:當水池高於水平線,開獎用自然率, 當水池低於水平線開獎則開系統最有利.
+            betamode=0					//是否開啟測試中程式 0:close, 1:open
+            deallog=2
+            single=1					//单间房是否可直接入场 0:不可 1：可
+            betlimitmoney=50			//下注攜帶金額限制
+            publiczhuang=0              //是否開放用戶上庄 0:close, 1:open
+            luckystarround=5            //幸運星持續局數
+            syspoolmode=2               //系統水池模式 0:無水池, 1:單機模式, 2:資料庫模式
+
+            [robot]
+            enable=1										//是否开启机器人
+            logoninterval=30								//加载机器人时间间隔
+            minmneyamount=500000								//机器人最小金币数
+            maxmoneyamount=100000000						//机器人最大金币数
+            queuecheckwaitspan=5,10							//配桌检查时间间隔
+            queueagainwaitspan=3,5							//继续配桌时间间隔
+            tablemaxusercount=500							//配桌时桌子上最大人数
+            tableminusercount=0								//配桌时桌子上最小人数
+            gameendleaveodds=0.5							//游戏结束时离开游戏几率
+            autositwaitspan=1,3							//主动入座时间间隔
+            gameactionwaitspan=1,4							//游戏动作响应时间间隔
+            gamereadywaitspan=3,5							//游戏准备响应时间间隔
+            maxusergameendleaveodds=1						//人数达到上限时离开游戏几率
+            maxcardsrndlvl=1								//机器人换牌概率值
+            matchtablemode=0                            //配桌方式, 0輪詢桌子每次放一個機器人 1輪詢桌子每次放N個機率機器人 2固定配機器人可配置上限
+            tablematchrobotrate=60,100     //為機器人人數,100機率%.  桌子隨機配N個機器人. 機率要設滿100%
+
+            [gamequeue]
+            gamematchwaitmintime=1		//撮合时间间隔范围小值,单位秒
+            gamematchwaitmaxtime=2		//撮合时间间隔范围大值,单位秒
+            againstsameip=0				//同IP不分配一起
+            againstlastgame=0			//最后一次游戏过的用户不分配一起
+            gameendaction=0				//游戏结束后动作,0 无动作 1 准备
+            queuetype=1					//撮合类型 0 时间随机 1 固定人数
+            queueusercount=1			//排队人数
+            queuetimeout=2				//排队人数超时
+
+            [baijiale]
+            count=10
+            1=8,2,1,1000000					//庄 //1类型，8概率，2倍率，100一次下注的钱,100000000下注限制，此概率为庄闲和的概率。8/17
+            2=8,2,1,1000000					//闲
+            3=1,9,1,1250000						//和
+            4=0,4,0,1500000						//庄天王，从这里开始是概率为千分比
+            5=0,4,0,1500000						//闲天王
+            6=70,12,1,900000				//庄对
+            7=70,12,1,900000					//闲对
+            8=0,56,0,150000						//庄顺
+            9=0,56,0,150000						//闲顺
+            10=0,34,0,300000						//同点和
+
+            [poolline]
+            count=5
+            1=0,100     //1水線順序, 0水池低於時, 100系统找出有利奖项的机率
+            2=1000000,25
+            3=1500000,25
+            4=1600000,0
+            5=2000000,0
+
+          robot.dat: |
+            [csize]
+            cn=8
+
+            [c1]
+            //偏执的偏庄机器人
+            betcount=25,250                    //一次下注的数量
+            bettype=1        //下注类型
+
+            [c2]
+            //偏执的偏闲机器人
+            betcount=25,250                //一次下注的数量
+            bettype=2        //下注类型
+
+            [c3]
+            //贪心的机器人
+            betcount=25,100                    //一次下注的数量
+            bettype=1,2        //下注类型
+
+            [c4]
+            //冷静的偏庄机器人
+            betcount=250,500                    //一次下注的数量
+            bettype=1            //下注类型
+
+            [c5]
+            //冷静的偏闲机器人
+            betcount=250,500                    //一次下注的数量
+            bettype=2            //下注类型
+
+            [c6]
+            //冷静的偏和机器人
+            betcount=5,10                    //一次下注的数量
+            bettype=3            //下注类型
+
+            [c7]
+            //碰碰运气的机器人
+            betcount=5,5                    //一次下注的数量
+            bettype=6,7        //下注类型
+
+            [c8]
+            //贪心的机器人
+            betcount=5,10                    //一次下注的数量
+            bettype=3,6,7        //下注类型
+            
+      - serverid: 213018810
+        configs:
+          gameserver.dat: |
+            [gameserver]
+            gameid=2130				 			//游戏ID
+            gamename=百家乐			 			//游戏名称
+            flag=1881				     			//显示名称,客户端可根据此名称将房间分类显示
+            minplayer=1              			//游戏最小人数
+            maxplayer=500            			//游戏最大人数
+            tablecount=1			 			//桌子数
+            seatcount=500						//椅子数
+            loginmoney=0			 			//进入游戏最小积分
+            scoremode=0							//0 即时写分 1退房间写分
+            maxuser=500							//最大人数
+            taxscale=5							//抽水比例
+            readywaittime=30					//举手超时时间,单位秒
+            reghallserverinterval=5			//注册广场时间间隔,单位秒
+            qiangzhuang=100						//抢庄时间，单位秒
+            bettime=18							//下注时间
+            basescore=100						//底分
+            kaijiangactiontime=12				//开奖动画超时
+            endactiontime=3					//结算动画超时
+            zhuanglimit=5000000						//上庄资金限制
+            zhuangturn=8						//庄局数
+            betcount=100,500,1000,5000,10000,50000,100000    //一次下注的数量
+            maxclearcount=1						//最大清除次数
+            maxrobotzhuang=5			//最多多少个机器人上庄
+            robotxiazhuang=30			//机器人下庄概率百分比
+            robotzhuang=100				//没有人当庄的时候机器人当庄的概率百分比
+            winline=1500000				//机器人赢钱线
+            zhushui=0                  //注水比例
+            poolline=1500000                  //水池線:當水池高於水平線,開獎用自然率, 當水池低於水平線開獎則開系統最有利.
+            betamode=1					//是否開啟測試中程式 0:close, 1:open
+            deallog=2
+            single=1					//单间房是否可直接入场 0:不可 1：可
+            betlimitmoney=50			//下注攜帶金額限制
+            publiczhuang=0              //是否開放用戶上庄 0:close, 1:open
+            luckystarround=5            //幸運星持續局數
+            syspoolmode=2               //系統水池模式 0:無水池, 1:單機模式, 2:資料庫模式數
+
+            [robot]
+            enable=1										//是否开启机器人
+            logoninterval=30								//加载机器人时间间隔
+            minmneyamount=5000000								//机器人最小金币数
+            maxmoneyamount=100000000						//机器人最大金币数
+            queuecheckwaitspan=5,10							//配桌检查时间间隔
+            queueagainwaitspan=3,5							//继续配桌时间间隔
+            tablemaxusercount=500							//配桌时桌子上最大人数
+            tableminusercount=0								//配桌时桌子上最小人数
+            gameendleaveodds=0.5							//游戏结束时离开游戏几率
+            autositwaitspan=1,3							//主动入座时间间隔
+            gameactionwaitspan=1,4							//游戏动作响应时间间隔
+            gamereadywaitspan=3,5							//游戏准备响应时间间隔
+            maxusergameendleaveodds=1						//人数达到上限时离开游戏几率
+            maxcardsrndlvl=1								//机器人换牌概率值
+            matchtablemode=0                            //配桌方式, 0輪詢桌子每次放一個機器人 1輪詢桌子每次放N個機率機器人 2固定配機器人可配置上限
+            tablematchrobotrate=60,100     //為機器人人數,100機率%.  桌子隨機配N個機器人. 機率要設滿100%
+
+            [gamequeue]
+            gamematchwaitmintime=1		//撮合时间间隔范围小值,单位秒
+            gamematchwaitmaxtime=2		//撮合时间间隔范围大值,单位秒
+            againstsameip=0				//同IP不分配一起
+            againstlastgame=0			//最后一次游戏过的用户不分配一起
+            gameendaction=0				//游戏结束后动作,0 无动作 1 准备
+            queuetype=1					//撮合类型 0 时间随机 1 固定人数
+            queueusercount=1			//排队人数
+            queuetimeout=2				//排队人数超时
+
+            [baijiale]
+            count=10
+            1=8,2,1,1000000					//庄 //1类型，8概率，2倍率，100一次下注的钱,100000000下注限制，此概率为庄闲和的概率。8/17
+            2=8,2,1,1000000					//闲
+            3=1,9,1,1250000						//和
+            4=0,4,0,1500000						//庄天王，从这里开始是概率为千分比
+            5=0,4,0,1500000						//闲天王
+            6=70,12,1,900000				//庄对
+            7=70,12,1,900000					//闲对
+            8=0,56,0,150000						//庄顺
+            9=0,56,0,150000						//闲顺
+            10=0,34,0,300000						//同点和
+
+            [poolline]
+            count=5
+            1=0,100     //1水線順序, 0水池低於時, 100系统找出有利奖项的机率
+            2=1000000,25
+            3=1500000,25
+            4=1600000,0
+            5=2000000,0
+
+          robot.dat: |
+            [csize]
+            cn=8
+
+            [c1]
+            //偏执的偏庄机器人
+            betcount=25,250                    //一次下注的数量
+            bettype=1        //下注类型
+
+            [c2]
+            //偏执的偏闲机器人
+            betcount=25,250                //一次下注的数量
+            bettype=2        //下注类型
+
+            [c3]
+            //贪心的机器人
+            betcount=25,100                    //一次下注的数量
+            bettype=1,2        //下注类型
+
+            [c4]
+            //冷静的偏庄机器人
+            betcount=250,500                    //一次下注的数量
+            bettype=1            //下注类型
+
+            [c5]
+            //冷静的偏闲机器人
+            betcount=250,500                    //一次下注的数量
+            bettype=2            //下注类型
+
+            [c6]
+            //冷静的偏和机器人
+            betcount=5,10                    //一次下注的数量
+            bettype=3            //下注类型
+
+            [c7]
+            //碰碰运气的机器人
+            betcount=5,5                    //一次下注的数量
+            bettype=6,7        //下注类型
+
+            [c8]
+            //贪心的机器人
+            betcount=5,10                    //一次下注的数量
+            bettype=3,6,7        //下注类型
+            
+      - serverid: 213008810
+        configs:
+          gameserver.dat: |
+            [gameserver]
+            gameid=2130				 			//游戏ID
+            gamename=百家乐			 			//游戏名称
+            flag=881				     			//显示名称,客户端可根据此名称将房间分类显示
+            minplayer=1              			//游戏最小人数
+            maxplayer=500            			//游戏最大人数
+            tablecount=1			 			//桌子数
+            seatcount=500						//椅子数
+            loginmoney=0			 			//进入游戏最小积分
+            scoremode=0							//0 即时写分 1退房间写分
+            maxuser=500							//最大人数
+            taxscale=5							//抽水比例
+            readywaittime=30					//举手超时时间,单位秒
+            reghallserverinterval=5			//注册广场时间间隔,单位秒
+            qiangzhuang=100						//抢庄时间，单位秒
+            bettime=18							//下注时间
+            basescore=100						//底分
+            kaijiangactiontime=12				//开奖动画超时
+            endactiontime=3					//结算动画超时
+            zhuanglimit=50000						//上庄资金限制
+            zhuangturn=8						//庄局数
+            betcount=100,500,1000,5000,10000,50000,100000    //一次下注的数量
+            maxclearcount=1						//最大清除次数
+            maxrobotzhuang=5			//最多多少个机器人上庄
+            robotxiazhuang=30			//机器人下庄概率百分比
+            robotzhuang=100				//没有人当庄的时候机器人当庄的概率百分比
+            winline=1500000				//机器人赢钱线
+            zhushui=0                  //注水比例
+            poolline=1500000                  //水池線:當水池高於水平線,開獎用自然率, 當水池低於水平線開獎則開系統最有利.
+            betamode=1					//是否開啟測試中程式 0:close, 1:open
+            deallog=2
+            single=1					//单间房是否可直接入场 0:不可 1：可
+            betlimitmoney=50			//下注攜帶金額限制
+            publiczhuang=0              //是否開放用戶上庄 0:close, 1:open
+            luckystarround=5            //幸運星持續局數
+            syspoolmode=2               //系統水池模式 0:無水池, 1:單機模式, 2:資料庫模式數
+
+            [robot]
+            enable=1										//是否开启机器人
+            logoninterval=30								//加载机器人时间间隔
+            minmneyamount=500000								//机器人最小金币数
+            maxmoneyamount=100000000						//机器人最大金币数
+            queuecheckwaitspan=5,10							//配桌检查时间间隔
+            queueagainwaitspan=3,5							//继续配桌时间间隔
+            tablemaxusercount=500							//配桌时桌子上最大人数
+            tableminusercount=0								//配桌时桌子上最小人数
+            gameendleaveodds=0.5							//游戏结束时离开游戏几率
+            autositwaitspan=1,3							//主动入座时间间隔
+            gameactionwaitspan=1,4							//游戏动作响应时间间隔
+            gamereadywaitspan=3,5							//游戏准备响应时间间隔
+            maxusergameendleaveodds=1						//人数达到上限时离开游戏几率
+            maxcardsrndlvl=1								//机器人换牌概率值
+            matchtablemode=0                            //配桌方式, 0輪詢桌子每次放一個機器人 1輪詢桌子每次放N個機率機器人 2固定配機器人可配置上限
+            tablematchrobotrate=60,100     //為機器人人數,100機率%.  桌子隨機配N個機器人. 機率要設滿100%
+
+            [gamequeue]
+            gamematchwaitmintime=1		//撮合时间间隔范围小值,单位秒
+            gamematchwaitmaxtime=2		//撮合时间间隔范围大值,单位秒
+            againstsameip=0				//同IP不分配一起
+            againstlastgame=0			//最后一次游戏过的用户不分配一起
+            gameendaction=0				//游戏结束后动作,0 无动作 1 准备
+            queuetype=1					//撮合类型 0 时间随机 1 固定人数
+            queueusercount=1			//排队人数
+            queuetimeout=2				//排队人数超时
+
+            [baijiale]
+            count=10
+            1=8,2,1,1000000					//庄 //1类型，8概率，2倍率，100一次下注的钱,100000000下注限制，此概率为庄闲和的概率。8/17
+            2=8,2,1,1000000					//闲
+            3=1,9,1,1250000						//和
+            4=0,4,0,1500000						//庄天王，从这里开始是概率为千分比
+            5=0,4,0,1500000						//闲天王
+            6=70,12,1,900000				//庄对
+            7=70,12,1,900000					//闲对
+            8=0,56,0,150000						//庄顺
+            9=0,56,0,150000						//闲顺
+            10=0,34,0,300000						//同点和
+
+            [poolline]
+            count=5
+            1=0,100     //1水線順序, 0水池低於時, 100系统找出有利奖项的机率
+            2=1000000,25
+            3=1500000,25
+            4=1600000,0
+            5=2000000,0
+
+          robot.dat: |
+            [csize]
+            cn=8
+
+            [c1]
+            //偏执的偏庄机器人
+            betcount=25,250                    //一次下注的数量
+            bettype=1        //下注类型
+
+            [c2]
+            //偏执的偏闲机器人
+            betcount=25,250                //一次下注的数量
+            bettype=2        //下注类型
+
+            [c3]
+            //贪心的机器人
+            betcount=25,100                    //一次下注的数量
+            bettype=1,2        //下注类型
+
+            [c4]
+            //冷静的偏庄机器人
+            betcount=250,500                    //一次下注的数量
+            bettype=1            //下注类型
+
+            [c5]
+            //冷静的偏闲机器人
+            betcount=250,500                    //一次下注的数量
+            bettype=2            //下注类型
+
+            [c6]
+            //冷静的偏和机器人
+            betcount=5,10                    //一次下注的数量
+            bettype=3            //下注类型
+
+            [c7]
+            //碰碰运气的机器人
+            betcount=5,5                    //一次下注的数量
+            bettype=6,7        //下注类型
+
+            [c8]
+            //贪心的机器人
+            betcount=5,10                    //一次下注的数量
+            bettype=3,6,7        //下注类型
+            
+      - serverid: 213000010
+        configs:
+          gameserver.dat: |
+            [gameserver]
+            gameid=2130				 			//游戏ID
+            gamename=百家乐			 			//游戏名称
+            flag=1				     			//显示名称,客户端可根据此名称将房间分类显示
+            minplayer=1              			//游戏最小人数
+            maxplayer=500            			//游戏最大人数
+            tablecount=1			 			//桌子数
+            seatcount=500						//椅子数
+            loginmoney=0			 			//进入游戏最小积分
+            scoremode=0							//0 即时写分 1退房间写分
+            maxuser=500							//最大人数
+            taxscale=5							//抽水比例
+            readywaittime=30					//举手超时时间,单位秒
+            reghallserverinterval=5			//注册广场时间间隔,单位秒
+            qiangzhuang=100						//抢庄时间，单位秒
+            bettime=18							//下注时间
+            basescore=100						//底分
+            kaijiangactiontime=12				//开奖动画超时
+            endactiontime=3					//结算动画超时
+            zhuanglimit=50000						//上庄资金限制
+            zhuangturn=8						//庄局数
+            betcount=100,500,1000,5000,10000,50000,100000    //一次下注的数量
+            maxclearcount=1						//最大清除次数
+            maxrobotzhuang=5			//最多多少个机器人上庄
+            robotxiazhuang=30			//机器人下庄概率百分比
+            robotzhuang=100				//没有人当庄的时候机器人当庄的概率百分比
+            winline=1500000				//机器人赢钱线
+            zhushui=0                  //注水比例
+            poolline=0                  //水池線:當水池高於水平線,開獎用自然率, 當水池低於水平線開獎則開系統最有利.
+            betamode=0					//是否開啟測試中程式 0:close, 1:open
+            deallog=2
+            single=1					//单间房是否可直接入场 0:不可 1：可
+            betlimitmoney=50			//下注攜帶金額限制
+            publiczhuang=0              //是否開放用戶上庄 0:close, 1:open
+            luckystarround=5            //幸運星持續局數
+            syspoolmode=2               //系統水池模式 0:無水池, 1:單機模式, 2:資料庫模式
+
+            [robot]
+            enable=1										//是否开启机器人
+            logoninterval=30								//加载机器人时间间隔
+            minmneyamount=500000								//机器人最小金币数
+            maxmoneyamount=100000000						//机器人最大金币数
+            queuecheckwaitspan=5,10							//配桌检查时间间隔
+            queueagainwaitspan=3,5							//继续配桌时间间隔
+            tablemaxusercount=500							//配桌时桌子上最大人数
+            tableminusercount=0								//配桌时桌子上最小人数
+            gameendleaveodds=0.5							//游戏结束时离开游戏几率
+            autositwaitspan=1,3							//主动入座时间间隔
+            gameactionwaitspan=1,4							//游戏动作响应时间间隔
+            gamereadywaitspan=3,5							//游戏准备响应时间间隔
+            maxusergameendleaveodds=1						//人数达到上限时离开游戏几率
+            maxcardsrndlvl=1								//机器人换牌概率值
+            matchtablemode=0                            //配桌方式, 0輪詢桌子每次放一個機器人 1輪詢桌子每次放N個機率機器人 2固定配機器人可配置上限
+            tablematchrobotrate=60,100     //為機器人人數,100機率%.  桌子隨機配N個機器人. 機率要設滿100%
+
+            [gamequeue]
+            gamematchwaitmintime=1		//撮合时间间隔范围小值,单位秒
+            gamematchwaitmaxtime=2		//撮合时间间隔范围大值,单位秒
+            againstsameip=0				//同IP不分配一起
+            againstlastgame=0			//最后一次游戏过的用户不分配一起
+            gameendaction=0				//游戏结束后动作,0 无动作 1 准备
+            queuetype=1					//撮合类型 0 时间随机 1 固定人数
+            queueusercount=1			//排队人数
+            queuetimeout=2				//排队人数超时
+
+            [baijiale]
+            count=10
+            1=8,2,1,1000000					//庄 //1类型，8概率，2倍率，100一次下注的钱,100000000下注限制，此概率为庄闲和的概率。8/17
+            2=8,2,1,1000000					//闲
+            3=1,9,1,1250000						//和
+            4=0,4,0,1500000						//庄天王，从这里开始是概率为千分比
+            5=0,4,0,1500000						//闲天王
+            6=70,12,1,900000				//庄对
+            7=70,12,1,900000					//闲对
+            8=0,56,0,150000						//庄顺
+            9=0,56,0,150000						//闲顺
+            10=0,34,0,300000						//同点和
+
+            [poolline]
+            count=5
+            1=0,100     //1水線順序, 0水池低於時, 100系统找出有利奖项的机率
+            2=1000000,25
+            3=1500000,25
+            4=1600000,0
+            5=2000000,0
+
+          robot.dat: |
+            [csize]
+            cn=8
+
+            [c1]
+            //偏执的偏庄机器人
+            betcount=25,250                    //一次下注的数量
+            bettype=1        //下注类型
+
+            [c2]
+            //偏执的偏闲机器人
+            betcount=25,250                //一次下注的数量
+            bettype=2        //下注类型
+
+            [c3]
+            //贪心的机器人
+            betcount=25,100                    //一次下注的数量
+            bettype=1,2        //下注类型
+
+            [c4]
+            //冷静的偏庄机器人
+            betcount=250,500                    //一次下注的数量
+            bettype=1            //下注类型
+
+            [c5]
+            //冷静的偏闲机器人
+            betcount=250,500                    //一次下注的数量
+            bettype=2            //下注类型
+
+            [c6]
+            //冷静的偏和机器人
+            betcount=5,10                    //一次下注的数量
+            bettype=3            //下注类型
+
+            [c7]
+            //碰碰运气的机器人
+            betcount=5,5                    //一次下注的数量
+            bettype=6,7        //下注类型
+
+            [c8]
+            //贪心的机器人
+            betcount=5,10                    //一次下注的数量
+            bettype=3,6,7        //下注类型
+      
+      - serverid: 213002110
+        configs:
+          gameserver.dat: |
+            [gameserver]
+            gameid=2130				 			//游戏ID
+            gamename=百家乐			 			//游戏名称
+            flag=211				     			//显示名称,客户端可根据此名称将房间分类显示
+            minplayer=1              			//游戏最小人数
+            maxplayer=500            			//游戏最大人数
+            tablecount=1			 			//桌子数
+            seatcount=500						//椅子数
+            loginmoney=0			 			//进入游戏最小积分
+            scoremode=0							//0 即时写分 1退房间写分
+            maxuser=500							//最大人数
+            taxscale=5							//抽水比例
+            readywaittime=30					//举手超时时间,单位秒
+            reghallserverinterval=5			//注册广场时间间隔,单位秒
+            qiangzhuang=100						//抢庄时间，单位秒
+            bettime=18							//下注时间
+            basescore=100						//底分
+            kaijiangactiontime=12				//开奖动画超时
+            endactiontime=3					//结算动画超时
+            zhuanglimit=50000						//上庄资金限制
+            zhuangturn=8						//庄局数
+            betcount=100,500,1000,5000,10000,50000,100000    //一次下注的数量
+            maxclearcount=1						//最大清除次数
+            maxrobotzhuang=5			//最多多少个机器人上庄
+            robotxiazhuang=30			//机器人下庄概率百分比
+            robotzhuang=100				//没有人当庄的时候机器人当庄的概率百分比
+            winline=1500000				//机器人赢钱线
+            zhushui=0                  //注水比例
+            poolline=0                  //水池線:當水池高於水平線,開獎用自然率, 當水池低於水平線開獎則開系統最有利.
+            betamode=0					//是否開啟測試中程式 0:close, 1:open
+            deallog=2
+            single=1					//单间房是否可直接入场 0:不可 1：可
+            betlimitmoney=50			//下注攜帶金額限制
+            publiczhuang=0              //是否開放用戶上庄 0:close, 1:open
+            luckystarround=5            //幸運星持續局數
+            syspoolmode=2               //系統水池模式 0:無水池, 1:單機模式, 2:資料庫模式
+
+            [robot]
+            enable=1										//是否开启机器人
+            logoninterval=30								//加载机器人时间间隔
+            minmneyamount=500000								//机器人最小金币数
+            maxmoneyamount=100000000						//机器人最大金币数
+            queuecheckwaitspan=5,10							//配桌检查时间间隔
+            queueagainwaitspan=3,5							//继续配桌时间间隔
+            tablemaxusercount=500							//配桌时桌子上最大人数
+            tableminusercount=0								//配桌时桌子上最小人数
+            gameendleaveodds=0.5							//游戏结束时离开游戏几率
+            autositwaitspan=1,3							//主动入座时间间隔
+            gameactionwaitspan=1,4							//游戏动作响应时间间隔
+            gamereadywaitspan=3,5							//游戏准备响应时间间隔
+            maxusergameendleaveodds=1						//人数达到上限时离开游戏几率
+            maxcardsrndlvl=1								//机器人换牌概率值
+            matchtablemode=0                            //配桌方式, 0輪詢桌子每次放一個機器人 1輪詢桌子每次放N個機率機器人 2固定配機器人可配置上限
+            tablematchrobotrate=60,100     //為機器人人數,100機率%.  桌子隨機配N個機器人. 機率要設滿100%
+
+            [gamequeue]
+            gamematchwaitmintime=1		//撮合时间间隔范围小值,单位秒
+            gamematchwaitmaxtime=2		//撮合时间间隔范围大值,单位秒
+            againstsameip=0				//同IP不分配一起
+            againstlastgame=0			//最后一次游戏过的用户不分配一起
+            gameendaction=0				//游戏结束后动作,0 无动作 1 准备
+            queuetype=1					//撮合类型 0 时间随机 1 固定人数
+            queueusercount=1			//排队人数
+            queuetimeout=2				//排队人数超时
+
+            [baijiale]
+            count=10
+            1=8,2,1,1000000					//庄 //1类型，8概率，2倍率，100一次下注的钱,100000000下注限制，此概率为庄闲和的概率。8/17
+            2=8,2,1,1000000					//闲
+            3=1,9,1,1250000						//和
+            4=0,4,0,1500000						//庄天王，从这里开始是概率为千分比
+            5=0,4,0,1500000						//闲天王
+            6=70,12,1,900000				//庄对
+            7=70,12,1,900000					//闲对
+            8=0,56,0,150000						//庄顺
+            9=0,56,0,150000						//闲顺
+            10=0,34,0,300000						//同点和
+
+            [poolline]
+            count=5
+            1=0,100     //1水線順序, 0水池低於時, 100系统找出有利奖项的机率
+            2=1000000,25
+            3=1500000,25
+            4=1600000,0
+            5=2000000,0
+
+          robot.dat: |
+            [csize]
+            cn=8
+
+            [c1]
+            //偏执的偏庄机器人
+            betcount=25,250                    //一次下注的数量
+            bettype=1        //下注类型
+
+            [c2]
+            //偏执的偏闲机器人
+            betcount=25,250                //一次下注的数量
+            bettype=2        //下注类型
+
+            [c3]
+            //贪心的机器人
+            betcount=25,100                    //一次下注的数量
+            bettype=1,2        //下注类型
+
+            [c4]
+            //冷静的偏庄机器人
+            betcount=250,500                    //一次下注的数量
+            bettype=1            //下注类型
+
+            [c5]
+            //冷静的偏闲机器人
+            betcount=250,500                    //一次下注的数量
+            bettype=2            //下注类型
+
+            [c6]
+            //冷静的偏和机器人
+            betcount=5,10                    //一次下注的数量
+            bettype=3            //下注类型
+
+            [c7]
+            //碰碰运气的机器人
+            betcount=5,5                    //一次下注的数量
+            bettype=6,7        //下注类型
+
+            [c8]
+            //贪心的机器人
+            betcount=5,10                    //一次下注的数量
+            bettype=3,6,7        //下注类型
+      
+      - serverid: 213004010
+        configs:
+          gameserver.dat: |
+            [gameserver]
+            gameid=2130				 			//游戏ID
+            gamename=百家乐			 			//游戏名称
+            flag=401				     			//显示名称,客户端可根据此名称将房间分类显示
+            minplayer=1              			//游戏最小人数
+            maxplayer=500            			//游戏最大人数
+            tablecount=1			 			//桌子数
+            seatcount=500						//椅子数
+            loginmoney=0			 			//进入游戏最小积分
+            scoremode=0							//0 即时写分 1退房间写分
+            maxuser=500							//最大人数
+            taxscale=5							//抽水比例
+            readywaittime=30					//举手超时时间,单位秒
+            reghallserverinterval=5			//注册广场时间间隔,单位秒
+            qiangzhuang=100						//抢庄时间，单位秒
+            bettime=18							//下注时间
+            basescore=100						//底分
+            kaijiangactiontime=12				//开奖动画超时
+            endactiontime=3					//结算动画超时
+            zhuanglimit=5000000						//上庄资金限制
+            zhuangturn=8						//庄局数
+            betcount=100,500,1000,5000,10000,50000,100000    //一次下注的数量
+            maxclearcount=1						//最大清除次数
+            maxrobotzhuang=5			//最多多少个机器人上庄
+            robotxiazhuang=30			//机器人下庄概率百分比
+            robotzhuang=100				//没有人当庄的时候机器人当庄的概率百分比
+            winline=1500000				//机器人赢钱线
+            zhushui=0                  //注水比例
+            poolline=0                  //水池線:當水池高於水平線,開獎用自然率, 當水池低於水平線開獎則開系統最有利.
+            betamode=0					//是否開啟測試中程式 0:close, 1:open
+            deallog=2
+            single=1					//单间房是否可直接入场 0:不可 1：可
+            betlimitmoney=50			//下注攜帶金額限制
+            publiczhuang=0              //是否開放用戶上庄 0:close, 1:open
+            luckystarround=5            //幸運星持續局數
+            syspoolmode=2               //系統水池模式 0:無水池, 1:單機模式, 2:資料庫模式
+
+            [robot]
+            enable=1										//是否开启机器人
+            logoninterval=30								//加载机器人时间间隔
+            minmneyamount=500000								//机器人最小金币数
+            maxmoneyamount=100000000						//机器人最大金币数
+            queuecheckwaitspan=5,10							//配桌检查时间间隔
+            queueagainwaitspan=3,5							//继续配桌时间间隔
+            tablemaxusercount=500							//配桌时桌子上最大人数
+            tableminusercount=0								//配桌时桌子上最小人数
+            gameendleaveodds=0.5							//游戏结束时离开游戏几率
+            autositwaitspan=1,3							//主动入座时间间隔
+            gameactionwaitspan=1,4							//游戏动作响应时间间隔
+            gamereadywaitspan=3,5							//游戏准备响应时间间隔
+            maxusergameendleaveodds=1						//人数达到上限时离开游戏几率
+            maxcardsrndlvl=1								//机器人换牌概率值
+            matchtablemode=0                            //配桌方式, 0輪詢桌子每次放一個機器人 1輪詢桌子每次放N個機率機器人 2固定配機器人可配置上限
+            tablematchrobotrate=60,100     //為機器人人數,100機率%.  桌子隨機配N個機器人. 機率要設滿100%
+
+            [gamequeue]
+            gamematchwaitmintime=1		//撮合时间间隔范围小值,单位秒
+            gamematchwaitmaxtime=2		//撮合时间间隔范围大值,单位秒
+            againstsameip=0				//同IP不分配一起
+            againstlastgame=0			//最后一次游戏过的用户不分配一起
+            gameendaction=0				//游戏结束后动作,0 无动作 1 准备
+            queuetype=1					//撮合类型 0 时间随机 1 固定人数
+            queueusercount=1			//排队人数
+            queuetimeout=2				//排队人数超时
+
+            [baijiale]
+            count=10
+            1=8,2,1,1000000					//庄 //1类型，8概率，2倍率，100一次下注的钱,100000000下注限制，此概率为庄闲和的概率。8/17
+            2=8,2,1,1000000					//闲
+            3=1,9,1,1250000						//和
+            4=0,4,0,1500000						//庄天王，从这里开始是概率为千分比
+            5=0,4,0,1500000						//闲天王
+            6=70,12,1,900000				//庄对
+            7=70,12,1,900000					//闲对
+            8=0,56,0,150000						//庄顺
+            9=0,56,0,150000						//闲顺
+            10=0,34,0,300000						//同点和
+
+            [poolline]
+            count=5
+            1=0,100     //1水線順序, 0水池低於時, 100系统找出有利奖项的机率
+            2=1000000,25
+            3=1500000,25
+            4=1600000,0
+            5=2000000,0
+
+          robot.dat: |
+            [csize]
+            cn=8
+
+            [c1]
+            //偏执的偏庄机器人
+            betcount=25,250                    //一次下注的数量
+            bettype=1        //下注类型
+
+            [c2]
+            //偏执的偏闲机器人
+            betcount=25,250                //一次下注的数量
+            bettype=2        //下注类型
+
+            [c3]
+            //贪心的机器人
+            betcount=25,100                    //一次下注的数量
+            bettype=1,2        //下注类型
+
+            [c4]
+            //冷静的偏庄机器人
+            betcount=250,500                    //一次下注的数量
+            bettype=1            //下注类型
+
+            [c5]
+            //冷静的偏闲机器人
+            betcount=250,500                    //一次下注的数量
+            bettype=2            //下注类型
+
+            [c6]
+            //冷静的偏和机器人
+            betcount=5,10                    //一次下注的数量
+            bettype=3            //下注类型
+
+            [c7]
+            //碰碰运气的机器人
+            betcount=5,5                    //一次下注的数量
+            bettype=6,7        //下注类型
+
+            [c8]
+            //贪心的机器人
+            betcount=5,10                    //一次下注的数量
+            bettype=3,6,7        //下注类型

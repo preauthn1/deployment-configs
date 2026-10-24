@@ -1,0 +1,6 @@
+storageClass:
+  name: fast
+  defaultClass: true
+nfs:
+  server: 0.0.0.0
+  path: /hd2/nfsshare

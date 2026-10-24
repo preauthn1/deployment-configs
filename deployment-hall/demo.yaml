@@ -1,0 +1,124 @@
+image:
+  repository: example.invalid/target/hall
+  tag: latest
+  pullPolicy: Always
+
+imagePullSecrets: 
+  - name: regcred
+
+ingress:
+  enabled: true
+  annotations: {}
+    # example.invalid/ingress.class: nginx
+    # example.invalid/tls-acme: "true"
+  hosts:
+    - host: example.invalid
+      paths: [/]
+    - host: example.invalid
+      paths: [/]
+    - host: example.invalid
+      paths: [/]
+
+  tls:
+    - secretName: example.invalid-tls
+      hosts:
+        - example.invalid
+    - secretName: example.invalid-tls
+      hosts:
+        - example.invalid
+    - secretName: example.invalid-tls
+      hosts:
+        - example.invalid
+hall:
+  server:
+    http:
+      port: 80
+
+  target:
+    api:
+      uri: http://backend-api-public:3109/v1
+    merchant:
+      id: 175014
+      api-key: PgSeXpErIeNcE
+      is-open-agg-fish: false
+      game-item-style: 2
+      showDescription: 1
+    brand:
+      name: target
+      title: target Demo Hall
+      link: https://example.invalid/
+    groups:
+      - name: TableGame
+        games:
+          - gid: 13
+            code: bjl
+            rooms: 
+              - id: 2
+                name: Normal
+          - gid: 11
+            code: lhd
+            rooms: 
+              - id: 2
+                name: Normal
+          - gid: 20
+            code: hhdz
+            rooms: 
+              - id: 2
+                name: Normal
+          - gid: 2009
+            code: hljbp
+            rooms: 
+              - id: 2
+                name: Normal
+      - name: Slots
+        games:
+          - gid: 25
+            code: dfdc
+            rooms: 
+              - id: 2
+                name: Normal
+          - gid: 26
+            code: tgw
+            rooms: 
+              - id: 2
+                name: Normal
+          - gid: 1013
+            code: s88f
+            rooms: 
+              - id: 2
+                name: Normal
+          - gid: 1014
+            code: jkjl
+            rooms: 
+              - id: 2
+                name: Normal
+          - gid: 1015
+            code: lkb
+            rooms: 
+              - id: 2
+                name: Normal
+          - gid: 1016
+            code: faf
+            rooms: 
+              - id: 2
+                name: Normal
+          - gid: 1017
+            code: qow
+            rooms: 
+              - id: 2
+                name: Normal
+          - gid: 1018
+            code: bb
+            rooms: 
+              - id: 2
+                name: Normal
+          - gid: 1019
+            code: s888
+            rooms: 
+              - id: 2
+                name: Normal
+          - gid: 1020
+            code: s5ll
+            rooms: 
+              - id: 2
+                name: Normal

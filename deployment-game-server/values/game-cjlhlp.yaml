@@ -1,0 +1,276 @@
+game:
+  cjlhlp:
+    id: 2233
+    name: 超級零號輪盤
+    group: poker
+    admin: true
+    room:
+      - serverid: 223300410
+        configs:
+          gameserver.dat: |
+            [gameserver]
+            gameid=2233			                            // 遊戲ID
+            gamename=超級零號輪盤	                        // 遊戲名稱
+            flag=41				                              // 顯示名稱,客戶端可根據此名稱將房間分類顯示
+            minplayer=0              	                  // 遊戲最小人數
+            maxplayer=480          		                  // 遊戲最大人數
+            tablecount=1			 	                        // 桌子數
+            seatcount=480				                        // 椅子數量
+            loginmoney=0			 	                        // 進入遊戲最小積分
+            scoremode=0					                        // 0 即時寫分 1退房間寫分
+            maxuser=480					                        // 最大人數
+            taxscale=0					                        // 抽水比例
+            readywaittime=10			                      // 舉手超時時間,單位秒
+            reghallserverinterval=5		                  // 註冊廣場時間間隔,單位秒
+            basescore=100				                        // 底分
+            betcount=50,100,200,500,1000,2000,5000,10000,100000                  // 一次下注的數量(籌碼面額)
+            deallog=2					                          // 牌局記錄器類型 0 不記錄 1 文本 2 DB 5 Console
+            single=1					                          // 單間房是否可直接入場 0:不可 1：可
+            syspoolmode=2                               // 系統水池模式 0:無水池, 1:單機寫檔模式, 2:資料庫模式
+            syspoolctrlrate=50                         // 系統水池，開系統有利獎的機率 (百分比)
+
+            [gameinfo]
+            autostart=1                 // 是否自動開啟 Default: 0
+            betmincarry=50            // 下注攜帶金額限制(分) 100分=1元 Default: 0
+            usermaxbet=1000000           // 單人下注限制(分) Default: 100000
+            richestcount=7              // 富豪榜人數 Default: 7
+            winlistcount=3              // 贏錢排行人數 Default: 3
+            flowtype=0                  // 流水統計方式 0: 輸分流水 1: 有效投注流水 Default: 0
+
+            [bet]
+            1=1,100000 // Odd 基
+            2=1,100000 // Even 偶
+            3=1,100000 // Red 紅
+            4=1,100000 // Black 黑
+            5=1,100000 // Small 小
+            6=1,100000 // Big 大
+            7=2,100000 // First12 1-12
+            8=2,100000 // Second12 13-24
+            9=2,100000 // Third12 25-36
+            10=2,100000 // FirstRow 1-4-7-10-13-16-19-22-25-28-31-34
+            11=2,100000 // SecondRow 2-5-8-11-14-17-20-23-26-29-32-35
+            12=2,100000 // ThirdRow 3-6-9-12-15-18-21-24-27-30-33-36
+            13=35,10000 // OneNumber 一個號碼
+            14=17,100000 // TwoNumber 兩個號碼
+            15=11,100000 // ThreeNumber 三個號碼
+            16=8,100000 // FourNumber 四個號碼
+            17=5,100000 // SixNumber 六個號碼
+            18=47,10000 // SuperZeroNumber 超級零號
+
+            [record]
+            maxsize=30                  // 最多保留多少筆紀錄 Default: 30
+
+            [animate]
+            start=3s                    // 遊戲開始動畫時間 Default: 3s
+            bet=15s                     // 下注時間 Default: 10s
+            award=10s                    // 表演開獎時間 Default: 5s
+            finish=2s                   // 遊戲結束時間 Default: 2s
+
+            [gamequeue]
+            gamematchwaitmintime=1		                                    // 撮合時間間隔範圍小值,單位秒
+            gamematchwaitmaxtime=3		                                    // 撮合時間間隔範圍大值,單位秒
+            againstsameip=0				                                        // 同IP不分配一起
+            againstlastgame=0			                                        // 最後一次遊戲過的用戶不分配一起
+            gameendaction=0				                                        // 遊戲結束後動作,0 無動作 1 準備
+            queuetype=1					                                          // 撮合類型 0 時間隨機 1 固定人數
+            queueusercount=1			                                        // 排隊人數
+            queuetimeout=2				                                        // 排隊人數超時
+
+            [robot]
+            enable=1										                                  // 是否開啟機器人
+            logoninterval=30								                              // 加載機器人時間間隔
+            minmneyamount=100000								                          // 機器人最小金幣數
+            maxmoneyamount=5000000						                            // 機器人最大金幣數
+            queuecheckwaitspan=5,10							                          // 配桌檢查時間間隔
+            queueagainwaitspan=3,5							                          // 繼續配桌時間間隔
+            tablemaxusercount=480							                            // 配桌時桌子上最大人數
+            tableminusercount=0								                            // 配桌時桌子上最小人數
+            gameendleaveodds=0.5							                            // 遊戲結束時離開遊戲機率
+            maxusergameendleaveodds=1						                          // 人數達到上限時離開遊戲機率
+            autositwaitspan=1,3							                              // 主動入座時間間隔
+            gameactionwaitspan=1,5						                            // 遊戲動作響應時間間隔
+            gamereadywaitspan=3,5							                            // 遊戲準備相應時間間隔
+            maxcardsrndlvl=1								                              // 機器人換牌概率值
+            matchtablemode=0                                              // 配桌方式, 0輪詢桌子每次放一個機器人 1輪詢桌子每次放N個機率機器人 2固定配機器人可配置上限
+            tablematchrobotrate=50,100                                    // 為機器人人數,100機率%. 桌子隨機配N個機器人. 機率要設滿100%
+
+            [supertool]
+            ctrlbetlimit=1000                                             // 監控名單會控制的最低注額(分)
+          robot.dat: |
+            [csize]
+            cn=4
+
+            // 1: Odd         BetType = iota + 1 // 單 1:1
+            // 2: Even                           // 雙 1:1
+            // 3: Red                            // 紅  1:1
+            // 4: Black                          // 黑 1:1
+            // 5: Small                          // 小 1-18 1:1
+            // 6: Big                            // 大 19-36 1:1
+            // 7: First12                        // 1-12 1:2
+            // 8: Second12                       // 13-24 1:2
+            // 9: Third12                        // 25-36 1:2
+            // 10: FirstRow                      // 1-34 1-4-7-10-13-16-19-22-25-28-31-34 1:2
+            // 11: SecondRow                     // 2-35 2-5-8-11-14-17-20-23-26-29-32-35 1:2
+            // 12: ThirdRow                      // 3-36 3-6-9-12-15-18-21-24-27-30-33-36 1:2
+            // 13: OneNumber                     // 單一號碼 1:35
+            // 14: TwoNumber                     // 兩個號碼 1:17
+            // 15: ThreeNumber                   // 三個號碼 1:11
+            // 16: FourNumber                    // 四個號碼 1:8
+            // 17: SixNumber                     // 六個號碼 1:5
+            // 18: SuperZero                     // 超級0 1:47
+
+            // 隨機單雙紅黑大小
+            [c1]
+            betcount=2000,5000      // 一次下注的數量隨機 (分) 20.00 - 50.00
+            bettype=1,2,3,4,5,6           // 下注類型逗號區隔  
+
+            // 隨機 First12 Second12 Third12 FirstRow SecondRow ThirdRow
+            [c2]
+            betcount=500,500        // 一次下注的數量隨機 (分) 5.00 - 5.00
+            bettype=7,8,9,10,11,12           // 下注類型逗號區隔  
+
+            // 專門下 13,14,15,16,17 (單一號碼機率高一點)
+            [c3]
+            betcount=100,100        // 一次下注的數量隨機 (分) 1.00 - 1.00
+            bettype=13,13,13,14,15,16,17           // 下注類型逗號區隔  
+
+            // 專門下 13,14,15,16,17 (單一號碼機率高一點)
+            [c4]
+            betcount=50,50        // 一次下注的數量隨機 (分) 0.50 - 0.50
+            bettype=13,13,13,14,15,16,17           // 下注類型逗號區隔
+
+      - serverid: 223300010
+        configs:
+          gameserver.dat: |
+            [gameserver]
+            gameid=2233			                            // 遊戲ID
+            gamename=超級零號輪盤	                        // 遊戲名稱
+            flag=1				                              // 顯示名稱,客戶端可根據此名稱將房間分類顯示
+            minplayer=0              	                  // 遊戲最小人數
+            maxplayer=480          		                  // 遊戲最大人數
+            tablecount=1			 	                        // 桌子數
+            seatcount=480				                        // 椅子數量
+            loginmoney=0			 	                        // 進入遊戲最小積分
+            scoremode=0					                        // 0 即時寫分 1退房間寫分
+            maxuser=480					                        // 最大人數
+            taxscale=0					                        // 抽水比例
+            readywaittime=10			                      // 舉手超時時間,單位秒
+            reghallserverinterval=5		                  // 註冊廣場時間間隔,單位秒
+            basescore=100				                        // 底分
+            betcount=500,1000,2000,5000,10000,20000,50000,100000,500000                  // 一次下注的數量(籌碼面額)
+            deallog=2					                          // 牌局記錄器類型 0 不記錄 1 文本 2 DB 5 Console
+            single=1					                          // 單間房是否可直接入場 0:不可 1：可
+            syspoolmode=2                               // 系統水池模式 0:無水池, 1:單機寫檔模式, 2:資料庫模式
+            syspoolctrlrate=50                         // 系統水池，開系統有利獎的機率 (百分比)
+
+            [gameinfo]
+            autostart=1                 // 是否自動開啟 Default: 0
+            betmincarry=50            // 下注攜帶金額限制(分) 100分=1元 Default: 0
+            usermaxbet=10000000           // 單人下注限制(分) Default: 100000
+            richestcount=7              // 富豪榜人數 Default: 7
+            winlistcount=3              // 贏錢排行人數 Default: 3
+            flowtype=0                  // 流水統計方式 0: 輸分流水 1: 有效投注流水 Default: 0
+
+            [bet]
+            1=1,1000000 // Odd 基
+            2=1,1000000 // Even 偶
+            3=1,1000000 // Red 紅
+            4=1,1000000 // Black 黑
+            5=1,1000000 // Small 小
+            6=1,1000000 // Big 大
+            7=2,1000000 // First12 1-12
+            8=2,1000000 // Second12 13-24
+            9=2,1000000 // Third12 25-36
+            10=2,1000000 // FirstRow 1-4-7-10-13-16-19-22-25-28-31-34
+            11=2,1000000 // SecondRow 2-5-8-11-14-17-20-23-26-29-32-35
+            12=2,1000000 // ThirdRow 3-6-9-12-15-18-21-24-27-30-33-36
+            13=35,100000 // OneNumber 一個號碼
+            14=17,100000 // TwoNumber 兩個號碼
+            15=11,100000 // ThreeNumber 三個號碼
+            16=8,100000 // FourNumber 四個號碼
+            17=5,100000 // SixNumber 六個號碼
+            18=47,10000 // SuperZeroNumber 超級零號
+
+            [record]
+            maxsize=30                  // 最多保留多少筆紀錄 Default: 30
+
+            [animate]
+            start=3s                    // 遊戲開始動畫時間 Default: 3s
+            bet=15s                     // 下注時間 Default: 10s
+            award=10s                    // 表演開獎時間 Default: 5s
+            finish=2s                   // 遊戲結束時間 Default: 2s
+
+            [gamequeue]
+            gamematchwaitmintime=1		                                    // 撮合時間間隔範圍小值,單位秒
+            gamematchwaitmaxtime=3		                                    // 撮合時間間隔範圍大值,單位秒
+            againstsameip=0				                                        // 同IP不分配一起
+            againstlastgame=0			                                        // 最後一次遊戲過的用戶不分配一起
+            gameendaction=0				                                        // 遊戲結束後動作,0 無動作 1 準備
+            queuetype=1					                                          // 撮合類型 0 時間隨機 1 固定人數
+            queueusercount=1			                                        // 排隊人數
+            queuetimeout=2				                                        // 排隊人數超時
+
+            [robot]
+            enable=1										                                  // 是否開啟機器人
+            logoninterval=30								                              // 加載機器人時間間隔
+            minmneyamount=1000000								                          // 機器人最小金幣數
+            maxmoneyamount=5000000						                            // 機器人最大金幣數
+            queuecheckwaitspan=5,10							                          // 配桌檢查時間間隔
+            queueagainwaitspan=3,5							                          // 繼續配桌時間間隔
+            tablemaxusercount=480							                            // 配桌時桌子上最大人數
+            tableminusercount=0								                            // 配桌時桌子上最小人數
+            gameendleaveodds=0.5							                            // 遊戲結束時離開遊戲機率
+            maxusergameendleaveodds=1						                          // 人數達到上限時離開遊戲機率
+            autositwaitspan=1,3							                              // 主動入座時間間隔
+            gameactionwaitspan=1,5						                            // 遊戲動作響應時間間隔
+            gamereadywaitspan=3,5							                            // 遊戲準備相應時間間隔
+            maxcardsrndlvl=1								                              // 機器人換牌概率值
+            matchtablemode=0                                              // 配桌方式, 0輪詢桌子每次放一個機器人 1輪詢桌子每次放N個機率機器人 2固定配機器人可配置上限
+            tablematchrobotrate=50,100                                    // 為機器人人數,100機率%. 桌子隨機配N個機器人. 機率要設滿100%
+
+            [supertool]
+            ctrlbetlimit=1000                                             // 監控名單會控制的最低注額(分)
+          robot.dat: |
+            [csize]
+            cn=4
+
+            // 1: Odd         BetType = iota + 1 // 單 1:1
+            // 2: Even                           // 雙 1:1
+            // 3: Red                            // 紅  1:1
+            // 4: Black                          // 黑 1:1
+            // 5: Small                          // 小 1-18 1:1
+            // 6: Big                            // 大 19-36 1:1
+            // 7: First12                        // 1-12 1:2
+            // 8: Second12                       // 13-24 1:2
+            // 9: Third12                        // 25-36 1:2
+            // 10: FirstRow                      // 1-34 1-4-7-10-13-16-19-22-25-28-31-34 1:2
+            // 11: SecondRow                     // 2-35 2-5-8-11-14-17-20-23-26-29-32-35 1:2
+            // 12: ThirdRow                      // 3-36 3-6-9-12-15-18-21-24-27-30-33-36 1:2
+            // 13: OneNumber                     // 單一號碼 1:35
+            // 14: TwoNumber                     // 兩個號碼 1:17
+            // 15: ThreeNumber                   // 三個號碼 1:11
+            // 16: FourNumber                    // 四個號碼 1:8
+            // 17: SixNumber                     // 六個號碼 1:5
+            // 18: SuperZero                     // 超級0 1:47
+
+            // 隨機單雙紅黑大小
+            [c1]
+            betcount=20000,50000      // 一次下注的數量隨機 (分) 200.00 - 500.00
+            bettype=1,2,3,4,5,6           // 下注類型逗號區隔  
+
+            // 隨機 First12 Second12 Third12 FirstRow SecondRow ThirdRow
+            [c2]
+            betcount=5000,5000        // 一次下注的數量隨機 (分) 50.00 - 50.00
+            bettype=7,8,9,10,11,12           // 下注類型逗號區隔  
+
+            // 專門下 13,14,15,16,17 (單一號碼機率高一點)
+            [c3]
+            betcount=1000,1000        // 一次下注的數量隨機 (分) 10.00 - 10.00
+            bettype=13,13,13,14,15,16,17           // 下注類型逗號區隔  
+
+            // 專門下 13,14,15,16,17 (單一號碼機率高一點)
+            [c4]
+            betcount=500,500        // 一次下注的數量隨機 (分) 5.00 - 5.00
+            bettype=13,13,13,14,15,16,17           // 下注類型逗號區隔
+
+

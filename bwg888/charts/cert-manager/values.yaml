@@ -1,0 +1,11 @@
+installCRDs: true
+replicaCount: 1
+
+# 移除资源限制
+resources: {}
+
+# 容忍配置
+tolerations: []
+
+# 节点选择器
+nodeSelector: {} 

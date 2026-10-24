@@ -1,0 +1,14 @@
+apiVersion: v2
+name: laravel-migration
+description: A Helm chart for Laravel database migration jobs
+type: application
+version: 0.1.0
+appVersion: "1.0"
+keywords:
+  - laravel
+  - migration
+  - database
+  - job
+maintainers:
+  - name: GFFTeam
+    email: user@example.invalid

@@ -1,0 +1,39 @@
+image: alpine/helm:3.16.1
+stages:
+  - info
+  - deploy
+  - notify
+
+variables:
+  # 设置全局变量
+  PROJECT_NAME: "gffv1proxy"
+
+workflow:
+  name: "[${SRC_REPO_NAME}:${SRC_REF_NAME}] Deploy"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "trigger"
+      variables:
+        CI_PIPELINE_DESCRIPTION: "desc_${CI_PIPELINE_NAME}"
+
+# 构建阶段
+info_job:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger"'
+      when: on_success
+    - when: never
+  stage: info
+  script:
+    - echo "Hello World from GitLab CI!"
+    - echo "Building project [$PROJECT_NAME]"
+    - echo "Build completed successfully"
+    - echo "SRC_SHORT_SHA = $SRC_SHORT_SHA"
+    - echo "SRC_REPO_NAME = $SRC_REPO_NAME"
+    - echo "SRC_REF_NAME = $SRC_REF_NAME"
+    - echo "KUBECTL_ARGS = $KUBECTL_ARGS"
+    - echo base64 -d $KUBECTL_ARGS
+  tags:
+    - golang
+
+include:
+  - local: 'fon666/deploy.yaml'
+  - local: 'vplus33/deploy.yaml'

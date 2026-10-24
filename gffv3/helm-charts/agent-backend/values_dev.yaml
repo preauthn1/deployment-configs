@@ -1,0 +1,32 @@
+replicaCount: 2
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 2
+
+resources:
+  limits:
+    memory: 512Mi
+  requests:
+    cpu: 0.1
+
+# gateway runtime secrets for dev environment
+gateway:
+  SESSION_PASSWORD: [REDACTED]"
+  AES_KEY: "M53B?xKnTVtVnjM^"
+  AES_IV: "3579653693526433"
+  MD5_KEY: "&zSMvVTK4gbDvCcU"
+  API_URL: "http://agent-console-api-service:60003/"
+  APIS_URL: "http://apis-allinone/"
+  API_INTERNAL: "http://api-internal/"
+  CS_AES_KEY: "mu5*rwp5j%3U4kZG"
+  CS_MD5_KEY: "k^QtGkDg7FXJ#@QC"
+  CS_IV: "9240533016891799"
+  CS_API_URL: "http://cs-api-service:60003/"
+  CS_SOCKET_URL: "https://example.invalid/"
+
+  # target/tickets#4187：live 用 /proxy/detect-ip 驗證過 example.invalid 的
+  # 拓樸——GCLB 會把自己那個沒法枚舉的前端 VIP 放進 X-Forwarded-For 最後一格
+  # （修完 agent-backend 的 nginx 內部 loopback 那層之後），確認開啟安全。
+  TRUSTED_PROXY_SKIP_LAST_HOP: "true"

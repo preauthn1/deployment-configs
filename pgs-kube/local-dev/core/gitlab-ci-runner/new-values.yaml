@@ -1,0 +1,58 @@
+image: gitlab/gitlab-runner:alpine-v15.1.0
+useTini: false
+imagePullPolicy: IfNotPresent
+gitlabUrl: http://example.invalid:1688/
+runnerRegistrationToken: [REDACTED]"
+unregisterRunners: true
+terminationGracePeriodSeconds: 3600
+concurrent: 10
+checkInterval: 5
+rbac:
+  create: false
+  clusterWideAccess: true
+  serviceAccountName: gitlab-ci
+metrics:
+  enabled: true
+runners:
+  config: |
+    [[runners]]
+      [runners.kubernetes]
+        image = "golang:1.12"
+        imagePullSecrets = "regcred"
+        imagePullPolicy = "if-not-present"
+        tags = "golang,dotnet,database,client,protobuf,docker,node,php"
+        privileged = true
+      [runners.cache]
+        Type = "s3"
+        Path = "gitlab_runner"
+        Shared = true
+        [runners.cache.s3]
+          ServerAddress = "example.invalid:9000"
+          BucketName = "gitlab-runner"
+          BucketLocation = "us-east-1"
+          Insecure = true
+          AuthenticationType = "access-key"
+  tags: "golang,dotnet,database,client,protobuf,docker,node,php"
+  cache: 
+    secretName: s3access
+  serviceAccountName: gitlab-ci
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  privileged: false
+  capabilities:
+    drop: ["ALL"]
+
+## Configure securitycontext valid for the whole pod
+## ref: http://example.invalid/docs/user-guide/security-context/
+##
+podSecurityContext:
+  runAsUser: 100
+  # runAsGroup: 65533
+  fsGroup: 65533
+  # supplementalGroups: [65533]
+
+  ## Note: values for the ubuntu image:
+  # runAsUser: 999
+  # fsGroup: 999

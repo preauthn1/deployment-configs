@@ -1,0 +1,182 @@
+image: google/cloud-sdk:latest
+
+variables:
+  TRIGGER_FROM_PROJECT: target/gffv3/apis
+  SRC_TITLE: ${SRC_COMMIT_BRANCH}${SRC_COMMIT_TAG}
+
+workflow:
+  name: "[${SRC_PROJECT}:${SRC_TITLE}] ${SRC_SHORT_SHA}"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "trigger"
+      variables:
+        CI_PIPELINE_DESCRIPTION: "desc_${CI_PIPELINE_NAME}"
+
+stages:
+  - info
+  - choose-env
+  - deploy
+
+info:
+  stage: info
+  tags:
+    - php
+  script:
+    - uname -r
+    - curl -s example.invalid
+    - echo $SRC_COMMIT_BRANCH
+    - echo $SRC_SHORT_SHA
+    - echo $SRC_PROJECT
+    - echo $SRC_IMAGE
+    - echo $BUILD_NAME
+    - echo $CI_BUILD_TARGETS
+
+
+############################################################
+# Extends required variables
+# 建置來源專案
+# TRIGGER_FROM_PROJECT: target/gffv3/apis
+# AR_PATH: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024
+# 應用名
+# DEPLOYMENT_NAME: apis
+# APP_NAME: Laravel
+# GKE 叢集
+# GKE_CLUSTER_NAME: cluster-1
+# GKE_CLUSTER_ZONE: asia-east1-a
+# GCP_PROJECT: tp-wz3-rd
+# 部署命名空間
+# DEPLOY_NS: cm
+# DEPLOY_KEY_FILE: deploy-keys/tp-wz3-rd-deploy.json
+# HELM_CHART_PATH: helm-charts/apis
+# DEPLOY_VALUES_FILE: helm-charts/apis/values.yaml
+############################################################
+.migration:
+  stage: deploy
+  image: google/cloud-sdk:latest
+  tags:
+    - php
+  before_script:
+    - make setup-tools
+    - make debug-info
+  script:
+    - make deploy-gcp
+    - make wait-job-deployment
+
+############################################################
+# 建置來源專案
+# TRIGGER_FROM_PROJECT: target/gffv3/apis
+# AR_PATH: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024
+# 應用名
+# DEPLOYMENT_NAME: apis
+# APP_NAME: Laravel
+# GKE 叢集
+# GKE_CLUSTER_NAME: cluster-1
+# GKE_CLUSTER_ZONE: asia-east1-a
+# GCP_PROJECT: tp-wz3-rd
+# 部署命名空間
+# DEPLOY_NS: cm
+# DEPLOY_KEY_FILE: deploy-keys/tp-wz3-rd-deploy.json
+# HELM_CHART_PATH: helm-charts/apis
+# DEPLOY_VALUES_FILE: helm-charts/apis/values.yaml
+############################################################
+.migration-echo-variables:
+  stage: deploy
+  tags:
+    - php
+  script:
+    - echo "TRIGGER_FROM_PROJECT= ${TRIGGER_FROM_PROJECT}"
+    - echo "AR_PATH= ${AR_PATH}"
+    - echo "DEPLOYMENT_NAME= ${DEPLOYMENT_NAME}"
+    - echo "APP_NAME= ${APP_NAME}"
+    - echo "GKE_CLUSTER_NAME= ${GKE_CLUSTER_NAME}"
+    - echo "GKE_CLUSTER_ZONE= ${GKE_CLUSTER_ZONE}"  
+    - echo "GCP_PROJECT= ${GCP_PROJECT}"
+    - echo "DEPLOY_NS= ${DEPLOY_NS}"
+    - echo "DEPLOY_KEY_FILE= ${DEPLOY_KEY_FILE}"
+    - echo "HELM_CHART_PATH= ${HELM_CHART_PATH}"
+    - echo "DEPLOY_VALUES_FILE= ${DEPLOY_VALUES_FILE}"
+      
+
+############################################################
+# Extends required variables
+# 建置來源專案
+# TRIGGER_FROM_PROJECT: target/gffv3/apis
+# AR_PATH: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024
+# 應用名
+# DEPLOYMENT_NAME: apis
+# APP_NAME: Laravel
+# APP_PORT: 80
+# GKE 叢集
+# GKE_CLUSTER_NAME: cluster-1
+# GKE_CLUSTER_ZONE: asia-east1-a
+# GCP_PROJECT: tp-wz3-rd
+# 部署命名空間
+# DEPLOY_NS: cm
+# 部署相關配置
+# DEPLOY_MODE: split
+# DEPLOY_KEY_FILE: deploy-keys/tp-wz3-rd-deploy.json
+# HELM_CHART_PATH: helm-charts/apis
+# DEPLOY_VALUES_FILE: helm-charts/apis/values.yaml
+############################################################
+.deploy-app:
+  stage: deploy
+  image: google/cloud-sdk:latest
+  tags:
+    - php
+  before_script:
+    - make setup-tools
+    - make debug-info
+    
+  script:
+    - make deploy-gcp
+
+############################################################
+# Extends required variables
+# 建置來源專案
+# TRIGGER_FROM_PROJECT: target/gffv3/apis
+# AR_PATH: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024
+# 應用名
+# DEPLOYMENT_NAME: apis
+# APP_NAME: Laravel
+# APP_PORT: 80
+# GKE 叢集
+# GKE_CLUSTER_NAME: cluster-1
+# GKE_CLUSTER_ZONE: asia-east1-a
+# GCP_PROJECT: tp-wz3-rd
+# 部署命名空間
+# DEPLOY_NS: cm
+# 部署相關配置
+# DEPLOY_MODE: split
+# DEPLOY_KEY_FILE: deploy-keys/tp-wz3-rd-deploy.json
+# HELM_CHART_PATH: helm-charts/apis
+# DEPLOY_VALUES_FILE: helm-charts/apis/values.yaml
+############################################################
+.deploy-app-echo-variables:
+  stage: deploy
+  tags:
+    - php
+  script:
+    - echo "TRIGGER_FROM_PROJECT= ${TRIGGER_FROM_PROJECT}"
+    - echo "AR_PATH= ${AR_PATH}"
+    - echo "DEPLOYMENT_NAME= ${DEPLOYMENT_NAME}"
+    - echo "APP_NAME= ${APP_NAME}"
+    - echo "APP_PORT= ${APP_PORT}"
+    - echo "GKE_CLUSTER_NAME= ${GKE_CLUSTER_NAME}"
+    - echo "GKE_CLUSTER_ZONE= ${GKE_CLUSTER_ZONE}"
+    - echo "GCP_PROJECT= ${GCP_PROJECT}"
+    - echo "DEPLOY_NS= ${DEPLOY_NS}"
+    - echo "DEPLOY_MODE= ${DEPLOY_MODE}"
+    - echo "DEPLOY_KEY_FILE= ${DEPLOY_KEY_FILE}"
+    - echo "HELM_CHART_PATH= ${HELM_CHART_PATH}"
+    - echo "DEPLOY_VALUES_FILE= ${DEPLOY_VALUES_FILE}"
+    - echo "deploy to ${GCP_PROJECT} (${DEPLOYMENT_NAME})"
+
+include:
+  - .gitlab-ci-jobs/deploy-to-rd.yml
+  - .gitlab-ci-jobs/deploy-to-prods/vworldmy.yaml
+#  - .gitlab-ci-jobs/deploy-to-prods/vietwin88.yaml
+  - .gitlab-ci-jobs/deploy-to-prods/vplus33.yaml
+  - .gitlab-ci-jobs/deploy-to-prods/alfawin77.yaml
+  - .gitlab-ci-jobs/deploy-to-prods/vwb2c.yaml
+  - .gitlab-ci-jobs/deploy-to-prods/wintoto.yaml
+  - .gitlab-ci-jobs/deploy-to-prods/yes2win.yaml
+  - .gitlab-ci-jobs/deploy-to-prods/tpower.yaml

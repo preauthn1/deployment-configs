@@ -1,0 +1,98 @@
+replicaCount: 1
+
+image:
+  repository: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024/target/gffv3/web-frontend
+  pullPolicy: IfNotPresent
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+podSecurityContext: {}
+securityContext: {}
+
+# web-frontend 是單一 Nitro node 進程（repo 根目錄 Dockerfile，node .output/server/index.mjs），
+# 容器內聽 3000，沒有 agent-backend 那層 nginx。
+service:
+  type: ClusterIP
+  port: 3000
+
+# 對外入口比照 apis / agent-backend 慣例由叢集側管理，chart 不開 ingress。
+# ⚠️ 站台解析（server/middleware/site.ts）與 CSRF 檢查（server/middleware/origin-check.ts）
+#   都依賴 Host / X-Forwarded-Host，入口必須把使用者請求的原始 Host 一路帶到 pod。
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+resources:
+  limits:
+    memory: 512Mi
+  requests:
+    cpu: 0.1
+
+# /api/_health 是 web-frontend 的 server/api/_health.get.ts，site middleware 會略過它，
+# 不會為了探測去 apis 查 template。
+livenessProbe:
+  httpGet:
+    path: /api/_health
+    port: http
+  initialDelaySeconds: 15
+  periodSeconds: 20
+
+readinessProbe:
+  httpGet:
+    path: /api/_health
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# 非機密設定，以一般 env 注入（對應 web-frontend nuxt.config.ts 的 runtimeConfig）
+config:
+  # 客服站台網址（舊專案的 API_CHATPATH），/chat 以 iframe 嵌入
+  NUXT_PUBLIC_CHAT_BASE_URL: ""
+  # 品牌三層解析：template 欄位 → host 對照表(JSON) → 預設品牌
+  NUXT_PUBLIC_DEFAULT_BRAND: ""
+  NUXT_BRAND_FIELD: "brand_code"
+  NUXT_HOST_BRAND_MAP: ""
+  # template 快取秒數（每個 pod 記憶體）
+  NUXT_TEMPLATE_CACHE_TTL: "60"
+  # BFF 回應 zod 驗證：dev 環境開、正式關（off）
+  NUXT_PUBLIC_API_SCHEMA_VALIDATION: "off"
+
+# runtime secrets — 各環境於 values_<env>.yaml 覆寫
+# 名稱必須是 NUXT_* 原名：金鑰類由 server/utils/env.ts readSecretEnv() 直接讀 process.env
+secrets:
+  # apis frontend 面向位置（allinone：http://apis-allinone/；split：http://apis-frontend/）
+  NUXT_API_BASE_URL: ""
+  # 與 apis values_<env>.yaml 的 app.api.aes_key / aes_iv / aes_md5 一致
+  NUXT_API_AES_KEY: ""
+  NUXT_API_AES_IV: ""
+  NUXT_API_MD5_KEY: ""
+  # nuxt-auth-utils 密封 cookie 的密碼，>= 32 字元，每個環境各自產生
+  NUXT_SESSION_PASSWORD: ""

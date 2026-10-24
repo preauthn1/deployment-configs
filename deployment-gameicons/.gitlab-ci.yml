@@ -1,0 +1,72 @@
+image: curlimages/curl-base:8.9.1
+stages:
+  - info
+  - push
+  - purge_cache
+info:
+  stage: info
+  script:
+    - curl example.invalid/ip
+  tags:
+    - golang
+  only:
+    - main
+push to hanstech:
+  stage: push
+  before_script:
+    - build_dir=$(pwd)
+    - mv /usr/lib/libcurl.so* /tmp
+    - apk update --no-cache
+    - apk upgrade --no-cache
+    - apk add bash git make --no-cache
+    - git clone https://example.invalid/git-ftp/git-ftp.git /opt/git-ftp
+    - cd /opt/git-ftp
+    - make install
+    - rm -rf /opt/git-ftp
+    - cd $build_dir
+    - mv /tmp/libcurl.so* /usr/lib
+  script:
+    # Sync to FTP
+    - ls ./
+    - pwd
+    - git ftp push -u upuser -p dI20tgkd sftp://0.0.0.0 -vv --auto-init --syncroot . --remote-root /opt/ftpd_server/pure-ftpd/data
+    #- lftp -e "set ftp:ssl-allow false; mirror -RLv -x .git -x README.md ./ /html/test/ --transfer-all --parallel=20 --no-perm; exit;" -u $FTP_USERNAME,$FTP_PASSWORD $FTP_HOST
+    #- lftp -e "set ftp:ssl-allow false; mirror -RLv -x .* -x .*/ --transfer-all --parallel=20 --verbose --delete ./ html/test/; bye" -u $FTP_USERNAME,$FTP_PASSWORD 0.0.0.0
+  tags:
+    - golang
+  only:
+    - main
+  when: manual
+push to gcp:
+  stage: push
+  before_script:
+    - build_dir=$(pwd)
+    - mv /usr/lib/libcurl.so* /tmp
+    - apk update --no-cache
+    - apk upgrade --no-cache
+    - apk add bash git make --no-cache
+    - git clone https://example.invalid/git-ftp/git-ftp.git /opt/git-ftp
+    - cd /opt/git-ftp
+    - make install
+    - rm -rf /opt/git-ftp
+    - cd $build_dir
+    - mv /tmp/libcurl.so* /usr/lib
+  script:
+    # Sync to FTP
+    - ls ./
+    - pwd
+    - git ftp push -u upuser -p dI20tgkd sftp://0.0.0.0 -vv --auto-init --syncroot . --remote-root /data/resources/html/data
+    #- lftp -e "set ftp:ssl-allow false; mirror -RLv -x .git -x README.md ./ /html/test/ --transfer-all --parallel=20 --no-perm; exit;" -u $FTP_USERNAME,$FTP_PASSWORD $FTP_HOST
+    #- lftp -e "set ftp:ssl-allow false; mirror -RLv -x .* -x .*/ --transfer-all --parallel=20 --verbose --delete ./ html/test/; bye" -u $FTP_USERNAME,$FTP_PASSWORD 0.0.0.0
+  tags:
+    - golang
+  only:
+    - main
+purge cache:
+  stage: purge_cache
+  script:
+    - curl --location 'https://example.invalid/client/v4/zones/f9d6fa7609dd5abcc9be7cc9f1806499/purge_cache' --header 'X-Auth-Key:03022fad912814437aa9bcbdc846dcd017631' --header 'X-Auth-Email:user@example.invalid' --header 'Content-Type:application/json' --header 'Cookie:__cf_bm=.A029bXUP6EZnSnqbaIzp5R5gfo8ND6VQFavLeZyDPc-1724300369-0.0.0.0-uNw6cEdW4QSFHyLJHmYUmKV0iGuel8JR.Ni2yUaUhG0ghDmq5iDK1EKew1BnGx7.ZdnTJVsj2sSRt9tFdhR0_g; __cflb=0H28vgHxwvgAQtjUGUFqYFDiSDreGJnV4s7qkarjCjw' --data '{"purge_everything":true}'
+  tags:
+    - golang
+  only:
+    - main

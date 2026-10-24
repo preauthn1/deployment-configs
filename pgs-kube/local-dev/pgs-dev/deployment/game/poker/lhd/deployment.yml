@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-game-poker-lhd-1
+  namespace: target-dev
+spec:
+  type: ClusterIP
+  ports:
+    - port: 12101
+      protocol: TCP
+  selector:
+    name: game-poker-lhd-1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    example.invalid/auto: "true"
+  name: deployment-game-poker-lhd-1
+  namespace: target-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: game-poker-lhd-1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      annotations:
+        version/config: "20200316003"
+      labels:
+        name: game-poker-lhd-1
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      volumes:
+        - name: api
+          configMap:
+            name: game-apiserver
+            items:
+              - key: apiserver-api.dat
+                path: api.dat
+        - name: lhd-1
+          configMap:
+            name: game-poker-lhd
+            items:
+              - key: lhd-1-robot.dat
+                path: robot.dat
+              - key: lhd-1-gameserver.dat
+                path: gameserver.dat
+              - key: lhd-1-serverinfo.dat
+                path: serverinfo.dat
+        - name: storage
+          emptyDir: {}
+      containers:
+        - name: game-poker-lhd
+          image: example.invalid/gameserver:beta
+          #imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
+          env:
+            - name: ENV_API_PATH
+              value: "/app/apiserver"
+            - name: ENV_API_NAME
+              value: "apiserver"
+            - name: ENV_APP_PATH
+              value: "/app/gameserver/lhd"
+            - name: ENV_APP_NAME
+              value: "lhd"
+          ports:
+            - name: lhd-1
+              containerPort: 12101
+              protocol: TCP
+          volumeMounts:
+            - name: api
+              mountPath: /app/apiserver/config
+              readOnly: true
+            - name: lhd-1
+              mountPath: /app/gameserver/lhd/config
+              readOnly: true

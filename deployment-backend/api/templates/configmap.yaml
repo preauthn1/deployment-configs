@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-appsettings
+data:
+  appsettings-adminsys.json: | 
+    {{ tpl ($.Files.Get "appsettings-adminsys.json") . | nindent 4 }}
+  appsettings-game.json: | 
+    {{ tpl ($.Files.Get "appsettings-game.json") . | nindent 4 }}
+  appsettings-public.json: | 
+    {{ tpl ($.Files.Get "appsettings-public.json") . | nindent 4 }}
+  appsettings-vendor.json: | 
+    {{ tpl ($.Files.Get "appsettings-vendor.json") . | nindent 4 }}
+  appsettings-sandbox_vendor.json: | 
+    {{ tpl ($.Files.Get "appsettings-sandbox_vendor.json") . | nindent 4 }}  
+  appsettings-externalvendor.json: | 
+    {{ tpl ($.Files.Get "appsettings-externalvendor.json") . | nindent 4 }}
+  appsettings-file.json: | 
+    {{ tpl ($.Files.Get "appsettings-file.json") . | nindent 4 }}
+  appsettings-job-console.json: | 
+    {{ tpl ($.Files.Get "appsettings-job-console.json") . | nindent 4 }}
+  appsettings-job.json: | 
+    {{ tpl ($.Files.Get "appsettings-job.json") . | nindent 4 }}

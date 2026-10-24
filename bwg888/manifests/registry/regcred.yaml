@@ -1,0 +1,8 @@
+kind: Secret
+apiVersion: v1
+metadata:
+  name: regcred
+  namespace: bwg
+type: example.invalid/dockerconfigjson
+data:
+  .dockerconfigjson: eyJhdXRocyI6eyJyZWdpc3RyeS5kZDk5LnNpdGUiOnsidXNlcm5hbWUiOiJhZG1pbiIsInBhc3N3b3JkIjoiYWRtaW4xMjMiLCJhdXRoIjoiWVdSdGFXNDZZV1J0YVc0eE1qTT0ifX19 

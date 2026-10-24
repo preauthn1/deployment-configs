@@ -1,0 +1,300 @@
+game:
+  ald:
+    id: 1025
+    name: 阿拉丁
+    group: slot
+    room:
+      - serverid: 102500410
+        proto: ald
+        configs: 
+          gameserver.dat: |
+            [gameserver]
+            gameid=1025				 	                              // 遊戲ID
+            gamename=阿拉丁  		 	                            // 遊戲名稱
+            flag=41                                           // 顯示名稱,客戶端可根據此名稱將房間分類顯示
+            minplayer=1                                       // 遊戲最小人數
+            maxplayer=1                                       // 遊戲最大人數
+            tablecount=480                                    // 桌子數
+            seatcount=1                                       // 椅子數
+            loginmoney=0                                      // 進入遊戲最小積分
+            scoremode=0                                       // 0 即時寫分 1 退房間寫分 2 比賽 3 分段寫分
+            maxuser=480                                       // 最大人數
+            taxscale=0                                        // 抽水比例
+            readywaittime=10                                  // 舉手超時時間,單位秒
+            reghallserverinterval=5                           // 註冊廣場時間間隔,單位秒
+            basescore=100                                     // 底分
+            deallog=2                                         // 牌局記錄器類型 0 不記錄 ,1 文本, 2 db, 3 fish, 4分段寫分
+            mincarrymoney=0                                   // 下注攜帶金額限制
+
+            [gamequeue]
+            gamematchwaitmintime=1                            // 撮合時間間隔範圍小值,單位秒
+            gamematchwaitmaxtime=3                            // 撮合時間間隔範圍大值,單位秒
+            againstsameip=0                                   // 同IP不分配一起
+            againstlastgame=0                                 // 最後一次遊戲過的用戶不分配一起
+            gameendaction=0                                   // 遊戲結束後動作,0 無動作 1 準備
+            queuetype=1                                       // 撮合類型 0 時間隨機 1 固定人數
+            queueusercount=1                                  // 排隊人數
+            queuetimeout=2                                    // 排隊人數超時
+          slotconfig.dat: |
+            [slotsetting]
+            endactiontime=1				                            // 結算動畫超時
+            betcount=10,20,30,50,70,100,200,300,500,700,1000  // 一次下注的數量
+
+            slotpattern=3                                     // 參考csv SlotPattern類型, 可多個用逗號分
+            releasepattern=3                                  // 放分
+            bitepattern=3                                     // 咬分
+            bigwinrule=25,75,150,250   								        // client動畫播放階段,以Bet為主
+            bigwinnotify=25                                   // 當下注16, Total=6400(16*400) 得獎超過6400才廣播.
+
+            [symbols]
+            w1.title=百搭
+            w1.desc=可代表任何符号，只出现在第2、3、4转轴。 \n符号扩展占据整个转轴，并触发免费再转\n免费再转最多触发3次
+
+            [description]
+            payline.desc=游戏有10条赔付线，转轴上由最左至右或由最右至左连续出现3个以上的相同符号，即可获得该图目标得分奖励！ \n只赔付每条线中赢取最高的奖金。 \n游戏出现故障时，所有赔付和游戏都视为无效。
+      - serverid: 102518810
+        proto: ald
+        configs: 
+          gameserver.dat: |
+            [gameserver]
+            gameid=1025				 	                                            // 遊戲ID
+            gamename=阿拉丁  		 	                                          // 遊戲名稱
+            flag=1881                                                       // 顯示名稱,客戶端可根據此名稱將房間分類顯示
+            minplayer=1                                                     // 遊戲最小人數
+            maxplayer=1                                                     // 遊戲最大人數
+            tablecount=480                                                  // 桌子數
+            seatcount=1                                                     // 椅子數
+            loginmoney=0                                                    // 進入遊戲最小積分
+            scoremode=0                                                     // 0 即時寫分 1 退房間寫分 2 比賽 3 分段寫分
+            maxuser=480                                                     // 最大人數
+            taxscale=0                                                      // 抽水比例
+            readywaittime=10                                                // 舉手超時時間,單位秒
+            reghallserverinterval=5                                         // 註冊廣場時間間隔,單位秒
+            basescore=100                                                   // 底分
+            deallog=2                                                       // 牌局記錄器類型 0 不記錄 ,1 文本, 2 db, 3 fish, 4分段寫分
+            mincarrymoney=0                                                 // 下注攜帶金額限制
+
+            [gamequeue]
+            gamematchwaitmintime=1                                          // 撮合時間間隔範圍小值,單位秒
+            gamematchwaitmaxtime=3                                          // 撮合時間間隔範圍大值,單位秒
+            againstsameip=0                                                 // 同IP不分配一起
+            againstlastgame=0                                               // 最後一次遊戲過的用戶不分配一起
+            gameendaction=0                                                 // 遊戲結束後動作,0 無動作 1 準備
+            queuetype=1                                                     // 撮合類型 0 時間隨機 1 固定人數
+            queueusercount=1                                                // 排隊人數
+            queuetimeout=2                                                  // 排隊人數超時
+          slotconfig.dat: |
+            [slotsetting]
+            endactiontime=1				                                          // 结算动画超时
+            betcount=100,200,300,500,700,1000,2000,3000,5000,7000,10000     // 一次下注的数量
+
+            slotpattern=3                                                   // 參考csv SlotPattern類型, 可多個用逗號分
+            releasepattern=3                                                // 放分
+            bitepattern=3                                                   // 咬分
+            bigwinrule=25,75,150,250   								                      // client動畫播放階段,以Bet為主
+            bigwinnotify=25                                                 // 當下注16, Total=6400(16*400) 得獎超過6400才廣播.
+
+            [symbols]
+            w1.title=百搭
+            w1.desc=可代表任何符号，只出现在第2、3、4转轴。 \n符号扩展占据整个转轴，并触发免费再转\n免费再转最多触发3次
+
+            [description]
+            payline.desc=游戏有10条赔付线，转轴上由最左至右或由最右至左连续出现3个以上的相同符号，即可获得该图目标得分奖励！ \n只赔付每条线中赢取最高的奖金。 \n游戏出现故障时，所有赔付和游戏都视为无效。
+            
+            [unit-prefix]
+            K=1000
+            M=1000000
+      - serverid: 102508810
+        proto: ald
+        configs: 
+          gameserver.dat: |
+            [gameserver]
+            gameid=1025				 	                              // 遊戲ID
+            gamename=阿拉丁  		 	                            // 遊戲名稱
+            flag=881                                           // 顯示名稱,客戶端可根據此名稱將房間分類顯示
+            minplayer=1                                       // 遊戲最小人數
+            maxplayer=1                                       // 遊戲最大人數
+            tablecount=480                                    // 桌子數
+            seatcount=1                                       // 椅子數
+            loginmoney=0                                      // 進入遊戲最小積分
+            scoremode=0                                       // 0 即時寫分 1 退房間寫分 2 比賽 3 分段寫分
+            maxuser=480                                       // 最大人數
+            taxscale=0                                        // 抽水比例
+            readywaittime=10                                  // 舉手超時時間,單位秒
+            reghallserverinterval=5                           // 註冊廣場時間間隔,單位秒
+            basescore=100                                     // 底分
+            deallog=2                                         // 牌局記錄器類型 0 不記錄 ,1 文本, 2 db, 3 fish, 4分段寫分
+            mincarrymoney=0                                   // 下注攜帶金額限制
+
+            [gamequeue]
+            gamematchwaitmintime=1                            // 撮合時間間隔範圍小值,單位秒
+            gamematchwaitmaxtime=3                            // 撮合時間間隔範圍大值,單位秒
+            againstsameip=0                                   // 同IP不分配一起
+            againstlastgame=0                                 // 最後一次遊戲過的用戶不分配一起
+            gameendaction=0                                   // 遊戲結束後動作,0 無動作 1 準備
+            queuetype=1                                       // 撮合類型 0 時間隨機 1 固定人數
+            queueusercount=1                                  // 排隊人數
+            queuetimeout=2                                    // 排隊人數超時
+          slotconfig.dat: |
+            [slotsetting]
+            endactiontime=1				                            // 結算動畫超時
+            betcount=10,20,30,50,70,100,200,300,500,700,1000  // 一次下注的數量
+
+            slotpattern=3                                     // 參考csv SlotPattern類型, 可多個用逗號分
+            releasepattern=3                                  // 放分
+            bitepattern=3                                     // 咬分
+            bigwinrule=25,75,150,250   								        // client動畫播放階段,以Bet為主
+            bigwinnotify=25                                   // 當下注16, Total=6400(16*400) 得獎超過6400才廣播.
+
+            [symbols]
+            w1.title=百搭
+            w1.desc=可代表任何符号，只出现在第2、3、4转轴。 \n符号扩展占据整个转轴，并触发免费再转\n免费再转最多触发3次
+
+            [description]
+            payline.desc=游戏有10条赔付线，转轴上由最左至右或由最右至左连续出现3个以上的相同符号，即可获得该图目标得分奖励！ \n只赔付每条线中赢取最高的奖金。 \n游戏出现故障时，所有赔付和游戏都视为无效。
+      - serverid: 102500010
+        proto: ald
+        configs: 
+          gameserver.dat: |
+            [gameserver]
+            gameid=1025				 	                              // 遊戲ID
+            gamename=阿拉丁  		 	                            // 遊戲名稱
+            flag=1                                           // 顯示名稱,客戶端可根據此名稱將房間分類顯示
+            minplayer=1                                       // 遊戲最小人數
+            maxplayer=1                                       // 遊戲最大人數
+            tablecount=480                                    // 桌子數
+            seatcount=1                                       // 椅子數
+            loginmoney=0                                      // 進入遊戲最小積分
+            scoremode=0                                       // 0 即時寫分 1 退房間寫分 2 比賽 3 分段寫分
+            maxuser=480                                       // 最大人數
+            taxscale=0                                        // 抽水比例
+            readywaittime=10                                  // 舉手超時時間,單位秒
+            reghallserverinterval=5                           // 註冊廣場時間間隔,單位秒
+            basescore=100                                     // 底分
+            deallog=2                                         // 牌局記錄器類型 0 不記錄 ,1 文本, 2 db, 3 fish, 4分段寫分
+            mincarrymoney=0                                   // 下注攜帶金額限制
+
+            [gamequeue]
+            gamematchwaitmintime=1                            // 撮合時間間隔範圍小值,單位秒
+            gamematchwaitmaxtime=3                            // 撮合時間間隔範圍大值,單位秒
+            againstsameip=0                                   // 同IP不分配一起
+            againstlastgame=0                                 // 最後一次遊戲過的用戶不分配一起
+            gameendaction=0                                   // 遊戲結束後動作,0 無動作 1 準備
+            queuetype=1                                       // 撮合類型 0 時間隨機 1 固定人數
+            queueusercount=1                                  // 排隊人數
+            queuetimeout=2                                    // 排隊人數超時
+          slotconfig.dat: |
+            [slotsetting]
+            endactiontime=1				                            // 結算動畫超時
+            betcount=10,20,30,50,70,100,200,300,500,700,1000  // 一次下注的數量
+
+            slotpattern=3                                     // 參考csv SlotPattern類型, 可多個用逗號分
+            releasepattern=3                                  // 放分
+            bitepattern=3                                     // 咬分
+            bigwinrule=25,75,150,250   								        // client動畫播放階段,以Bet為主
+            bigwinnotify=25                                   // 當下注16, Total=6400(16*400) 得獎超過6400才廣播.
+
+            [symbols]
+            w1.title=百搭
+            w1.desc=可代表任何符号，只出现在第2、3、4转轴。 \n符号扩展占据整个转轴，并触发免费再转\n免费再转最多触发3次
+
+            [description]
+            payline.desc=游戏有10条赔付线，转轴上由最左至右或由最右至左连续出现3个以上的相同符号，即可获得该图目标得分奖励！ \n只赔付每条线中赢取最高的奖金。 \n游戏出现故障时，所有赔付和游戏都视为无效。            
+            
+      - serverid: 102502110
+        proto: ald
+        configs: 
+          gameserver.dat: |
+            [gameserver]
+            gameid=1025				 	                              // 遊戲ID
+            gamename=阿拉丁  		 	                            // 遊戲名稱
+            flag=211                                           // 顯示名稱,客戶端可根據此名稱將房間分類顯示
+            minplayer=1                                       // 遊戲最小人數
+            maxplayer=1                                       // 遊戲最大人數
+            tablecount=480                                    // 桌子數
+            seatcount=1                                       // 椅子數
+            loginmoney=0                                      // 進入遊戲最小積分
+            scoremode=0                                       // 0 即時寫分 1 退房間寫分 2 比賽 3 分段寫分
+            maxuser=480                                       // 最大人數
+            taxscale=0                                        // 抽水比例
+            readywaittime=10                                  // 舉手超時時間,單位秒
+            reghallserverinterval=5                           // 註冊廣場時間間隔,單位秒
+            basescore=100                                     // 底分
+            deallog=2                                         // 牌局記錄器類型 0 不記錄 ,1 文本, 2 db, 3 fish, 4分段寫分
+            mincarrymoney=0                                   // 下注攜帶金額限制
+
+            [gamequeue]
+            gamematchwaitmintime=1                            // 撮合時間間隔範圍小值,單位秒
+            gamematchwaitmaxtime=3                            // 撮合時間間隔範圍大值,單位秒
+            againstsameip=0                                   // 同IP不分配一起
+            againstlastgame=0                                 // 最後一次遊戲過的用戶不分配一起
+            gameendaction=0                                   // 遊戲結束後動作,0 無動作 1 準備
+            queuetype=1                                       // 撮合類型 0 時間隨機 1 固定人數
+            queueusercount=1                                  // 排隊人數
+            queuetimeout=2                                    // 排隊人數超時
+          slotconfig.dat: |
+            [slotsetting]
+            endactiontime=1				                            // 結算動畫超時
+            betcount=10,20,30,50,70,100,200,300,500,700,1000  // 一次下注的數量
+
+            slotpattern=3                                     // 參考csv SlotPattern類型, 可多個用逗號分
+            releasepattern=3                                  // 放分
+            bitepattern=3                                     // 咬分
+            bigwinrule=25,75,150,250   								        // client動畫播放階段,以Bet為主
+            bigwinnotify=25                                   // 當下注16, Total=6400(16*400) 得獎超過6400才廣播.
+
+            [symbols]
+            w1.title=百搭
+            w1.desc=可代表任何符号，只出现在第2、3、4转轴。 \n符号扩展占据整个转轴，并触发免费再转\n免费再转最多触发3次
+
+            [description]
+            payline.desc=游戏有10条赔付线，转轴上由最左至右或由最右至左连续出现3个以上的相同符号，即可获得该图目标得分奖励！ \n只赔付每条线中赢取最高的奖金。 \n游戏出现故障时，所有赔付和游戏都视为无效。 
+      
+      - serverid: 102504010
+        proto: ald
+        configs: 
+          gameserver.dat: |
+            [gameserver]
+            gameid=1025				 	                              // 遊戲ID
+            gamename=阿拉丁  		 	                            // 遊戲名稱
+            flag=401                                           // 顯示名稱,客戶端可根據此名稱將房間分類顯示
+            minplayer=1                                       // 遊戲最小人數
+            maxplayer=1                                       // 遊戲最大人數
+            tablecount=480                                    // 桌子數
+            seatcount=1                                       // 椅子數
+            loginmoney=0                                      // 進入遊戲最小積分
+            scoremode=0                                       // 0 即時寫分 1 退房間寫分 2 比賽 3 分段寫分
+            maxuser=480                                       // 最大人數
+            taxscale=0                                        // 抽水比例
+            readywaittime=10                                  // 舉手超時時間,單位秒
+            reghallserverinterval=5                           // 註冊廣場時間間隔,單位秒
+            basescore=100                                     // 底分
+            deallog=2                                         // 牌局記錄器類型 0 不記錄 ,1 文本, 2 db, 3 fish, 4分段寫分
+            mincarrymoney=0                                   // 下注攜帶金額限制
+
+            [gamequeue]
+            gamematchwaitmintime=1                            // 撮合時間間隔範圍小值,單位秒
+            gamematchwaitmaxtime=3                            // 撮合時間間隔範圍大值,單位秒
+            againstsameip=0                                   // 同IP不分配一起
+            againstlastgame=0                                 // 最後一次遊戲過的用戶不分配一起
+            gameendaction=0                                   // 遊戲結束後動作,0 無動作 1 準備
+            queuetype=1                                       // 撮合類型 0 時間隨機 1 固定人數
+            queueusercount=1                                  // 排隊人數
+            queuetimeout=2                                    // 排隊人數超時
+          slotconfig.dat: |
+            [slotsetting]
+            endactiontime=1				                            // 結算動畫超時
+            betcount=10,20,30,50,70,100,200,300,500,700,1000  // 一次下注的數量
+
+            slotpattern=3                                     // 參考csv SlotPattern類型, 可多個用逗號分
+            releasepattern=3                                  // 放分
+            bitepattern=3                                     // 咬分
+            bigwinrule=25,75,150,250   								        // client動畫播放階段,以Bet為主
+            bigwinnotify=25                                   // 當下注16, Total=6400(16*400) 得獎超過6400才廣播.
+
+            [symbols]
+            w1.title=百搭
+            w1.desc=可代表任何符号，只出现在第2、3、4转轴。 \n符号扩展占据整个转轴，并触发免费再转\n免费再转最多触发3次
+
+            [description]
+            payline.desc=游戏有10条赔付线，转轴上由最左至右或由最右至左连续出现3个以上的相同符号，即可获得该图目标得分奖励！ \n只赔付每条线中赢取最高的奖金。 \n游戏出现故障时，所有赔付和游戏都视为无效。           

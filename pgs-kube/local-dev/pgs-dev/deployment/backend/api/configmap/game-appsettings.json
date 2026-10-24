@@ -1,0 +1,37 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "AllowedHosts": "*",
+
+  "ConnectionStrings": {
+    "MasterDB": "Server=0.0.0.0;Initial Catalog=PGS_Master;Persist Security Info=False;User ID=target;Password=[REDACTED];MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;",
+    "StatReportDB": "Server=0.0.0.0;Initial Catalog=PGS_StatReport;Persist Security Info=False;User ID=target;Password=[REDACTED];MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;",
+    "TransactionDB": "Server=0.0.0.0;Initial Catalog=PGS_Transaction;Persist Security Info=False;User ID=target;Password=[REDACTED];MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;",
+    "GameLogDB": "Server=0.0.0.0;Initial Catalog=PGS_GameLog;Persist Security Info=False;User ID=target;Password=[REDACTED];MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;",
+    "SystemLogDB": "Server=0.0.0.0;Initial Catalog=PGS_SystemLog;Persist Security Info=False;User ID=target;Password=[REDACTED];MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;"
+  },
+
+  "SlackNotify": {
+
+    "NotifyChannel_When_SystemException": "n_error_game_api",
+    "IsNotifyEnable_When_SystemException": true
+  },
+  
+  "ThirdParty": {
+
+    "RedisConn": "example.invalid:6380,password=[REDACTED],ssl=True,abortConnect=False",
+    "RedisDBNumber": 1
+  },
+  
+  "ApiCertificateValue": "851b-222e5f24024b",
+  "ApiRequestLogTableName": "[dbo].[ApiRequestLogGameAPI]",
+  "ApiRequestErrorLogTableName": "[dbo].[ApiRequestLogGameAPIError]",
+
+  "WebSiteName": "target.API.Game.Local",
+  "IsEnableCache": true
+}

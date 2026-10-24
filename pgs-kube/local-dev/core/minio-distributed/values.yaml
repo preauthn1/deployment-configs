@@ -1,0 +1,9 @@
+mode: distributed
+replicas: 4
+accessKey: minio
+secretKey: minio123
+service: 
+  type: LoadBalancer
+persistence:
+  storageClass: fast
+  size: 10Gi

@@ -1,0 +1,82 @@
+{{- if .Values.cronjob.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name }}-cronjob
+  labels:
+    example.invalid/component: cronjob
+spec:
+  schedule: {{ .Values.cronjob.schedule | quote }}
+  timeZone: {{ .Values.cronjob.timeZone | default "UTC" }}
+  concurrencyPolicy: {{ .Values.cronjob.concurrencyPolicy }}
+  failedJobsHistoryLimit: {{ .Values.cronjob.failedJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ .Values.cronjob.successfulJobsHistoryLimit }}
+  startingDeadlineSeconds: {{ .Values.cronjob.startingDeadlineSeconds }}
+  jobTemplate:
+    spec:
+      backoffLimit: {{ .Values.cronjob.backoffLimit }}
+      template:
+        metadata:
+          {{- with .Values.podAnnotations }}
+          annotations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          labels:
+            example.invalid/component: cronjob
+        spec:
+          restartPolicy: {{ .Values.cronjob.restartPolicy }}
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          serviceAccountName: {{ include "gffpay.serviceAccountName" . }}
+          securityContext:
+            {{- toYaml .Values.podSecurityContext | nindent 12 }}
+          volumes:
+            - name: shared-files
+              emptyDir: {}
+            - name: config
+              configMap:
+                name: {{ .Release.Name }}-config
+                items:
+                  - key: .env
+                    path: .env
+                  - key: nginx.conf
+                    path: nginx.conf
+                  - key: www.conf
+                    path: www.conf
+          containers:
+          - name: {{ .Release.Name }}-scheduler
+            securityContext:
+              {{- toYaml .Values.securityContext | nindent 14 }}
+            image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            imagePullPolicy: {{ .Values.image.pullPolicy }}
+            command: ["/bin/sh"]
+            args: ["-c", "{{ .Values.cronjob.command }}"]
+            volumeMounts:
+              - name: config
+                mountPath: /app/.env
+                subPath: .env
+                readOnly: true
+              - name: config
+                mountPath: /usr/local/etc/php-fpm.d/www.conf
+                subPath: www.conf
+                readOnly: true
+            env:
+              - name: APP_NAME
+                value: Laravel_Scheduler
+            resources:
+              {{- toYaml .Values.cronjob.resources | nindent 14 }}
+          {{- with .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+{{- end }}

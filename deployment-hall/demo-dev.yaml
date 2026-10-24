@@ -1,0 +1,47 @@
+image:
+  repository: example.invalid/target/hall
+  tag: latest
+  pullPolicy: Always
+
+imagePullSecrets: 
+  - name: regcred
+
+ingress:
+  enabled: true
+  annotations: {}
+    # example.invalid/ingress.class: nginx
+    # example.invalid/tls-acme: "true"
+  hosts:
+    - host: example.invalid
+      paths: [/]
+  tls:
+    - secretName: docker-registry-tls-certificate
+      hosts:
+        - example.invalid
+
+hall:
+  server:
+    http:
+      port: 8080
+
+  target:
+    api:
+      uri: http://example.invalid/v1
+    merchant:
+      # 轉帳錢包商戶
+      id: 175013
+      api-key: PgSeXpErIeNcE
+      game-item-style: 2
+      showDescription: 1
+      # 單一錢包商戶
+      # id: 175028
+      # api-key: c91a94a09e6511e
+      # 是否單一錢包商戶
+      is-single-wallet: false
+      # 是否固定用戶
+      # fixed-user: monitor-001
+      
+      
+    brand:
+      name: target
+      title: target Demo Hall

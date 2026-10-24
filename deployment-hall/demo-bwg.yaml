@@ -1,0 +1,46 @@
+image:
+  repository: example.invalid/target/hall
+  tag: latest
+  pullPolicy: Always
+
+imagePullSecrets: 
+  - name: regcred
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    example.invalid/proxy-body-size: "0"
+    example.invalid/ssl-redirect: "false"
+    example.invalid/cluster-issuer: "letsencrypt-prod"
+  # 標準域名配置 {service}-example.invalid
+  hosts:
+    - host: example.invalid
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: wildcard-target-com-tls
+      hosts:
+        - example.invalid
+
+hall:
+  server:
+    http:
+      port: 80
+      
+
+  target:
+    api:
+      uri: http://backend-api-public-bwg-api:3109/v1
+    merchant:
+      id: 175001
+      api-key: 66ccba51d068407
+      is-open-agg-fish: false
+      game-item-style: 2
+      showDescription: 1
+    brand:
+      name: bwg
+      title: BWG Demo Hall
+      link: https://example.invalid/
+      

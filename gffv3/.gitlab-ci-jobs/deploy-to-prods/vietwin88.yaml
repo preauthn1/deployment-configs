@@ -1,0 +1,90 @@
+.release_prod_rule: &release_prod_rule
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger" && $SRC_PROJECT == $TRIGGER_FROM_PROJECT && $SRC_COMMIT_TAG =~ /^release_\d+$/'
+    - when: never
+    
+vietwin88 at gff-tpower-vn:
+  <<: *release_prod_rule
+  stage: choose-env
+  tags:
+    - php
+  needs:
+    - "info"
+  when: manual
+  script:
+    - echo "choose gff-tpower-vn (vietwin88)"
+
+migration to gff-tpower-vn (vietwin88):
+  <<: *release_prod_rule
+  image: google/cloud-sdk:latest
+  stage: deploy
+  tags:
+    - php
+  needs:
+    - "vietwin88 at gff-tpower-vn"
+  variables:
+    DEPLOY_NS: 
+    # 建置來源專案
+    TRIGGER_FROM_PROJECT: target/gffv3/apis
+    AR_PATH: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024
+    # 應用名
+    DEPLOYMENT_NAME: laravel-migration
+    APP_NAME: Laravel
+    APP_PORT: 80
+    # GKE 叢集
+    GKE_CLUSTER_NAME: cluster-vn
+    GKE_CLUSTER_ZONE: asia-southeast1-a
+    GCP_PROJECT: gff-tpower-vn
+    # 部署命名空間
+    DEPLOY_NS: default
+    # 部署金鑰
+    DEPLOY_KEY_FILE: deploy-keys/gff-tpower-vn-deploy.json
+    # HELM 圖表路徑
+    HELM_CHART_PATH: helm-charts/laravel-migration
+    # 部署值檔案
+    DEPLOY_VALUES_FILE: helm-charts/laravel-migration/values_vietwin88.yaml
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq make
+    - make setup-tools
+    - make debug-info
+  script:
+    - make deploy-gcp
+    - make wait-job-deployment
+
+deploy to gff-tpower-vn (vietwin88):
+  <<: *release_prod_rule
+  image: google/cloud-sdk:latest
+  stage: deploy
+  tags:
+    - php
+  needs:
+    - "vietwin88 at gff-tpower-vn"
+    - "migration to gff-tpower-vn (vietwin88)"
+  variables:
+    # 建置來源專案
+    TRIGGER_FROM_PROJECT: target/gffv3/apis
+    AR_PATH: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024
+    # 應用名
+    DEPLOYMENT_NAME: apis
+    APP_NAME: Laravel
+    APP_PORT: 80
+    # GKE 叢集
+    GKE_CLUSTER_NAME: cluster-vn
+    GKE_CLUSTER_ZONE: asia-southeast1-a
+    GCP_PROJECT: gff-tpower-vn
+    # 部署命名空間
+    DEPLOY_NS: default
+    # 部署模式
+    DEPLOY_MODE: split
+    # 部署金鑰
+    DEPLOY_KEY_FILE: deploy-keys/gff-tpower-vn-deploy.json
+    # HELM 圖表路徑
+    HELM_CHART_PATH: helm-charts/apis
+    # 部署值檔案
+    DEPLOY_VALUES_FILE: helm-charts/apis/values_vietwin88.yaml
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq make
+    - make setup-tools
+    - make debug-info
+  script:
+    - make deploy-gcp

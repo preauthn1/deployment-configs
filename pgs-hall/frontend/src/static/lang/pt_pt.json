@@ -1,0 +1,46 @@
+{
+    "Label_Prompt" : "Prompt",
+    "Label_RecentlyGame" : "Jogos recentes",
+    "Label_GameList" : "Lista de jogos",
+    "Label_GameHall" : "Sala de jogos",
+    "Label_Events" : "Informações do evento",
+    "Label_Messages" : "Notificações",
+    "Label_SelectLanguage" : "Idioma",
+    "Label_EventTime" : "Horário do evento",
+    "Label_EventNote" : "Observações do evento",
+    "Label_Tag_System" : "Sistema",
+
+    "Label_GameName" : "Nome do jogo",
+    "Label_OrderNo" : "Número do pedido",
+    "Label_PlayerName" : "Nome do jogador",
+    "Label_BetTime" : "Horário da aposta",
+    "Label_BetAmount" : "Valor da aposta",
+    "Label_Amount" : "Valor",
+    "Label_Time" : "Horário",
+    "Label_PrizeName" : "Prêmio",
+    "Label_PayoutAmount" : "Valor do pagamento",
+    "Label_Exit" : "Sair",
+    "Label_LuckyWheel" : "Roleta da sorte",
+    "Label_RemainingDrawTimes": "Número de sorteios restantes",
+    "Label_RemainingPoint": "Pontos restantes",
+    "Label_CosumePointPerDraw": "Pontos consumidos por sorteio",
+    "Label_EventRestrictGames": "Jogos restritos para o evento",
+    "Label_DrawResult": "Resultado do sorteio",
+    "Label_BackToPage" : "Voltar à página anterior",
+    "Label_EarnReward" : "Ganhar recompensa",
+
+    "Title_ViewHistory" : "Ver histórico",
+
+    "GameType_ALL" : "Todos",
+
+
+    "Timezone" : "Fuso horário",
+    "Msg_OnlyShowNewstNumberOfSize" : "Mostrar apenas os {size} mais recentes",
+
+    "Button_Confirm" : "Confirmar",
+    "Invalid_AuthToken" : "Sua sessão expirou, por favor faça login novamente",
+    "Msg_SystemMaintain" : "O sistema está em manutenção, por favor tente novamente mais tarde",
+    "Msg_NoMessages" : "Não há notificações no momento",
+    "Msg_RewardHadSendToWallet" : "A recompensa foi enviada para sua carteira de jogos"
+
+}

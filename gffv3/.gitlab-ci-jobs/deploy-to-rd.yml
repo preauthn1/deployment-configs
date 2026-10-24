@@ -1,0 +1,262 @@
+.release_dev_rule: &release_dev_rule
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger" && $SRC_PROJECT == $TRIGGER_FROM_PROJECT && ($SRC_COMMIT_BRANCH == "develop" || $SRC_COMMIT_BRANCH == "cicd/stage-build")'
+      when: on_success
+    - when: never
+
+choose to dev:
+  <<: *release_dev_rule
+  stage: choose-env
+  image: alpine:3.12.12
+  tags:
+    - php
+  needs:
+    - "info"
+  script:
+    - echo "choose to dev"
+    
+migration to dev:
+  <<: *release_dev_rule
+  image: google/cloud-sdk:latest
+  stage: deploy
+  tags:
+    - php
+  needs:
+    - "choose to dev"
+  variables:
+    DEPLOY_NS: 
+    # 建置來源專案
+    TRIGGER_FROM_PROJECT: target/gffv3/apis
+    AR_PATH: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024
+    # 應用名
+    DEPLOYMENT_NAME: laravel-migration
+    APP_NAME: Laravel
+    APP_PORT: 80
+    # GKE 叢集
+    GKE_CLUSTER_NAME: cluster-1
+    GKE_CLUSTER_ZONE: asia-east1-a
+    GCP_PROJECT: tp-wz3-rd
+    # 部署命名空間
+    DEPLOY_NS: default
+    # 部署金鑰
+    DEPLOY_KEY_FILE: deploy-keys/tp-wz3-rd-deploy.json
+    # HELM 圖表路徑
+    HELM_CHART_PATH: helm-charts/laravel-migration
+    # 部署值檔案
+    DEPLOY_VALUES_FILE: helm-charts/laravel-migration/values_dev.yaml
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq make
+    - make setup-tools
+    - make debug-info
+  script:
+    - make deploy-gcp
+    - make wait-job-deployment
+
+deploy to dev (DEV):
+  <<: *release_dev_rule
+  image: google/cloud-sdk:latest
+  stage: deploy
+  tags:
+    - php
+  needs:
+    - "choose to dev"
+    - "migration to dev"
+  variables:
+    # 建置來源專案
+    TRIGGER_FROM_PROJECT: target/gffv3/apis
+    AR_PATH: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024
+    # 應用名
+    DEPLOYMENT_NAME: apis
+    APP_NAME: Laravel
+    APP_PORT: 80
+    # GKE 叢集
+    GKE_CLUSTER_NAME: cluster-1
+    GKE_CLUSTER_ZONE: asia-east1-a
+    GCP_PROJECT: tp-wz3-rd
+    # 部署命名空間
+    DEPLOY_NS: default
+    # 部署模式
+    DEPLOY_MODE: allinone
+    # 部署金鑰
+    DEPLOY_KEY_FILE: deploy-keys/tp-wz3-rd-deploy.json
+    # HELM 圖表路徑
+    HELM_CHART_PATH: helm-charts/apis
+    # 部署值檔案
+    DEPLOY_VALUES_FILE: helm-charts/apis/values_dev.yaml
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq make
+    - make setup-tools
+    - make debug-info
+  script:
+    - make deploy-gcp
+    
+deploy to dev2 (DEV) split service:
+  <<: *release_dev_rule
+  image: google/cloud-sdk:latest
+  stage: deploy
+  tags:
+    - php
+  needs:
+    - "choose to dev"
+    - "migration to dev"
+  variables:
+    # 建置來源專案
+    TRIGGER_FROM_PROJECT: target/gffv3/apis
+    AR_PATH: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024
+    # 應用名
+    DEPLOYMENT_NAME: apis
+    APP_NAME: Laravel
+    APP_PORT: 80
+    # GKE 叢集
+    GKE_CLUSTER_NAME: cluster-1
+    GKE_CLUSTER_ZONE: asia-east1-a
+    GCP_PROJECT: tp-wz3-rd
+    # 部署命名空間
+    DEPLOY_NS: dev2
+    # 部署模式
+    DEPLOY_MODE: split
+    # 部署金鑰
+    DEPLOY_KEY_FILE: deploy-keys/tp-wz3-rd-deploy.json
+    # HELM 圖表路徑
+    HELM_CHART_PATH: helm-charts/apis
+    # 部署值檔案
+    DEPLOY_VALUES_FILE: helm-charts/apis/values_dev2.yaml
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq make
+    - make setup-tools
+    - make debug-info
+  script:
+    - make deploy-gcp
+
+deploy to devwtt (DEV):
+  <<: *release_dev_rule
+  image: google/cloud-sdk:latest
+  stage: deploy
+  tags:
+    - php
+  needs:
+    - "choose to dev"
+    - "migration to dev"
+  variables:
+    # 建置來源專案
+    TRIGGER_FROM_PROJECT: target/gffv3/apis
+    AR_PATH: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024
+    # 應用名
+    DEPLOYMENT_NAME: apis
+    APP_NAME: Laravel
+    APP_PORT: 80
+    # GKE 叢集
+    GKE_CLUSTER_NAME: cluster-1
+    GKE_CLUSTER_ZONE: asia-east1-a
+    GCP_PROJECT: tp-wz3-rd
+    # 部署命名空間
+    DEPLOY_NS: devwtt
+    # 部署模式
+    DEPLOY_MODE: allinone
+    # 部署金鑰
+    DEPLOY_KEY_FILE: deploy-keys/tp-wz3-rd-deploy.json
+    # HELM 圖表路徑
+    HELM_CHART_PATH: helm-charts/apis
+    # 部署值檔案
+    DEPLOY_VALUES_FILE: helm-charts/apis/values_devwtt.yaml
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq make
+    - make setup-tools
+    - make debug-info
+  script:
+    - make deploy-gcp
+
+.release_agent_backend_dev_rule: &release_agent_backend_dev_rule
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger" && $SRC_PROJECT == "target/gffv3/agent-backend" && ($SRC_COMMIT_BRANCH == "develop" || $SRC_COMMIT_BRANCH == "cicd/stage-build")'
+      when: on_success
+    - when: never
+
+choose agent-backend to dev:
+  <<: *release_agent_backend_dev_rule
+  stage: choose-env
+  image: alpine:3.12.12
+  tags:
+    - php
+  needs:
+    - "info"
+  script:
+    - echo "choose agent-backend to dev"
+
+deploy agent-backend to dev:
+  <<: *release_agent_backend_dev_rule
+  image: google/cloud-sdk:latest
+  stage: deploy
+  tags:
+    - php
+  needs:
+    - "choose agent-backend to dev"
+  variables:
+    TRIGGER_FROM_PROJECT: target/gffv3/agent-backend
+    AR_PATH: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024
+    DEPLOYMENT_NAME: agent-backend
+    APP_NAME: AgentBackend
+    APP_PORT: 8080
+    GKE_CLUSTER_NAME: cluster-1
+    GKE_CLUSTER_ZONE: asia-east1-a
+    GCP_PROJECT: tp-wz3-rd
+    DEPLOY_NS: default
+    DEPLOY_KEY_FILE: deploy-keys/tp-wz3-rd-deploy.json
+    HELM_CHART_PATH: helm-charts/agent-backend
+    DEPLOY_VALUES_FILE: helm-charts/agent-backend/values_dev.yaml
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq make
+    - make setup-tools
+    - make debug-info
+  script:
+    - make deploy-gcp
+
+############################################################
+# web-frontend（新前台，Nuxt 4 SSR）→ dev
+# 比照上方 agent-backend 的 SRC_PROJECT 分流；前端無 DB，不需 migration job
+# 對外網域：https://example.invalid/
+############################################################
+.release_web_frontend_dev_rule: &release_web_frontend_dev_rule
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger" && $SRC_PROJECT == "target/gffv3/web-frontend" && ($SRC_COMMIT_BRANCH == "develop" || $SRC_COMMIT_BRANCH == "cicd/stage-build")'
+      when: on_success
+    - when: never
+
+choose web-frontend to dev:
+  <<: *release_web_frontend_dev_rule
+  stage: choose-env
+  image: alpine:3.12.12
+  tags:
+    - php
+  needs:
+    - "info"
+  script:
+    - echo "choose web-frontend to dev"
+
+deploy web-frontend to dev:
+  <<: *release_web_frontend_dev_rule
+  image: google/cloud-sdk:latest
+  stage: deploy
+  tags:
+    - php
+  needs:
+    - "choose web-frontend to dev"
+  variables:
+    TRIGGER_FROM_PROJECT: target/gffv3/web-frontend
+    AR_PATH: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024
+    DEPLOYMENT_NAME: web-frontend
+    APP_NAME: WebFrontend
+    APP_PORT: 3000
+    GKE_CLUSTER_NAME: cluster-1
+    GKE_CLUSTER_ZONE: asia-east1-a
+    GCP_PROJECT: tp-wz3-rd
+    DEPLOY_NS: default
+    DEPLOY_KEY_FILE: deploy-keys/tp-wz3-rd-deploy.json
+    HELM_CHART_PATH: helm-charts/web-frontend
+    DEPLOY_VALUES_FILE: helm-charts/web-frontend/values_dev.yaml
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq make
+    - make setup-tools
+    - make debug-info
+  script:
+    - make deploy-gcp

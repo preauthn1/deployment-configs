@@ -1,0 +1,68 @@
+# vwb2c（prod）環境 values
+# 目標叢集：gff-vwb2c / cluster-vwb2c / ns default（比照 apis 的 vwb2c 部署）
+# 慣例來源：helm-charts/apis/values_vwb2c.yaml 與本 chart values_vworldmy.yaml
+
+# autoscaling 啟用時 replicaCount 不生效，此值僅供關閉 HPA 時 fallback
+replicaCount: 2
+
+# 比照 apis 各 prod values 的 components.agent（代理後台面向）autoscaling 配置（人類已拍板恢復 HPA）
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+# 比照 apis prod values 的 components.agent 資源規格
+# （agent-backend 為單容器：nginx 靜態檔 + Nitro gateway，負載遠輕於 PHP-FPM）
+resources:
+  limits:
+    cpu: 0.5
+    memory: 1024Mi
+  requests:
+    cpu: 0.2
+
+# 對外入口：apis 各 prod values 均未啟用 chart ingress（對外流量入口由叢集側管理），此處比照維持關閉
+# TODO(拍板)：vwb2c 代理後台的對外網域尚無現成慣例可推導
+#   （apis vwb2c 既有網域：example.invalid / example.invalid / example.invalid，
+#    無 agent/代理後台前綴慣例），待決定網域與入口管理方式（叢集側 LB 或啟用本 chart ingress）
+ingress:
+  enabled: false
+
+# gateway runtime secrets for vwb2c (prod)
+# 與 dev 同樣由本 chart secret.yaml 建 Secret、deployment 以 secretKeyRef 注入。
+# 機密值已依人類指示填入（來源見各行註記），本檔不 commit。
+gateway:
+  # gateway server-side session 加密密碼（h3 useSession 要求 >= 32 字元，僅 gateway 自用不需對齊他系統）
+  # 本值為 2026-07-21 新產生之 32 字元隨機密鑰（vwb2c 專用，未沿用 dev / vworldmy）
+  SESSION_PASSWORD: [REDACTED]"
+  # 與 apis values_vwb2c.yaml 之 app.api.* 一致（gateway 加簽轉發用）：
+  #   AES_KEY ← app.api.aes_key、AES_IV ← app.api.aes_iv、MD5_KEY ← app.api.aes_md5
+  AES_KEY: "KfRzYaQNt6JpXwH^"
+  AES_IV: "8094635217902485"
+  MD5_KEY: "&QmvpjLcT7nhA2Yw"
+  # API_URL：agent-console API（dev 慣例為 agent-console-api-service:60003；此處比照 vworldmy 最終定案的
+  # 叢集內 service 名稱 agent-webapi-service）
+  # TODO(確認)：vwb2c 叢集內該 service 名稱/port 與是否已部署，待維運確認
+  API_URL: "http://agent-webapi-service:60003/"
+  # apis 於 vwb2c 為 split 模式（deploy job DEPLOY_MODE: split），代理後台面向的 Service 為 apis-agent（ClusterIP:80）
+  APIS_URL: "http://apis-agent/"
+  # TODO(確認)：vwb2c 叢集內是否存在 api-internal service（dev 值為 http://api-internal/，且 dev 環境本就不可達）
+  API_INTERNAL: "http://api-internal/"
+  # 客服系統 API 加簽三鍵，來源：html/gsrc/WEB_CustomerServiceSocket/_release/.env.vwb2c
+  #   （server-build-vwb2c/Dockerfile-php COPY .env.vwb2c，cloudbuild 部署至 gff-vwb2c/cluster-vwb2c，
+  #    與本檔目標叢集一致）
+  #   對應：CS_AES_KEY ← API_AES_KEY、CS_MD5_KEY ← API_MD5_KEY、CS_IV ← API_IV（欄位對應經 dev 值於 .env.rd 交叉驗證）
+  #   注意：vwb2c 的 CS 三鍵為品牌獨立值，與 tm66s 主線（.env.pro）不同
+  CS_AES_KEY: "Dzr8B1YqLtMvF3xW"
+  CS_MD5_KEY: "XrMTqL9V2KsJ7pYe"
+  CS_IV: "9045721683257496"
+  # CS_API_URL：比照 vworldmy 最終定案走叢集內 CS API service（CS 系統 cloudbuild 亦部署於 vwb2c 同叢集；
+  #   外網域備援值為 apis api_cs_url：https://example.invalid/api/）
+  # TODO(確認)：vwb2c 叢集內 cs-api-service 是否存在，不存在則改用上述外網域
+  CS_API_URL: "http://cs-api-service:60003/"
+  # 比照 apis values_vwb2c.yaml 的 api_cs_url 網域
+  CS_SOCKET_URL: "https://example.invalid/"
+
+  # target/tickets#4187：GKE+GCLB 拓樸，X-Forwarded-For 最後一格是 GCLB 自己的
+  # 前端 VIP（無法枚舉），跟 apis/WEB_AgentBackend 同品牌設定一致。
+  TRUSTED_PROXY_SKIP_LAST_HOP: "true"

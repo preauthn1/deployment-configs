@@ -1,0 +1,49 @@
+{
+    "Label_Prompt" : "提示",
+    "Label_RecentlyGame" : "近期游玩",
+    "Label_GameList" : "游戏列表",
+    "Label_GameHall" : "游戏大厅",
+    "Label_Events" : "活动信息",
+    "Label_Messages" : "信息通知",
+    "Label_SelectLanguage" : "语言",
+    "Label_EventTime" : "活动时间",
+    "Label_EventNote" : "注意事项",
+    "Label_Tag_System" : "系统",
+
+    "Label_Detail" : "查看详细",
+    "Label_TrialPlay" : "游戏试玩",
+    "Label_GameName" : "游戏名称",
+    "Label_OrderNo" : "单号",
+    "Label_PlayerName" : "玩家名称",
+    "Label_BetTime" : "投注时间",
+    "Label_BetAmount" : "投注金额",
+    "Label_Amount" : "金额",
+    "Label_Time" : "时间",
+    "Label_PrizeName" : "奖项",
+    "Label_PayoutAmount" : "派奖金额",
+    "Label_Cancel" : "取消",
+    "Label_Exit" : "离开",
+    "Label_LuckyWheel" : "幸运转轮",
+    "Label_RemainingDrawTimes": "剩余次数",
+    "Label_RemainingPoint": "剩余积分",
+    "Label_CosumePointPerDraw": "每次抽奖消耗点数",
+    "Label_EventRestrictGames": "活动限定以下游戏",
+    "Label_DrawResult": "抽奖结果",
+    "Label_BackToPage" : "返回前一页",
+    "Label_EarnReward" : "获得奖金",
+
+    "Title_ViewHistory" : "查看纪录",
+
+    "GameType_ALL" : "全部",
+
+
+    "Timezone" : "时区 ",
+    "Msg_OnlyShowNewstNumberOfSize" : "仅显示最新 {size} 笔 ",
+
+    "Button_Confirm" : "确认",
+    "Invalid_AuthToken" : "您的登入信息已失效，请尝试重新登入",
+    "Msg_SystemMaintain" : "系统例行维护中，建议您稍晚后再进行游戏",    
+    "Msg_NoMessages" : "目前無任何信息通知",
+    "Msg_RewardHadSendToWallet" : "奖金已派发至您的游戏钱包"
+
+}

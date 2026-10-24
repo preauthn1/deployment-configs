@@ -1,0 +1,18 @@
+server:
+  http:
+    port: 8082
+
+target:
+  api:
+    uri: http://example.invalid/v1
+  merchant:
+    id: 175013
+    api-key: PgSeXpErIeNcE
+    fixed-user: test-001
+    is-single-wallet: false
+    is-open-agg-fish: true
+    game-item-style: 2
+    showDescription: 1
+  brand:
+    name: target
+    title: target Demo Hall

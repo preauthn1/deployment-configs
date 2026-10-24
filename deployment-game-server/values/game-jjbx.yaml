@@ -1,0 +1,350 @@
+game:
+  jjbx:
+    id: 1004
+    name: 金吉報喜_無盡寶藏
+    group: slot
+    room:
+      - serverid: 100400410
+        proto: jjbx
+        configs: 
+          gameserver.dat: |
+            [gameserver]
+            gameid=1004				 	                      // 遊戲ID
+            gamename=金吉報喜_無盡寶藏  		 	          // 遊戲名稱
+            flag=41                                           // 顯示名稱,客戶端可根據此名稱將房間分類顯示
+            minplayer=1                                       // 遊戲最小人數
+            maxplayer=1                                       // 遊戲最大人數
+            tablecount=480                                    // 桌子數
+            seatcount=1                                       // 椅子數
+            loginmoney=0                                      // 進入遊戲最小積分
+            scoremode=0                                       // 0 即時寫分 1 退房間寫分 2 比賽 3 分段寫分
+            maxuser=480                                       // 最大人數
+            taxscale=0                                        // 抽水比例
+            readywaittime=10                                  // 舉手超時時間,單位秒
+            reghallserverinterval=5                           // 註冊廣場時間間隔,單位秒
+            basescore=100                                     // 底分
+            deallog=2                                         // 牌局記錄器類型 0 不記錄 ,1 文本, 2 db, 3 fish, 4分段寫分
+            mincarrymoney=0                                   // 下注攜帶金額限制
+
+            [gamequeue]
+            gamematchwaitmintime=1                            // 撮合時間間隔範圍小值,單位秒
+            gamematchwaitmaxtime=3                            // 撮合時間間隔範圍大值,單位秒
+            againstsameip=0                                   // 同IP不分配一起
+            againstlastgame=0                                 // 最後一次遊戲過的用戶不分配一起
+            gameendaction=0                                   // 遊戲結束後動作,0 無動作 1 準備
+            queuetype=1                                       // 撮合類型 0 時間隨機 1 固定人數
+            queueusercount=1                                  // 排隊人數
+            queuetimeout=2                                    // 排隊人數超時
+            
+          slotconfig.dat: |
+            [slotsetting]
+            endactiontime=1				                            // 結算動畫超時
+            betcount=5,10,15,25,50,100  // 一次下注的數量
+            betrate=8,18,38,68,88       // 玩家可上調的基本押注數量的倍率
+
+            slotpattern=7                                     // 參考csv SlotPattern類型, 可多個用逗號分
+            releasepattern=7                                  // 放分
+            bitepattern=7                                     // 咬分
+            bigwinrule=25,75,150,250   								        // client動畫播放階段,以Bet為主
+            bigwinnotify=25                                   // 當下注16, Total=6400(16*400) 得獎超過6400才廣播.
+
+            [description]
+            payline.desc=游戏有243条赔付线，滚轮上由左至右连续出现3个以上的相同符号，即可获得该图标的得分奖励！\n只赔付每条线中赢取最高的奖金，奖金派发按照赔付线从最左至最右转轴的顺序。\n游戏出现故障时，所有赔付和游戏都视为无效。
+            w1.title=百搭
+            w1.desc=百搭可代表任何符号，除了福符号，百搭只出现在第2、3、4转轴。
+            g1.title=福
+            g1.desc=转轴出现6或6个以上福符号时，便可进入选择特别奖
+            g7.title=黄钱币
+            g7.desc=出现在免费游戏与节节高特别奖中，在免费游戏中，可代表任何符号，只出现在第2、3、4转轴
+
+            g8.title=绿钱币
+            g8.desc=出现在节节高特别奖中，累积画面上所有钱币的奖金。
+            b1.title=+1 旋转
+            b1.desc=出现在节节高特别奖中，每次出现可额外获得一次免费游戏。
+      - serverid: 100418810
+        proto: jjbx-msc
+        configs: 
+          gameserver.dat: |
+            [gameserver]
+            gameid=1004				 	                      // 遊戲ID
+            gamename=金吉報喜_無盡寶藏  		 	          // 遊戲名稱
+            flag=1881                                         // 顯示名稱,客戶端可根據此名稱將房間分類顯示
+            minplayer=1                                       // 遊戲最小人數
+            maxplayer=1                                       // 遊戲最大人數
+            tablecount=480                                    // 桌子數
+            seatcount=1                                       // 椅子數
+            loginmoney=0                                      // 進入遊戲最小積分
+            scoremode=0                                       // 0 即時寫分 1 退房間寫分 2 比賽 3 分段寫分
+            maxuser=480                                       // 最大人數
+            taxscale=0                                        // 抽水比例
+            readywaittime=10                                  // 舉手超時時間,單位秒
+            reghallserverinterval=5                           // 註冊廣場時間間隔,單位秒
+            basescore=100                                     // 底分
+            deallog=2                                         // 牌局記錄器類型 0 不記錄 ,1 文本, 2 db, 3 fish, 4分段寫分
+            mincarrymoney=0                                   // 下注攜帶金額限制
+
+            [gamequeue]
+            gamematchwaitmintime=1                            // 撮合時間間隔範圍小值,單位秒
+            gamematchwaitmaxtime=3                            // 撮合時間間隔範圍大值,單位秒
+            againstsameip=0                                   // 同IP不分配一起
+            againstlastgame=0                                 // 最後一次遊戲過的用戶不分配一起
+            gameendaction=0                                   // 遊戲結束後動作,0 無動作 1 準備
+            queuetype=1                                       // 撮合類型 0 時間隨機 1 固定人數
+            queueusercount=1                                  // 排隊人數
+            queuetimeout=2                                    // 排隊人數超時
+            
+          slotconfig.dat: |
+            [slotsetting]
+            endactiontime=1				                            // 結算動畫超時
+            betcount=50,100,150,250,500,1000  // 一次下注的數量
+            betrate=8,18,38,68,88       // 玩家可上調的基本押注數量的倍率
+
+            slotpattern=7                                     // 參考csv SlotPattern類型, 可多個用逗號分
+            releasepattern=7                                  // 放分
+            bitepattern=7                                     // 咬分
+            bigwinrule=25,75,150,250   								        // client動畫播放階段,以Bet為主
+            bigwinnotify=25                                   // 當下注16, Total=6400(16*400) 得獎超過6400才廣播.
+
+            [description]
+            payline.desc=游戏有243条赔付线，滚轮上由左至右连续出现3个以上的相同符号，即可获得该图标的得分奖励！\n只赔付每条线中赢取最高的奖金，奖金派发按照赔付线从最左至最右转轴的顺序。\n游戏出现故障时，所有赔付和游戏都视为无效。
+            w1.title=百搭
+            w1.desc=百搭可代表任何符号，除了福符号，百搭只出现在第2、3、4转轴。
+            g1.title=福
+            g1.desc=转轴出现6或6个以上福符号时，便可进入选择特别奖
+            g7.title=黄钱币
+            g7.desc=出现在免费游戏与节节高特别奖中，在免费游戏中，可代表任何符号，只出现在第2、3、4转轴
+
+            g8.title=绿钱币
+            g8.desc=出现在节节高特别奖中，累积画面上所有钱币的奖金。
+            b1.title=+1 旋转
+            b1.desc=出现在节节高特别奖中，每次出现可额外获得一次免费游戏。              
+      - serverid: 100408810
+        proto: jjbx
+        configs: 
+          gameserver.dat: |
+            [gameserver]
+            gameid=1004				 	                      // 遊戲ID
+            gamename=金吉報喜_無盡寶藏  		 	          // 遊戲名稱
+            flag=881                                           // 顯示名稱,客戶端可根據此名稱將房間分類顯示
+            minplayer=1                                       // 遊戲最小人數
+            maxplayer=1                                       // 遊戲最大人數
+            tablecount=480                                    // 桌子數
+            seatcount=1                                       // 椅子數
+            loginmoney=0                                      // 進入遊戲最小積分
+            scoremode=0                                       // 0 即時寫分 1 退房間寫分 2 比賽 3 分段寫分
+            maxuser=480                                       // 最大人數
+            taxscale=0                                        // 抽水比例
+            readywaittime=10                                  // 舉手超時時間,單位秒
+            reghallserverinterval=5                           // 註冊廣場時間間隔,單位秒
+            basescore=100                                     // 底分
+            deallog=2                                         // 牌局記錄器類型 0 不記錄 ,1 文本, 2 db, 3 fish, 4分段寫分
+            mincarrymoney=0                                   // 下注攜帶金額限制
+
+            [gamequeue]
+            gamematchwaitmintime=1                            // 撮合時間間隔範圍小值,單位秒
+            gamematchwaitmaxtime=3                            // 撮合時間間隔範圍大值,單位秒
+            againstsameip=0                                   // 同IP不分配一起
+            againstlastgame=0                                 // 最後一次遊戲過的用戶不分配一起
+            gameendaction=0                                   // 遊戲結束後動作,0 無動作 1 準備
+            queuetype=1                                       // 撮合類型 0 時間隨機 1 固定人數
+            queueusercount=1                                  // 排隊人數
+            queuetimeout=2                                    // 排隊人數超時
+            
+          slotconfig.dat: |
+            [slotsetting]
+            endactiontime=1				                            // 結算動畫超時
+            betcount=5,10,15,25,50,100  // 一次下注的數量
+            betrate=8,18,38,68,88       // 玩家可上調的基本押注數量的倍率
+
+            slotpattern=7                                     // 參考csv SlotPattern類型, 可多個用逗號分
+            releasepattern=7                                  // 放分
+            bitepattern=7                                     // 咬分
+            bigwinrule=25,75,150,250   								        // client動畫播放階段,以Bet為主
+            bigwinnotify=25                                   // 當下注16, Total=6400(16*400) 得獎超過6400才廣播.
+
+            [description]
+            payline.desc=游戏有243条赔付线，滚轮上由左至右连续出现3个以上的相同符号，即可获得该图标的得分奖励！\n只赔付每条线中赢取最高的奖金，奖金派发按照赔付线从最左至最右转轴的顺序。\n游戏出现故障时，所有赔付和游戏都视为无效。
+            w1.title=百搭
+            w1.desc=百搭可代表任何符号，除了福符号，百搭只出现在第2、3、4转轴。
+            g1.title=福
+            g1.desc=转轴出现6或6个以上福符号时，便可进入选择特别奖
+            g7.title=黄钱币
+            g7.desc=出现在免费游戏与节节高特别奖中，在免费游戏中，可代表任何符号，只出现在第2、3、4转轴
+
+            g8.title=绿钱币
+            g8.desc=出现在节节高特别奖中，累积画面上所有钱币的奖金。
+            b1.title=+1 旋转
+            b1.desc=出现在节节高特别奖中，每次出现可额外获得一次免费游戏。
+      - serverid: 100400010
+        proto: jjbx
+        configs: 
+          gameserver.dat: |
+            [gameserver]
+            gameid=1004				 	                      // 遊戲ID
+            gamename=金吉報喜_無盡寶藏  		 	          // 遊戲名稱
+            flag=1                                           // 顯示名稱,客戶端可根據此名稱將房間分類顯示
+            minplayer=1                                       // 遊戲最小人數
+            maxplayer=1                                       // 遊戲最大人數
+            tablecount=480                                    // 桌子數
+            seatcount=1                                       // 椅子數
+            loginmoney=0                                      // 進入遊戲最小積分
+            scoremode=0                                       // 0 即時寫分 1 退房間寫分 2 比賽 3 分段寫分
+            maxuser=480                                       // 最大人數
+            taxscale=0                                        // 抽水比例
+            readywaittime=10                                  // 舉手超時時間,單位秒
+            reghallserverinterval=5                           // 註冊廣場時間間隔,單位秒
+            basescore=100                                     // 底分
+            deallog=2                                         // 牌局記錄器類型 0 不記錄 ,1 文本, 2 db, 3 fish, 4分段寫分
+            mincarrymoney=0                                   // 下注攜帶金額限制
+
+            [gamequeue]
+            gamematchwaitmintime=1                            // 撮合時間間隔範圍小值,單位秒
+            gamematchwaitmaxtime=3                            // 撮合時間間隔範圍大值,單位秒
+            againstsameip=0                                   // 同IP不分配一起
+            againstlastgame=0                                 // 最後一次遊戲過的用戶不分配一起
+            gameendaction=0                                   // 遊戲結束後動作,0 無動作 1 準備
+            queuetype=1                                       // 撮合類型 0 時間隨機 1 固定人數
+            queueusercount=1                                  // 排隊人數
+            queuetimeout=2                                    // 排隊人數超時
+            
+          slotconfig.dat: |
+            [slotsetting]
+            endactiontime=1				                            // 結算動畫超時
+            betcount=5,10,15,25,50,100  // 一次下注的數量
+            betrate=8,18,38,68,88       // 玩家可上調的基本押注數量的倍率
+
+            slotpattern=7                                     // 參考csv SlotPattern類型, 可多個用逗號分
+            releasepattern=7                                  // 放分
+            bitepattern=7                                     // 咬分
+            bigwinrule=25,75,150,250   								        // client動畫播放階段,以Bet為主
+            bigwinnotify=25                                   // 當下注16, Total=6400(16*400) 得獎超過6400才廣播.
+
+            [description]
+            payline.desc=游戏有243条赔付线，滚轮上由左至右连续出现3个以上的相同符号，即可获得该图标的得分奖励！\n只赔付每条线中赢取最高的奖金，奖金派发按照赔付线从最左至最右转轴的顺序。\n游戏出现故障时，所有赔付和游戏都视为无效。
+            w1.title=百搭
+            w1.desc=百搭可代表任何符号，除了福符号，百搭只出现在第2、3、4转轴。
+            g1.title=福
+            g1.desc=转轴出现6或6个以上福符号时，便可进入选择特别奖
+            g7.title=黄钱币
+            g7.desc=出现在免费游戏与节节高特别奖中，在免费游戏中，可代表任何符号，只出现在第2、3、4转轴
+
+            g8.title=绿钱币
+            g8.desc=出现在节节高特别奖中，累积画面上所有钱币的奖金。
+            b1.title=+1 旋转
+            b1.desc=出现在节节高特别奖中，每次出现可额外获得一次免费游戏。            
+            
+      - serverid: 100402110
+        proto: jjbx
+        configs: 
+          gameserver.dat: |
+            [gameserver]
+            gameid=1004				 	                      // 遊戲ID
+            gamename=金吉報喜_無盡寶藏  		 	          // 遊戲名稱
+            flag=211                                           // 顯示名稱,客戶端可根據此名稱將房間分類顯示
+            minplayer=1                                       // 遊戲最小人數
+            maxplayer=1                                       // 遊戲最大人數
+            tablecount=480                                    // 桌子數
+            seatcount=1                                       // 椅子數
+            loginmoney=0                                      // 進入遊戲最小積分
+            scoremode=0                                       // 0 即時寫分 1 退房間寫分 2 比賽 3 分段寫分
+            maxuser=480                                       // 最大人數
+            taxscale=0                                        // 抽水比例
+            readywaittime=10                                  // 舉手超時時間,單位秒
+            reghallserverinterval=5                           // 註冊廣場時間間隔,單位秒
+            basescore=100                                     // 底分
+            deallog=2                                         // 牌局記錄器類型 0 不記錄 ,1 文本, 2 db, 3 fish, 4分段寫分
+            mincarrymoney=0                                   // 下注攜帶金額限制
+
+            [gamequeue]
+            gamematchwaitmintime=1                            // 撮合時間間隔範圍小值,單位秒
+            gamematchwaitmaxtime=3                            // 撮合時間間隔範圍大值,單位秒
+            againstsameip=0                                   // 同IP不分配一起
+            againstlastgame=0                                 // 最後一次遊戲過的用戶不分配一起
+            gameendaction=0                                   // 遊戲結束後動作,0 無動作 1 準備
+            queuetype=1                                       // 撮合類型 0 時間隨機 1 固定人數
+            queueusercount=1                                  // 排隊人數
+            queuetimeout=2                                    // 排隊人數超時
+            
+          slotconfig.dat: |
+            [slotsetting]
+            endactiontime=1				                            // 結算動畫超時
+            betcount=5,10,15,25,50,100  // 一次下注的數量
+            betrate=8,18,38,68,88       // 玩家可上調的基本押注數量的倍率
+
+            slotpattern=7                                     // 參考csv SlotPattern類型, 可多個用逗號分
+            releasepattern=7                                  // 放分
+            bitepattern=7                                     // 咬分
+            bigwinrule=25,75,150,250   								        // client動畫播放階段,以Bet為主
+            bigwinnotify=25                                   // 當下注16, Total=6400(16*400) 得獎超過6400才廣播.
+
+            [description]
+            payline.desc=游戏有243条赔付线，滚轮上由左至右连续出现3个以上的相同符号，即可获得该图标的得分奖励！\n只赔付每条线中赢取最高的奖金，奖金派发按照赔付线从最左至最右转轴的顺序。\n游戏出现故障时，所有赔付和游戏都视为无效。
+            w1.title=百搭
+            w1.desc=百搭可代表任何符号，除了福符号，百搭只出现在第2、3、4转轴。
+            g1.title=福
+            g1.desc=转轴出现6或6个以上福符号时，便可进入选择特别奖
+            g7.title=黄钱币
+            g7.desc=出现在免费游戏与节节高特别奖中，在免费游戏中，可代表任何符号，只出现在第2、3、4转轴
+
+            g8.title=绿钱币
+            g8.desc=出现在节节高特别奖中，累积画面上所有钱币的奖金。
+            b1.title=+1 旋转
+            b1.desc=出现在节节高特别奖中，每次出现可额外获得一次免费游戏。
+
+      - serverid: 100404010
+        proto: jjbx
+        configs: 
+          gameserver.dat: |
+            [gameserver]
+            gameid=1004				 	                      // 遊戲ID
+            gamename=金吉報喜_無盡寶藏  		 	          // 遊戲名稱
+            flag=401                                           // 顯示名稱,客戶端可根據此名稱將房間分類顯示
+            minplayer=1                                       // 遊戲最小人數
+            maxplayer=1                                       // 遊戲最大人數
+            tablecount=480                                    // 桌子數
+            seatcount=1                                       // 椅子數
+            loginmoney=0                                      // 進入遊戲最小積分
+            scoremode=0                                       // 0 即時寫分 1 退房間寫分 2 比賽 3 分段寫分
+            maxuser=480                                       // 最大人數
+            taxscale=0                                        // 抽水比例
+            readywaittime=10                                  // 舉手超時時間,單位秒
+            reghallserverinterval=5                           // 註冊廣場時間間隔,單位秒
+            basescore=100                                     // 底分
+            deallog=2                                         // 牌局記錄器類型 0 不記錄 ,1 文本, 2 db, 3 fish, 4分段寫分
+            mincarrymoney=0                                   // 下注攜帶金額限制
+
+            [gamequeue]
+            gamematchwaitmintime=1                            // 撮合時間間隔範圍小值,單位秒
+            gamematchwaitmaxtime=3                            // 撮合時間間隔範圍大值,單位秒
+            againstsameip=0                                   // 同IP不分配一起
+            againstlastgame=0                                 // 最後一次遊戲過的用戶不分配一起
+            gameendaction=0                                   // 遊戲結束後動作,0 無動作 1 準備
+            queuetype=1                                       // 撮合類型 0 時間隨機 1 固定人數
+            queueusercount=1                                  // 排隊人數
+            queuetimeout=2                                    // 排隊人數超時
+            
+          slotconfig.dat: |
+            [slotsetting]
+            endactiontime=1				                            // 結算動畫超時
+            betcount=5,10,15,25,50,100  // 一次下注的數量
+            betrate=8,18,38,68,88       // 玩家可上調的基本押注數量的倍率
+
+            slotpattern=7                                     // 參考csv SlotPattern類型, 可多個用逗號分
+            releasepattern=7                                  // 放分
+            bitepattern=7                                     // 咬分
+            bigwinrule=25,75,150,250   								        // client動畫播放階段,以Bet為主
+            bigwinnotify=25                                   // 當下注16, Total=6400(16*400) 得獎超過6400才廣播.
+
+            [description]
+            payline.desc=游戏有243条赔付线，滚轮上由左至右连续出现3个以上的相同符号，即可获得该图标的得分奖励！\n只赔付每条线中赢取最高的奖金，奖金派发按照赔付线从最左至最右转轴的顺序。\n游戏出现故障时，所有赔付和游戏都视为无效。
+            w1.title=百搭
+            w1.desc=百搭可代表任何符号，除了福符号，百搭只出现在第2、3、4转轴。
+            g1.title=福
+            g1.desc=转轴出现6或6个以上福符号时，便可进入选择特别奖
+            g7.title=黄钱币
+            g7.desc=出现在免费游戏与节节高特别奖中，在免费游戏中，可代表任何符号，只出现在第2、3、4转轴
+
+            g8.title=绿钱币
+            g8.desc=出现在节节高特别奖中，累积画面上所有钱币的奖金。
+            b1.title=+1 旋转
+            b1.desc=出现在节节高特别奖中，每次出现可额外获得一次免费游戏。            

@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "agent-backend.fullname" . }}
+  labels:
+    {{- include "agent-backend.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      {{- include "agent-backend.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        # target/tickets#4187 附帶發現：secretKeyRef 引用的 Secret 內容變了，
+        # k8s 不會自動 rollout（只有 pod template 本身變化才會）。沒有這個
+        # checksum，改 values 裡的密鑰/環境變數（如 TRUSTED_PROXY_SKIP_LAST_HOP）
+        # 之後 `helm upgrade` 顯示成功，但正在跑的 pod 其實還是舊值，得手動
+        # kubectl rollout restart 才會生效。
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "agent-backend.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        version: {{ .Values.image.tag | default .Chart.AppVersion | quote }}
+    spec:
+      # preStop 20s + image 內 nginx worker_shutdown_timeout 30s = 50s，留 10s 餘裕。
+      # 與 agent-backend repo 的 entrypoint.sh / nginx.conf 為跨 repo 契約，
+      # 調整其一必須同步另一方。
+      terminationGracePeriodSeconds: 60
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "agent-backend.serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: PORT
+              value: "3000"
+            {{- range $key := list "SESSION_PASSWORD" "AES_KEY" "AES_IV" "MD5_KEY" "API_URL" "APIS_URL" "API_INTERNAL" "CS_AES_KEY" "CS_MD5_KEY" "CS_IV" "CS_API_URL" "CS_SOCKET_URL" "TRUSTED_PROXY_SKIP_LAST_HOP" "TRUSTED_PROXY_EXTRA_CIDRS" }}
+            - name: {{ $key }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "agent-backend.fullname" $ }}-secret
+                  key: {{ $key }}
+            {{- end }}
+          # Pod 一進 terminating，endpoint 反註冊與 SIGTERM 是同時發生的，不是先後。
+          # 沒有 preStop 時容器立刻關掉 listener，而 GKE Gateway 的 NEG 還在往這個
+          # pod 送流量 → 503。dev 實測滾更期間有 96 筆 503、最長 4.4s 無成功回應。
+          # 這 20s 純粹是等 NEG 反註冊傳播完，nginx 這段時間照常服務。
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 20"]
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

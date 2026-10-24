@@ -1,0 +1,95 @@
+replicaCount: 1
+
+image:
+  repository: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024/target/gffv3/agent-backend
+  pullPolicy: IfNotPresent
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+podSecurityContext: {}
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+resources:
+  limits:
+    memory: 512Mi
+  requests:
+    cpu: 0.1
+
+# liveness 維持探測 `/`（nginx 靜態檔）：gateway 若崩潰，entrypoint.sh 的
+# `wait -n` 會讓整個容器一起結束由 k8s 重建，不需 liveness 再判一次；讓 liveness
+# 依賴 gateway 反而多一條重啟風暴的路徑。
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 15
+  periodSeconds: 20
+
+# readiness 必須探測會經過 nginx `location /proxy/` 反代到 gateway 的路徑。
+# 探測 `/` 只會命中 nginx 的靜態檔 fallback，gateway 還沒 listen 就會被判 ready，
+# pod 一進 endpoint 所有 /proxy/* 呼叫都拿到 502。
+# 前提：本路徑由 agent-backend repo 的 apps/gateway/routes/proxy/health.get.ts
+# 提供，image 必須先含該 commit，否則新 pod 會全數卡在 NotReady、滾更停擺。
+readinessProbe:
+  httpGet:
+    path: /proxy/health
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# gateway runtime secrets — override per environment in values_dev.yaml etc.
+# DO NOT commit real values here.
+gateway:
+  SESSION_PASSWORD: ""
+  AES_KEY: ""
+  AES_IV: ""
+  MD5_KEY: ""
+  API_URL: ""
+  APIS_URL: ""
+  API_INTERNAL: ""
+  CS_AES_KEY: ""
+  CS_MD5_KEY: ""
+  CS_IV: ""
+  CS_API_URL: ""
+  CS_SOCKET_URL: ""
+
+  # target/tickets#4187：resolveClientIp() 信任鏈設定。skip_last_hop 只對已驗證
+  # GKE+GCLB 拓樸的環境開啟（見 apis/WEB_AgentBackend 同名設定），預設關閉。
+  TRUSTED_PROXY_SKIP_LAST_HOP: "false"
+  TRUSTED_PROXY_EXTRA_CIDRS: ""

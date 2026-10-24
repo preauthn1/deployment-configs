@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: efk-kibana
+  annotations:
+    example.invalid/ingress.class: nginx
+    example.invalid/proxy-body-size: "0"
+spec:
+  rules:
+  - host: example.invalid
+    http:
+      paths:
+      - backend:
+          serviceName: efk-kibana
+          servicePort: 443

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+data:
+  .env.schedule: |
+    {{ tpl ($.Files.Get ".env.schedule.tpl") . | nindent 4 }}
+  .env: | 
+    {{ tpl ($.Files.Get ".env.tpl") . | nindent 4 }}
+  nginx.conf: | 
+    {{ tpl ($.Files.Get "nginx.conf.tpl") . | nindent 4 }}

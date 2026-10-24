@@ -1,0 +1,74 @@
+stages:
+  - upgrade-app
+
+.msc:
+  stage: upgrade-app
+  tags:
+    - dotnet
+  image: alpine/k8s:1.18.2
+  only: 
+    - master
+  before_script:
+    - mkdir -p $HOME/.kube
+    - echo $KUBE_CONFIG | base64 -d > $HOME/.kube/config
+    - kubectl config view
+  script:
+    - echo "Deploy start ..."
+    - echo ${APP_TAG}
+    - helm upgrade msc-${APP_NAME} ./msc -f ./msc/${DEPLOY_VALUES_FILE} --install --namespace ${DEPLOY_NS} 
+      --set image.repository=${APP_IMAGE}
+      --set image.tag=${APP_TAG}
+      --set service.port=${APP_PORT}
+      --set app.name=${APP_NAME}
+    - echo "Deploy completed!"
+  when: manual
+
+API AdminSys:
+  extends: .msc
+  variables:
+    APP_NAME: api-adminsys
+    APP_IMAGE: example.invalid/msc/msc.api.adminsys
+    APP_TAG: 7723
+    APP_PORT: 80
+    DEPLOY_NS: msc
+    DEPLOY_VALUES_FILE: values.yaml
+
+API Point:
+  extends: .msc
+  variables:
+    APP_NAME: api-point
+    APP_IMAGE: example.invalid/msc/msc.api.point
+    APP_TAG: 7723
+    APP_PORT: 80
+    DEPLOY_NS: msc
+    DEPLOY_VALUES_FILE: values.yaml
+
+API Vendor:
+  extends: .msc
+  variables:
+    APP_NAME: api-vendor
+    APP_IMAGE: example.invalid/msc/msc.api.vendor
+    APP_TAG: 7723
+    APP_PORT: 80
+    DEPLOY_NS: msc
+    DEPLOY_VALUES_FILE: values.yaml
+
+Web AdminSys:
+  extends: .msc
+  variables:
+    APP_NAME: web-adminsys
+    APP_IMAGE: example.invalid/msc/msc.web.adminsys
+    APP_TAG: 7723
+    APP_PORT: 80
+    DEPLOY_NS: msc
+    DEPLOY_VALUES_FILE: values.yaml
+
+Web Point:
+  extends: .msc
+  variables:
+    APP_NAME: web-point
+    APP_IMAGE: example.invalid/msc/msc.web.point
+    APP_TAG: 7723
+    APP_PORT: 80
+    DEPLOY_NS: msc
+    DEPLOY_VALUES_FILE: values.yaml

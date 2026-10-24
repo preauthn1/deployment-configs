@@ -1,0 +1,149 @@
+.release_prod_rule: &release_prod_rule
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger" && $SRC_PROJECT == $TRIGGER_FROM_PROJECT && $SRC_COMMIT_TAG =~ /^release_\d+$/'
+    - when: never
+    
+choose gff-yes2win:
+  <<: *release_prod_rule
+  stage: choose-env
+  tags:
+    - php
+  needs:
+    - "info"
+  when: manual
+  script:
+    - echo "choose gff-yes2win"
+
+migration to gff-yes2win:
+  <<: *release_prod_rule
+  extends: .migration-echo-variables
+  stage: deploy
+  tags:
+    - php
+  needs:
+    - "choose gff-yes2win"
+  variables:
+    DEPLOY_NS: 
+    # 建置來源專案
+    TRIGGER_FROM_PROJECT: target/gffv3/apis
+    AR_PATH: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024
+    # 應用名
+    DEPLOYMENT_NAME: laravel-migration
+    APP_NAME: Laravel
+    APP_PORT: 80
+    # GKE 叢集
+    GKE_CLUSTER_NAME: cluster-yes2win
+    GKE_CLUSTER_ZONE: asia-southeast1-a
+    GCP_PROJECT: gff-yes2win
+    # 部署命名空間
+    DEPLOY_NS: default
+    # 部署金鑰
+    DEPLOY_KEY_FILE: deploy-keys/tp-wz3-rd-deploy.json
+    # HELM 圖表路徑
+    HELM_CHART_PATH: helm-charts/laravel-migration
+    # 部署值檔案
+    DEPLOY_VALUES_FILE: helm-charts/laravel-migration/values_yes2win.yaml
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq make
+    - make setup-tools
+    - make debug-info
+  script:
+    - echo "deploy to gff-yes2win"
+    - make deploy-gcp
+    - make wait-job-deployment
+
+deploy to gff-yes2win:
+  <<: *release_prod_rule
+  extends: .deploy-app-echo-variables
+  stage: deploy
+  tags:
+    - php
+  needs:
+    - "choose gff-yes2win"
+    - "migration to gff-yes2win"
+  variables:
+    # 建置來源專案
+    TRIGGER_FROM_PROJECT: target/gffv3/apis
+    AR_PATH: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024
+    # 應用名
+    DEPLOYMENT_NAME: apis
+    APP_NAME: Laravel
+    APP_PORT: 80
+    # GKE 叢集
+    GKE_CLUSTER_NAME: cluster-yes2win
+    GKE_CLUSTER_ZONE: asia-southeast1-a
+    GCP_PROJECT: gff-yes2win
+    # 部署命名空間
+    DEPLOY_NS: default
+    # 部署模式
+    DEPLOY_MODE: split
+    # 部署金鑰
+    DEPLOY_KEY_FILE: deploy-keys/tp-wz3-rd-deploy.json
+    # HELM 圖表路徑
+    HELM_CHART_PATH: helm-charts/apis
+    # 部署值檔案
+    DEPLOY_VALUES_FILE: helm-charts/apis/values_yes2win.yaml
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq make
+    - make setup-tools
+    - make debug-info
+  script:
+    - echo "deploy to gff-yes2win"
+    - make deploy-gcp
+
+############################################################
+# agent-backend（新後台前端）→ yes2win
+# 比照 .gitlab-ci-jobs/deploy-to-rd.yml 的 SRC_PROJECT 分流：
+# 僅在 target/gffv3/agent-backend 以 release_N tag trigger 時出現，
+# 不與上方 apis 的 jobs 混流；前端無 DB，不需 migration job
+############################################################
+.release_agent_backend_prod_rule_yes2win: &release_agent_backend_prod_rule_yes2win
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger" && $SRC_PROJECT == "target/gffv3/agent-backend" && $SRC_COMMIT_TAG =~ /^release_\d+$/'
+    - when: never
+
+choose agent-backend gff-yes2win (yes2win):
+  <<: *release_agent_backend_prod_rule_yes2win
+  stage: choose-env
+  tags:
+    - php
+  needs:
+    - "info"
+  when: manual
+  script:
+    - echo "choose agent-backend gff-yes2win (yes2win)"
+
+deploy agent-backend to gff-yes2win (yes2win):
+  <<: *release_agent_backend_prod_rule_yes2win
+  extends: .deploy-app-echo-variables
+  stage: deploy
+  tags:
+    - php
+  needs:
+    - "choose agent-backend gff-yes2win (yes2win)"
+  variables:
+    # 建置來源專案
+    TRIGGER_FROM_PROJECT: target/gffv3/agent-backend
+    AR_PATH: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024
+    # 應用名
+    DEPLOYMENT_NAME: agent-backend
+    APP_NAME: AgentBackend
+    APP_PORT: 8080
+    # GKE 叢集
+    GKE_CLUSTER_NAME: cluster-yes2win
+    GKE_CLUSTER_ZONE: asia-southeast1-a
+    GCP_PROJECT: gff-yes2win
+    # 部署命名空間
+    DEPLOY_NS: default
+    # 部署金鑰
+    DEPLOY_KEY_FILE: deploy-keys/tp-wz3-rd-deploy.json
+    # HELM 圖表路徑
+    HELM_CHART_PATH: helm-charts/agent-backend
+    # 部署值檔案
+    DEPLOY_VALUES_FILE: helm-charts/agent-backend/values_yes2win.yaml
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq make
+    - make setup-tools
+    - make debug-info
+  script:
+    - make deploy-gcp

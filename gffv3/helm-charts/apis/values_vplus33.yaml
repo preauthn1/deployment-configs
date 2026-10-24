@@ -1,0 +1,163 @@
+imagePullSecrets:
+  - name: ar-secret
+app:
+  site_name: vplus33
+  name: Laravel
+  env: production
+  key: base64:7P5vgqKsP+dIhpyZtCCzj7gAimNmgu7hR0xhRHFzohc=
+  url: http://apis
+  debug: false
+  currency_id: 1
+  timezone:
+    frontend: "Asia/Taipei"
+    backend: "Asia/Taipei"
+  log:
+    channel: stderr
+    level: debug
+  db:
+    connection: mysql
+    read:
+      host: mysql-service.mysql.svc.cluster.local
+      username: developer
+      password: [REDACTED]"
+    write:
+      host: mysql-service.mysql.svc.cluster.local
+      username: developer
+      password: [REDACTED]"
+    port: 3306
+    database: xsgcasino
+  session:
+    driver: redis
+  queue:
+    # #3967 啟用 Horizon，佇列切 redis
+    connection: redis
+  redis:
+    host: redis-service.redis.svc.cluster.local
+    password: [REDACTED]"
+    port: 6379
+    db: 0
+    # 佇列專用 db，避開 db 0 的 session/cache
+    queue_db: "3"
+  # Horizon 儀表板（#3967）：IP 白名單 + trusted proxies
+  horizon:
+    allowed_ips: "0.0.0.0"
+    # '*' 只信任直連的一跳（TrustProxies setTrustedProxyIpAddressesToTheCallingIp），
+    # 本站鏈路 XFF 實測 client → GCLB(0.0.0.0) → 叢集內(0.0.0.0) 兩層 proxy，
+    # '*' 會把 client IP 解成 GCLB 造成白名單 403。改列明確清單
+    # （叢集網段 + 本站 GCLB IP + GCLB backend 網段）沿 XFF 剝到真實 client IP。
+    trusted_proxies: "0.0.0.0/16,0.0.0.0,0.0.0.0/22,0.0.0.0/16"
+  # target/tickets#4187：resolveClientIp() 信任鏈設定（跟上面 horizon.trusted_proxies
+  # 是不同路徑、不同拓樸——這條是 /frontend/api/detect_ip 實測出來的，Envoy-based
+  # LB，鏈路是 client → 0.0.0.0（多次實測穩定不變）→ 浮動的最後一跳（每次
+  # 不同，見 skip_last_hop）。
+  #
+  # target/op_tickets#3478：補上 0.0.0.0。查本站 Loki 近 72 小時所有多節 XFF 的
+  # nginx access log（4,998 筆，鏈長一律 3 節），倒數第二節只有兩個值：
+  #   0.0.0.0  4,969 筆  各網域目前的 DNS 解析目標
+  #   0.0.0.0     29 筆  輪換前的舊 VIP，遊戲商回調仍走這個入口
+  #                            （實際路徑 /external/api/sw/astar/gamepool/vpl3）
+  # 少了它，那些請求 pop 掉最後一跳後會掃到它、它不在信任清單內，於是被當成
+  # 客戶端 IP 回傳。確認過不是偽造：
+  #   - 它恆定在第 1 節，而位置 0 的來源有 8 個互不相干的網段（含 Shodan 掃描器），
+  #     客戶端控制得了的欄位不會這樣固定
+  #   - RDAP 屬 Google LLC（0.0.0.0-0.0.0.0 GOOGL-2）
+  #   - 直連該 IP:443 取得的憑證由 Google Trust Services 簽發，SAN 為本站網域
+  #     （agent-backend / api-external / api / cs-api / cs-backend / cs-socket /
+  #     cs / m / www / example.invalid），只有網域擁有者申請得到
+  #   - 全 repo 搜過，沒有任何白名單拿它當「允許來源」，信任它不會讓別處失效
+  # 舊後台 _release/_init.php.vplus33 的 TRUSTED_PROXY_EXTRA_CIDRS 早已同時列這兩筆。
+  trusted_proxy:
+    extra_cidrs: "0.0.0.0/32,0.0.0.0/32"
+    skip_last_hop: true
+  api_external_url: "https://example.invalid/"
+  api_cs_url: "https://example.invalid/api/"
+  web_frontend_url: "https://example.invalid/"
+  api:
+    aes_key: "41XO3vcS87hVZ5do"
+    aes_iv: "5150080462393118"
+    aes_md5: "U7zrO7baZpil8Y7B"
+  third_party:
+    aes_md5: "oyz3xZ5K501520FB"
+    aes_key: "0K7AGrwqs00J5i9t"
+    aes_iv: "3067083800416789"
+  frontend:
+    unlimit_prefix: "UA"
+    event_code_prefix: "IE"
+    pgs_layout_lobby_agent: 9999999
+  # 對齊 WEB_AgentBackend _init.php.vplus33 的 SR11_NO_PRESELECTION（target/tickets#4335）
+  report:
+    sr11_no_preselection: "4,104,181,214,223,232"
+  live_chat:
+    bot_api_key: ""
+  # Office
+  office:
+    ip: "0.0.0.0"
+    password: [REDACTED]"
+  # Olympus Office 365 SSO（#4081）
+  azure:
+    client_id: "ab0f4fe1-5b93-427a-902f-01a6ec5f617e"
+    client_secret: [REDACTED]"
+    tenant: "e16cc667-9473-4fc9-9b30-211cdec6647e"
+    redirect_uri: "https://example.invalid/olympus/auth/callback"
+    force_sso: "true"
+  # Telegram
+  bot:
+    telegram_token: [REDACTED]
+    debug_chat_id: "-1001173896840"
+    error_chat_id: "-1001173896840"
+    warn_chat_id: "-1001173896840"
+  large_amount:
+    chat_id: ""
+    watch_agents: ""
+  switch:
+    log_request: true
+    log_sql: false
+    scramble_enabled: false
+    activity_logger_enabled: true
+  mail:
+    driver: smtp
+    scheme: null
+    host: example.invalid
+    port: 587
+    username: "user@example.invalid"
+    password: [REDACTED] grqx xazq zdri"
+    from:
+      address: "user@example.invalid"
+      name: "VPlus33"
+  # TikTok
+  tt:
+    api_url: "https://example.invalid/api/"
+    api_key: [REDACTED]"
+    private_key: "MIIEpAIBAAKCAQEAxxA87yBhi9bp6yCN3RnV48hmcQhTjiJcHpoUjrC4N1ciPVcLtcyDy0rDx90c0qZ8F3E5SwMboXvoG0bpLRfaXqNotKYy5b0zEWuGJvI4mCreTCJLj7oCXj9Xj1BZ1dMK/L5PEADFFb5DGrCWx8TTWxgSYoHyyz73psqeJ+H5DUC+Wv9uACHXV6MB5AJoJuAKrW8Px4Y/6fRD+fiGEzFnzUHLBXtJj/2kpEMZnQhMmKfLA3ACP+2JpCYnCpqL28LA3y4iCdESrpBFPASt4XpAU8XuizKn3GD0S38KmANJhx5I5BagZR0bRvmJi9eZTE92owSkaiLl/V8Lb2/GfgEo2QIDAQABAoIBAQC5+N6knMDlLzxMkZZXqOpdqvyhvyComksrv9FS2aDQ+tOfMPJcvxul0kyELXvfBPDLydi3zsiCnkrjKOVxXmaBofKRSvAkGBVcwfKL8iGTcAFMaYHkXegWeuDnoC69iDQsmfMtRTrbLGxuw+mp6qV25k9Ovo7A+SvPJF6Lbh8KE/sT3XsVwwgdj2gst9C8WrCjoNZbYPVpU8dNCKSghTFQO5wtGuGzZfyEYd9cf7rwL0uct9EOHE60W6SfJ3OD1smwHvnbkEr7s3IaO78fXhSyNGG8t0G4Jq1914/CXDtZ+N+TUSloWyFjQrVpfzipxoHtGiR27N4xZwO3iG0jsc+9AoGBAO5xKKeS+34a/dAZIQ0tBS4shHUjctxA+nAjLhb02dMswKM+nW3OPiQ3nWxwCyZCGpQqcz/JjH0xJf4+sy1ODxuDA+Rgukl9Ux10MKuA0BEhC/0F7j47qrN3C16tcttcr5p2SabYGwXc8C3vx0vvGBUD0r7pOFkV4RC/uP5fxSA3AoGBANW4whZAiUvZu8lTXbJx+DV9a0IrumCegWYnx7SGbtH2fHqoMYHvmZh5EEfLJjgwFX3gi4sGUouB/RcpRNHX+pO/1TAQttwB8agvdovZe5fqBiMSNLPA/0hsxXcRE6/DXaL7+UzqtbyYqQiateRr0PTnqIjba5WyNN3wSHehVtdvAoGAeFUfQUKKLSAOC2FDLtUTkjPhPQSAyOr5+HGopuk2rL4fEcNdy7aT4c83YSxCVDJ0G2Y4924Nunh9Rgv6fNiyAx5hbnXqTYAz299xWHwPhTV6SV0e2MVf5mYjlMpP9qiV7ovXq53QNWtEwsoJeCbXrnNZfgNQ7pR+GufGwokugI0CgYByxvKU+LvDXH+ZM4hSWRqvv1dnBgzl7roXnq2FqdzCLdnUFZfg7EhUtk+j/tnbuxcPrxPB6fdSrNC7K5KmD5Om3ZMkaRWLOhAJ/tNvb7EMeMYq95AOKUvwHVo/A5DLB+S1rxTH1hUb3/CHim686ZoirHa6aPxyPG5f8rc4aBE3SQKBgQCXT3Hvdw0CnnMb0NxBzdGjuJRHQ/epSwTE4lWsULQNOUb8puWI+XY25qhQdSph5vM580ZKTnqFZD5Sq4OD8660GmhvgYzMtCnZ3IwyUoww99rDigdng2qgffgnTi/bIYuAD9yxJsF4JQd56LzJRkG61ZXBy8pyKUvCBta36ecF1w=="
+
+# CronJob configuration
+cronjob:
+  enabled: true
+  schedule: "* * * * *"  # Every minute
+  timeZone: "UTC"
+  concurrencyPolicy: "Forbid"
+  failedJobsHistoryLimit: 1
+  successfulJobsHistoryLimit: 3
+  startingDeadlineSeconds: 300
+  backoffLimit: 6
+  restartPolicy: "OnFailure"
+  command: "php artisan schedule:run 2>&1"
+  resources:
+    limits:
+      memory: 1024Mi
+    requests:
+      cpu: 0.1
+
+# Horizon queue worker (#3967)
+# 單站獨立部署，一組 Horizon 消費自己的 redis 佇列（獨立 redis/mysql，不與其他品牌共用）
+# sizing：maxProcesses 沿用 apis config production=20；3Gi 為 20 worker 上限保護
+horizon:
+  enabled: true
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 3Gi

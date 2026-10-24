@@ -1,0 +1,50 @@
+.release_prod_rule: &release_prod_rule
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger" && $SRC_PROJECT_PATH == $TRIGGER_FROM_PROJECT && $SRC_COMMIT_REF_NAME =~ /^release_\d+$/'
+    - when: never
+
+choose gff-vwb2c (vwb2c):
+  <<: *release_prod_rule
+  stage: choose-env
+  image: alpine:3.12.12
+  tags:
+    - php
+  needs:
+    - "info"
+  when: manual
+  script:
+    - echo "choose gff-vwb2c (vwb2c)"
+
+deploy to gff-vwb2c (vwb2c):
+  <<: *release_prod_rule
+  image: google/cloud-sdk:latest
+  stage: deploy
+  tags:
+    - php
+  needs:
+    - "choose gff-vwb2c (vwb2c)"
+  variables:
+    # 應用名
+    DEPLOYMENT_NAME: tgbot-php
+    APP_NAME: tgbot
+    APP_PORT: 80
+    # GKE 叢集
+    GKE_CLUSTER_NAME: cluster-vwb2c
+    GKE_CLUSTER_ZONE: asia-southeast1-a
+    GCP_PROJECT: gff-vwb2c
+    # 部署命名空間
+    DEPLOY_NS: tgbot
+    # 部署金鑰
+    DEPLOY_KEY_FILE: .gitlab-ci-jobs/deploy-keys/tp-wz3-rd-deploy.json
+    # HELM 圖表路徑
+    HELM_CHART_PATH: helm-charts/tgbot-php
+    # 部署值檔案
+    DEPLOY_VALUES_FILE: helm-charts/tgbot-php/values_vwb2c.yaml
+  before_script:
+    - apt-get update && apt-get install vim wget kubectl make -y
+    - wget -q -O helm3.tar.gz https://get.helm.sh/helm-v3.2.3-linux-amd64.tar.gz
+    - tar -zxvf helm3.tar.gz && mv linux-amd64/helm /usr/local/bin/helm
+    - make debug-info
+  script:
+    - echo "deploy to gff-vwb2c (vwb2c)"
+    - make deploy-gcp

@@ -1,0 +1,77 @@
+# 第一阶段：构建 Flutter Web 应用
+FROM dart:3.5 AS builder
+
+# 设置环境变量
+ENV PATH="/flutter/bin:${PATH}" \
+    FLUTTER_WEB_CANVASKIT=true \
+    FLUTTER_WEB_RENDERER=html
+
+# 优化依赖安装
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    git \
+    unzip \
+    xz-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+# 创建用户和工作目录
+RUN useradd -ms /bin/bash flutter
+WORKDIR /home/flutter
+
+# 安装 Flutter
+RUN git clone https://example.invalid/flutter/flutter.git -b 3.24.3 /home/flutter/flutter \
+    && chown -R flutter:flutter /home/flutter/flutter \
+    && chmod -R 755 /home/flutter/flutter
+ENV PATH="/home/flutter/flutter/bin:${PATH}"
+
+# 优化 Flutter 安装 - 修正权限问题
+# RUN git clone --depth 1 https://example.invalid/flutter/flutter.git -b 3.24.3 /home/flutter/flutter \
+#     && chown -R flutter:flutter /home/flutter/flutter \
+#     && chmod -R 755 /home/flutter/flutter
+
+USER flutter
+
+# 预热 Flutter
+RUN flutter precache --web --no-android --no-ios --no-linux --no-windows --no-macos --no-fuchsia
+
+# 设置工作目录
+WORKDIR /home/flutter/app
+
+# 分层复制以优化缓存
+COPY --chown=flutter:flutter app/pubspec.* ./
+
+# 安装依赖
+RUN flutter pub get
+
+# 复制其余文件并构建
+COPY --chown=flutter:flutter app/. .
+RUN flutter gen-l10n \
+    && flutter build web --release \
+    --dart-define="FLUTTER_WEB_RENDERER=html" \
+    --dart-define="ENV=dev" \
+    --web-renderer html \
+    --dart-define="Dart_DefineSymbol=dart.vm.product=true" \
+    --pwa-strategy offline-first
+
+# 构建线上版本
+RUN flutter gen-l10n \
+    && flutter build web --release \
+    --dart-define="FLUTTER_WEB_RENDERER=html" \
+    --dart-define="ENV=online" \
+    --web-renderer html \
+    --dart-define="Dart_DefineSymbol=dart.vm.product=true" \
+    --pwa-strategy offline-first \
+    --output-dir=/home/flutter/app/build/web-online
+
+# 第二阶段：使用轻量级 nginx
+FROM nginx:alpine-slim
+
+# 优化 nginx 配置
+COPY --from=builder /home/flutter/app/build/web /usr/share/nginx/html
+COPY --from=builder /home/flutter/app/build/web-online /usr/share/nginx/html-online
+
+# 创建自定义 nginx 配置
+RUN echo 'client_max_body_size 100M;' > /etc/nginx/conf.d/custom.conf
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

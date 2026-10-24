@@ -1,0 +1,36 @@
+environment: production
+
+migration:
+  seedDatabase: false
+  clearCache: false
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    memory: 256Mi
+
+job:
+  activeDeadlineSeconds: 300    # 5 minutes
+
+waitForDatabase:
+  enabled: false
+  
+env:
+  SITE_NAME: prod
+  APP_NAME: Laravel_Migration
+  APP_ENV: production
+  APP_DEBUG: 0
+  DB_CONNECTION: mysql
+  DB_PORT: 3306
+  DB_DATABASE: gffpay
+  DB_LOG_DATABASE: gffpay_log
+  DB_HOST_READ: 0.0.0.0
+  DB_USERNAME_READ: developer
+  DB_PASSWORD_READ: "!QAZ2wsxForXSGames_online"
+  DB_HOST_WRITE: 0.0.0.0
+  DB_USERNAME_WRITE: developer
+  DB_PASSWORD_WRITE: "!QAZ2wsxForXSGames_online"
+  LOG_CHANNEL: stderr
+  LOG_LEVEL: debug

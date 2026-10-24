@@ -1,0 +1,99 @@
+defaultVersion: latest
+
+api:
+  schema: https
+  endpoint: example.invalid
+  cer: 851b-222e5f24024b
+  semaphore: 5
+
+tfserver:
+  port: 10080
+  replicas: 2
+  ingress:
+    enabled: true
+    annotations:
+      example.invalid/ingress.class: nginx
+      example.invalid/proxy-body-size: "0"
+      example.invalid/ssl-redirect: "false"
+      # example.invalid/ingress.class: nginx
+      # example.invalid/tls-acme: "true"
+    hosts:
+      - host: example.invalid
+        paths: [/]
+    tls:
+      - secretName: example.invalid-tls
+        hosts:
+          - example.invalid
+
+adminapi:
+  replicas: 1
+  # Logger Configurations
+  logger:
+    level: debug            # panic | fatal | error | warn | info | debug | trace 
+    formatter: text         # text | json
+    reportCaller: true
+    output:
+      - type: stdout        # stdout
+  api:
+    schema: https
+    addr: example.invalid
+    cer: 851b-222e5f24024b
+  auth:
+    admin:
+      users:
+      - username: admin
+        password: [REDACTED]
+        allowRooms:
+        - 223000010
+        - 223000410
+        - 223100010
+        - 223100410
+        - 223200010
+        - 223200410
+        - 223300010
+        - 223300410
+      - username: avatar
+        password: [REDACTED]
+        allowRooms:
+        - 223000410
+        - 223100410
+        - 223200410
+        - 223300410
+    token:
+      [REDACTED] z8@*$h96Z*284H(^
+      expire: 1h
+  ingress:
+    enabled: true
+    annotations:
+      example.invalid/ingress.class: nginx
+      example.invalid/proxy-body-size: "0"
+      example.invalid/ssl-redirect: "false"
+      # example.invalid/ingress.class: nginx
+      # example.invalid/tls-acme: "true"
+    hosts:
+      - host: example.invalid
+        paths: [/]
+    tls:
+      - secretName: example.invalid-tls
+        hosts:
+          - example.invalid
+
+adminweb:
+  apibase: https://example.invalid
+  replicas: 1
+  ingress:
+    enabled: true
+    annotations:
+      example.invalid/ingress.class: nginx
+      example.invalid/proxy-body-size: "0"
+      example.invalid/ssl-redirect: "false"
+      # example.invalid/ingress.class: nginx
+      # example.invalid/tls-acme: "true"
+    hosts:
+      - host: example.invalid
+        paths: [/]
+    tls:
+      - secretName: example.invalid-tls
+        hosts:
+          - example.invalid
+

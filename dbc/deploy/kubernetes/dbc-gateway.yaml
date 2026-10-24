@@ -1,0 +1,157 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dbc-gateway
+  labels:
+    gateway-access: dbc
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dbc-gateway
+  namespace: dbc-gateway
+automountServiceAccountToken: [REDACTED]
+---
+# dbc-gateway-config 這個 Secret 刻意不在這份 manifest 裡定義——內容含
+# 每個 role 的後端 MySQL 密碼，真實內容只能活在本機（複製
+# gateway.yaml.example 成 gateway.yaml，已被 .gitignore 排除，換上真的
+# 密碼）跟叢集裡的 Secret 兩處，絕不能進版控。部署前手動建立一次：
+#   kubectl create secret generic dbc-gateway-config -n dbc-gateway \
+#     --from-file=gateway.yaml=./gateway.yaml
+# deploy.sh／CI 的 kubectl apply 只處理這份檔案本身列出的資源，不會碰到
+# 這個 Secret，也就不會把手動建立的真實密碼蓋掉。之前曾經把這個 Secret
+# 也內嵌在這份 manifest 裡（含 mysqlPassword: [REDACTED]" 佔位符），結果每次
+# deploy.sh 套用整份 YAML 時就把真實密碼蓋回佔位符——這是真的在正式環境
+# 發生過的事故，故意拆開避免重演。
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dbc-gateway
+  namespace: dbc-gateway
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      example.invalid/name: dbc-gateway
+  template:
+    metadata:
+      labels:
+        example.invalid/name: dbc-gateway
+    spec:
+      serviceAccountName: dbc-gateway
+      automountServiceAccountToken: [REDACTED]
+      terminationGracePeriodSeconds: 4500
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: dbc-gateway
+          # CI 由 .gitlab-ci.yml 的 release-dbc-gateway-image job 自動 build/push，
+          # tag 對應 release 的 git tag（例如 v1.2.3），部署時換成實際版本。
+          image: asia-east1-docker.pkg.dev/tp-wz3-rd/bucket2024/sre/dbc/dbc-gateway:TAG
+          imagePullPolicy: IfNotPresent
+          args:
+            - -config
+            - /etc/dbc-gateway/config/gateway.yaml
+          env:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /var/run/google/credentials.json
+          ports:
+            - name: tls
+              containerPort: 8443
+              protocol: TCP
+            - name: health
+              containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: health
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /livez
+              port: health
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: config
+              mountPath: /etc/dbc-gateway/config
+              readOnly: true
+            - name: tls
+              mountPath: /etc/dbc-gateway/tls
+              readOnly: true
+            - name: google-credentials
+              mountPath: /var/run/google
+              readOnly: true
+      volumes:
+        - name: config
+          secret:
+            [REDACTED] dbc-gateway-config
+            defaultMode: 0440
+        - name: tls
+          secret:
+            [REDACTED] dbc-gateway-tls
+            defaultMode: 0440
+        - name: google-credentials
+          secret:
+            [REDACTED] dbc-gateway-google-credentials
+            defaultMode: 0440
+            items:
+              - key: credentials.json
+                path: credentials.json
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dbc-gateway
+  namespace: dbc-gateway
+spec:
+  type: ClusterIP
+  selector:
+    example.invalid/name: dbc-gateway
+  ports:
+    - name: tls
+      port: 8443
+      targetPort: tls
+      protocol: TCP
+    - name: health
+      port: 8080
+      targetPort: health
+      protocol: TCP
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: dbc-gateway
+  namespace: dbc-gateway
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      example.invalid/name: dbc-gateway

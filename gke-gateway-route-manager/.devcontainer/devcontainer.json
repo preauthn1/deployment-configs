@@ -1,0 +1,82 @@
+{
+	"name": "GKE Gateway Route Manager",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"context": ".."
+	},
+	// 掛載主機目錄以共享配置和憑證（掛載到 devuser 的 home 目錄）
+	"mounts": [
+		// GCP 憑證 - 用於 gcloud CLI 身份驗證和 GKE 集群操作
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.config/gcloud,target=/home/devuser/.config/gcloud,type=bind,consistency=cached",
+		// kubectl 配置 - 用於 Kubernetes 集群身份驗證和資源管理
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.kube,target=/home/devuser/.kube,type=bind,consistency=cached",
+		// SSH 密鑰 - 用於 Git SSH 認證和遠程服務器訪問
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/devuser/.ssh,type=bind,consistency=cached",
+		// Claude Code MCP 服務器配置 - 用於 context7 等 MCP 服務器（自動同步主機配置）
+		"source=${localEnv:HOME}${localEnv:USERPROFILE}/.config/claude,target=/home/devuser/.config/claude,type=bind,consistency=cached"
+	],
+	// 容器級環境變數（對整個容器所有進程可見，包括互動式 shell）
+	"containerEnv": {
+		"CLOUDFLARE_API_TOKEN": "${localEnv:CLOUDFLARE_API_TOKEN}"
+	},
+	// 遠端環境變數（對 devcontainer 工具和子進程可見）
+	"remoteEnv": {
+		"CLOUDFLARE_API_TOKEN": "${localEnv:CLOUDFLARE_API_TOKEN}"
+	},
+	// 容器建立後執行的命令
+	// 狀態：待 Laravel 專案初始化後啟用
+	// 啟用步驟：執行 `composer create-project laravel/laravel .` 後，取消註解此行並重建容器
+	// "postCreateCommand": "composer install && php artisan --version",
+	// 容器啟動後執行的命令（每次啟動都執行，確保 MCP 配置存在）
+	"postStartCommand": "claude mcp add --transport stdio context7 -- npx -y @upstash/context7-mcp 2>/dev/null || true",
+	// VS Code 自訂設定
+	"customizations": {
+		"vscode": {
+			// 推薦的擴展
+			"extensions": [
+				"bmewburn.vscode-intelephense-client",
+				"mikestead.dotenv",
+				"ms-azuretools.vscode-docker",
+				"ms-kubernetes-tools.vscode-kubernetes-tools",
+				"redhat.vscode-yaml",
+				"editorconfig.editorconfig"
+			],
+			// VS Code 設定
+			"settings": {
+				"php.validate.executablePath": "/usr/local/bin/php",
+				"terminal.integrated.defaultProfile.linux": "bash",
+				"files.eol": "\n",
+				"editor.formatOnSave": true,
+				"[php]": {
+					"editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+				}
+			}
+		}
+	},
+	// 使用與主機 UID/GID 匹配的用戶（由 common-utils feature 創建）
+	// 該用戶已被加入 sudo 群組，可執行需要權限的命令
+	"remoteUser": "devuser",
+	// 容器關閉時的行為
+	"shutdownAction": "stopContainer",
+	// 轉發端口（Laravel 預設使用 8000）
+	"forwardPorts": [
+		8000
+	],
+	// 啟動容器的功能特性
+	"features": {
+		// Git 配置
+		"example.invalid/devcontainers/features/git:1": {
+			"version": "latest"
+		},
+		// 自動創建與主機 UID/GID 匹配的用戶（解決文件權限問題）
+		"example.invalid/devcontainers/features/common-utils:2": {
+			"installZsh": true,
+			"installOhMyZsh": false,
+			"upgradePackages": false,
+			"username": "devuser",
+			"uid": "1000",
+			"gid": "1000",
+			"configureZshAsDefaultShell": false
+		}
+	}
+}

@@ -1,0 +1,494 @@
+game:
+  hljbp:
+    id: 2009
+    name: 欢乐聚宝盆
+    group: poker
+    room:
+      - serverid: 200900410
+        configs:
+          gameserver.dat: |
+            [gameserver]
+            gameid=2009				    //游戏ID
+            gamename=欢乐聚宝盆 	    //游戏名称
+            flag=41			     	    //显示名称,客户端可根据此名称将房间分类显示
+            minplayer=2                 //游戏最小人数
+            maxplayer=8                 //游戏最大人数
+            tablecount=100			    //桌子数
+            seatcount=8				    //椅子数
+            loginmoney=0			    //进入游戏最小积分
+            scoremode=0					//0 即时写分 1退房间写分
+            maxuser=500					//最大人数
+            taxscale=5					//抽水比例
+            readywaittime=6				//举手超时时间,单位秒
+            reghallserverinterval=60	//注册广场时间间隔,单位秒
+            basescore=100			    //底分
+            pokertype=1					//1随机发牌 2 发牌器发牌
+            deallog=2					//牌局记录器类型0 不记录 ,1 文本, 2 db
+            maxgamecountsametable=0		//同一桌最大游戏次数
+            matchmakingtime=0           //滿遊戲最小人數的等待時間
+            matchmakingnumber=0         //開始倒數時間的最低人數
+            gametimeout=10              //當遊戲開始後超過N分鐘未結束該局就踢出此張桌子所有人
+            kickoutmoney=0			    //達到此积分，強制退出房間
+            syspoolmode=2               //系統水池模式 0:無水池, 1:單機模式, 2:資料庫模式
+            syspoolctrlrate=15          //系統水池，開系統有利獎的機率
+            winline=1500000             //贏錢線
+
+
+            [gamequeue]
+            gamematchwaitmintime=1		//撮合时间间隔范围小值,单位秒
+            gamematchwaitmaxtime=3		//撮合时间间隔范围大值,单位秒
+            againstsameip=0				//同IP不分配一起
+            againstlastgame=0			//最后一次游戏过的用户不分配一起
+            gameendaction=0				//游戏结束后动作,0 无动作 1 准备
+            queuetype=0					//撮合类型 0 时间随机 1 固定人数 2输赢对战
+            queueusercount=3			//排队人数
+            queuetimeout=3				//排队人数超时
+            lessthanuser=10				//低於幾人不採用分桌機制
+
+            [robot]
+            enable=1									    //是否开启机器人
+            logoninterval=30								//加载机器人时间间隔
+            minmneyamount=10000							    //机器人最小金币数
+            maxmoneyamount=6000000						        //机器人最大金币数
+            queuecheckwaitspan=3,5							//配桌检查时间间隔
+            queueagainwaitspan=3,5							//继续配桌时间间隔
+            tablemaxusercount=8								//配桌时桌子上最大人数
+            tableminusercount=1								//配桌时桌子上最小人数
+            gameendleaveodds=1							    //游戏结束时离开游戏几率
+            autositwaitspan=1,3							    //主动入座时间间隔
+            gameactionwaitspan=1,2							//游戏动作响应时间间隔
+            gamereadywaitspan=1,5							//游戏准备相应时间间隔
+            maxusergameendleaveodds=0						//人数达到上限时离开游戏几率
+            maxcardsrndlvl=1								//机器人换牌概率0-10
+            againstgameing=0                                //進入正在遊戲中的(觀戰) 0是 1否
+            matchtablemode=0                                //配桌方式, 0輪詢桌子每次放一個機器人 1輪詢桌子每次放N個機率機器人
+            tablematchrobotrate=1,0|2,40|3,33|4,27          //為機器人人數,20機率%.  桌子隨機配N個機器人.分母为固定值,所有数字总和需为100
+            stresstest=0
+
+            [GameSetting]
+            TimeoutBetting=10                      //下注時間
+            TimeoutSettlement=15                //結算時間
+            ChipValue=500,1000,2000,5000,10000   // 籌碼面額
+            BetLimit=20000                      //押注限額
+            KickUserRound=5				        //多少回合沒下注將玩家踢出遊戲，單位回合
+
+   
+
+          robot.dat: |
+            [csize]
+            cn=1
+
+            //預設機器人
+            [c1]
+            BetRate=10000                                // 下注機率 ,100 是為1%
+            BetRange=1,7,2                              // 底注下注範圍,bet_range,1-7(籌碼編號),2(數量)
+            MoneyTime=200,1000	        	            // 下注間隔時間 200,1000 為200-1000毫秒隨機
+            
+      - serverid: 200918810
+        configs:
+          gameserver.dat: |
+            [gameserver]
+            gameid=2009				    //游戏ID
+            gamename=欢乐聚宝盆 	    //游戏名称
+            flag=1881			     	    //显示名称,客户端可根据此名称将房间分类显示
+            minplayer=2                 //游戏最小人数
+            maxplayer=8                 //游戏最大人数
+            tablecount=100			    //桌子数
+            seatcount=8				    //椅子数
+            loginmoney=0			    //进入游戏最小积分
+            scoremode=0					//0 即时写分 1退房间写分
+            maxuser=500					//最大人数
+            taxscale=5					//抽水比例
+            readywaittime=6				//举手超时时间,单位秒
+            reghallserverinterval=60	//注册广场时间间隔,单位秒
+            basescore=100			    //底分
+            pokertype=1					//1随机发牌 2 发牌器发牌
+            deallog=2					//牌局记录器类型0 不记录 ,1 文本, 2 db
+            maxgamecountsametable=0		//同一桌最大游戏次数
+            matchmakingtime=0           //滿遊戲最小人數的等待時間
+            matchmakingnumber=0         //開始倒數時間的最低人數
+            gametimeout=10              //當遊戲開始後超過N分鐘未結束該局就踢出此張桌子所有人
+            kickoutmoney=0			    //達到此积分，強制退出房間
+            syspoolmode=2               //系統水池模式 0:無水池, 1:單機模式, 2:資料庫模式
+            syspoolctrlrate=15          //系統水池，開系統有利獎的機率
+            winline=1500000             //贏錢線
+
+            [gamequeue]
+            gamematchwaitmintime=1		//撮合时间间隔范围小值,单位秒
+            gamematchwaitmaxtime=3		//撮合时间间隔范围大值,单位秒
+            againstsameip=0				//同IP不分配一起
+            againstlastgame=0			//最后一次游戏过的用户不分配一起
+            gameendaction=0				//游戏结束后动作,0 无动作 1 准备
+            queuetype=0					//撮合类型 0 时间随机 1 固定人数 2输赢对战
+            queueusercount=3			//排队人数
+            queuetimeout=3				//排队人数超时
+            lessthanuser=10				//低於幾人不採用分桌機制
+
+            [robot]
+            enable=1									    //是否开启机器人
+            logoninterval=30								//加载机器人时间间隔
+            minmneyamount=10000							    //机器人最小金币数
+            maxmoneyamount=6000000						        //机器人最大金币数
+            queuecheckwaitspan=3,5							//配桌检查时间间隔
+            queueagainwaitspan=3,5							//继续配桌时间间隔
+            tablemaxusercount=8								//配桌时桌子上最大人数
+            tableminusercount=1								//配桌时桌子上最小人数
+            gameendleaveodds=1							    //游戏结束时离开游戏几率
+            autositwaitspan=1,3							    //主动入座时间间隔
+            gameactionwaitspan=1,2							//游戏动作响应时间间隔
+            gamereadywaitspan=1,5							//游戏准备相应时间间隔
+            maxusergameendleaveodds=0						//人数达到上限时离开游戏几率
+            maxcardsrndlvl=1								//机器人换牌概率0-10
+            againstgameing=0                                //進入正在遊戲中的(觀戰) 0是 1否
+            matchtablemode=0                                //配桌方式, 0輪詢桌子每次放一個機器人 1輪詢桌子每次放N個機率機器人
+            tablematchrobotrate=1,0|2,40|3,33|4,27          //為機器人人數,20機率%.  桌子隨機配N個機器人.分母为固定值,所有数字总和需为100
+            stresstest=0
+
+            [GameSetting]
+            TimeoutBetting=10                      //下注時間
+            TimeoutSettlement=15                //結算時間
+            ChipValue=500,1000,2000,5000,10000   // 籌碼面額
+            BetLimit=20000                      //押注限額
+            KickUserRound=5				        //多少回合沒下注將玩家踢出遊戲，單位回合
+
+            [SystemPool]
+            EnablePoolControl=1         // 是否開啟水線控制功能，0:關閉，1:開啟
+            WinLine=1500000             // 贏錢線
+            BombRate=10                 // 作弊機率，採百分比
+
+          robot.dat: |
+            [csize]
+            cn=1
+
+            //預設機器人
+            [c1]
+            BetRate=10000                                // 下注機率 ,100 是為1%
+            BetRange=1,7,2                              // 底注下注範圍,bet_range,1-7(籌碼編號),2(數量)
+            MoneyTime=200,1000	        	            // 下注間隔時間 200,1000 為200-1000毫秒隨機
+
+      - serverid: 200908810
+        configs:
+          gameserver.dat: |
+            [gameserver]
+            gameid=2009				    //游戏ID
+            gamename=欢乐聚宝盆 	    //游戏名称
+            flag=881			     	    //显示名称,客户端可根据此名称将房间分类显示
+            minplayer=2                 //游戏最小人数
+            maxplayer=8                 //游戏最大人数
+            tablecount=100			    //桌子数
+            seatcount=8				    //椅子数
+            loginmoney=0			    //进入游戏最小积分
+            scoremode=0					//0 即时写分 1退房间写分
+            maxuser=500					//最大人数
+            taxscale=5					//抽水比例
+            readywaittime=6				//举手超时时间,单位秒
+            reghallserverinterval=60	//注册广场时间间隔,单位秒
+            basescore=100			    //底分
+            pokertype=1					//1随机发牌 2 发牌器发牌
+            deallog=2					//牌局记录器类型0 不记录 ,1 文本, 2 db
+            maxgamecountsametable=0		//同一桌最大游戏次数
+            matchmakingtime=0           //滿遊戲最小人數的等待時間
+            matchmakingnumber=0         //開始倒數時間的最低人數
+            gametimeout=10              //當遊戲開始後超過N分鐘未結束該局就踢出此張桌子所有人
+            kickoutmoney=0			    //達到此积分，強制退出房間
+            syspoolmode=2               //系統水池模式 0:無水池, 1:單機模式, 2:資料庫模式
+            syspoolctrlrate=15          //系統水池，開系統有利獎的機率
+            winline=1500000             //贏錢線
+
+            [gamequeue]
+            gamematchwaitmintime=1		//撮合时间间隔范围小值,单位秒
+            gamematchwaitmaxtime=3		//撮合时间间隔范围大值,单位秒
+            againstsameip=0				//同IP不分配一起
+            againstlastgame=0			//最后一次游戏过的用户不分配一起
+            gameendaction=0				//游戏结束后动作,0 无动作 1 准备
+            queuetype=0					//撮合类型 0 时间随机 1 固定人数 2输赢对战
+            queueusercount=3			//排队人数
+            queuetimeout=3				//排队人数超时
+            lessthanuser=10				//低於幾人不採用分桌機制
+
+            [robot]
+            enable=1									    //是否开启机器人
+            logoninterval=30								//加载机器人时间间隔
+            minmneyamount=10000							    //机器人最小金币数
+            maxmoneyamount=6000000						        //机器人最大金币数
+            queuecheckwaitspan=3,5							//配桌检查时间间隔
+            queueagainwaitspan=3,5							//继续配桌时间间隔
+            tablemaxusercount=8								//配桌时桌子上最大人数
+            tableminusercount=1								//配桌时桌子上最小人数
+            gameendleaveodds=1							    //游戏结束时离开游戏几率
+            autositwaitspan=1,3							    //主动入座时间间隔
+            gameactionwaitspan=1,2							//游戏动作响应时间间隔
+            gamereadywaitspan=1,5							//游戏准备相应时间间隔
+            maxusergameendleaveodds=0						//人数达到上限时离开游戏几率
+            maxcardsrndlvl=1								//机器人换牌概率0-10
+            againstgameing=0                                //進入正在遊戲中的(觀戰) 0是 1否
+            matchtablemode=0                                //配桌方式, 0輪詢桌子每次放一個機器人 1輪詢桌子每次放N個機率機器人
+            tablematchrobotrate=1,0|2,40|3,33|4,27          //為機器人人數,20機率%.  桌子隨機配N個機器人.分母为固定值,所有数字总和需为100
+            stresstest=0
+
+            [GameSetting]
+            TimeoutBetting=10                      //下注時間
+            TimeoutSettlement=15                //結算時間
+            ChipValue=500,1000,2000,5000,10000   // 籌碼面額
+            BetLimit=20000                      //押注限額
+            KickUserRound=5				        //多少回合沒下注將玩家踢出遊戲，單位回合
+
+            [SystemPool]
+            EnablePoolControl=1         // 是否開啟水線控制功能，0:關閉，1:開啟
+            WinLine=1500000             // 贏錢線
+            BombRate=10                 // 作弊機率，採百分比   
+
+          robot.dat: |
+            [csize]
+            cn=1
+
+            //預設機器人
+            [c1]
+            BetRate=10000                                // 下注機率 ,100 是為1%
+            BetRange=1,7,2                              // 底注下注範圍,bet_range,1-7(籌碼編號),2(數量)
+            MoneyTime=200,1000	        	            // 下注間隔時間 200,1000 為200-1000毫秒隨機
+      - serverid: 200900010
+        configs:
+          gameserver.dat: |
+            [gameserver]
+            gameid=2009				    //游戏ID
+            gamename=欢乐聚宝盆 	    //游戏名称
+            flag=1			     	    //显示名称,客户端可根据此名称将房间分类显示
+            minplayer=2                 //游戏最小人数
+            maxplayer=8                 //游戏最大人数
+            tablecount=100			    //桌子数
+            seatcount=8				    //椅子数
+            loginmoney=0			    //进入游戏最小积分
+            scoremode=0					//0 即时写分 1退房间写分
+            maxuser=500					//最大人数
+            taxscale=5					//抽水比例
+            readywaittime=6				//举手超时时间,单位秒
+            reghallserverinterval=60	//注册广场时间间隔,单位秒
+            basescore=100			    //底分
+            pokertype=1					//1随机发牌 2 发牌器发牌
+            deallog=2					//牌局记录器类型0 不记录 ,1 文本, 2 db
+            maxgamecountsametable=0		//同一桌最大游戏次数
+            matchmakingtime=0           //滿遊戲最小人數的等待時間
+            matchmakingnumber=0         //開始倒數時間的最低人數
+            gametimeout=10              //當遊戲開始後超過N分鐘未結束該局就踢出此張桌子所有人
+            kickoutmoney=0			    //達到此积分，強制退出房間
+            syspoolmode=2               //系統水池模式 0:無水池, 1:單機模式, 2:資料庫模式
+            syspoolctrlrate=15          //系統水池，開系統有利獎的機率
+            winline=1500000             //贏錢線
+
+
+            [gamequeue]
+            gamematchwaitmintime=1		//撮合时间间隔范围小值,单位秒
+            gamematchwaitmaxtime=3		//撮合时间间隔范围大值,单位秒
+            againstsameip=0				//同IP不分配一起
+            againstlastgame=0			//最后一次游戏过的用户不分配一起
+            gameendaction=0				//游戏结束后动作,0 无动作 1 准备
+            queuetype=0					//撮合类型 0 时间随机 1 固定人数 2输赢对战
+            queueusercount=3			//排队人数
+            queuetimeout=3				//排队人数超时
+            lessthanuser=10				//低於幾人不採用分桌機制
+
+            [robot]
+            enable=1									    //是否开启机器人
+            logoninterval=30								//加载机器人时间间隔
+            minmneyamount=10000							    //机器人最小金币数
+            maxmoneyamount=6000000						        //机器人最大金币数
+            queuecheckwaitspan=3,5							//配桌检查时间间隔
+            queueagainwaitspan=3,5							//继续配桌时间间隔
+            tablemaxusercount=8								//配桌时桌子上最大人数
+            tableminusercount=1								//配桌时桌子上最小人数
+            gameendleaveodds=1							    //游戏结束时离开游戏几率
+            autositwaitspan=1,3							    //主动入座时间间隔
+            gameactionwaitspan=1,2							//游戏动作响应时间间隔
+            gamereadywaitspan=1,5							//游戏准备相应时间间隔
+            maxusergameendleaveodds=0						//人数达到上限时离开游戏几率
+            maxcardsrndlvl=1								//机器人换牌概率0-10
+            againstgameing=0                                //進入正在遊戲中的(觀戰) 0是 1否
+            matchtablemode=0                                //配桌方式, 0輪詢桌子每次放一個機器人 1輪詢桌子每次放N個機率機器人
+            tablematchrobotrate=1,0|2,40|3,33|4,27          //為機器人人數,20機率%.  桌子隨機配N個機器人.分母为固定值,所有数字总和需为100
+            stresstest=0
+
+            [GameSetting]
+            TimeoutBetting=10                      //下注時間
+            TimeoutSettlement=15                //結算時間
+            ChipValue=500,1000,2000,5000,10000   // 籌碼面額
+            BetLimit=20000                      //押注限額
+            KickUserRound=5				        //多少回合沒下注將玩家踢出遊戲，單位回合
+
+            [SystemPool]
+            EnablePoolControl=1         // 是否開啟水線控制功能，0:關閉，1:開啟
+            WinLine=1500000             // 贏錢線
+            BombRate=10                 // 作弊機率，採百分比
+   
+
+          robot.dat: |
+            [csize]
+            cn=1
+
+            //預設機器人
+            [c1]
+            BetRate=10000                                // 下注機率 ,100 是為1%
+            BetRange=1,7,2                              // 底注下注範圍,bet_range,1-7(籌碼編號),2(數量)
+            MoneyTime=200,1000	        	            // 下注間隔時間 200,1000 為200-1000毫秒隨機
+
+      - serverid: 200902110
+        configs:
+          gameserver.dat: |
+            [gameserver]
+            gameid=2009				    //游戏ID
+            gamename=欢乐聚宝盆 	    //游戏名称
+            flag=211			     	    //显示名称,客户端可根据此名称将房间分类显示
+            minplayer=2                 //游戏最小人数
+            maxplayer=8                 //游戏最大人数
+            tablecount=100			    //桌子数
+            seatcount=8				    //椅子数
+            loginmoney=0			    //进入游戏最小积分
+            scoremode=0					//0 即时写分 1退房间写分
+            maxuser=500					//最大人数
+            taxscale=5					//抽水比例
+            readywaittime=6				//举手超时时间,单位秒
+            reghallserverinterval=60	//注册广场时间间隔,单位秒
+            basescore=100			    //底分
+            pokertype=1					//1随机发牌 2 发牌器发牌
+            deallog=2					//牌局记录器类型0 不记录 ,1 文本, 2 db
+            maxgamecountsametable=0		//同一桌最大游戏次数
+            matchmakingtime=0           //滿遊戲最小人數的等待時間
+            matchmakingnumber=0         //開始倒數時間的最低人數
+            gametimeout=10              //當遊戲開始後超過N分鐘未結束該局就踢出此張桌子所有人
+            kickoutmoney=0			    //達到此积分，強制退出房間
+            syspoolmode=2               //系統水池模式 0:無水池, 1:單機模式, 2:資料庫模式
+            syspoolctrlrate=15          //系統水池，開系統有利獎的機率
+            winline=1500000             //贏錢線
+
+
+            [gamequeue]
+            gamematchwaitmintime=1		//撮合时间间隔范围小值,单位秒
+            gamematchwaitmaxtime=3		//撮合时间间隔范围大值,单位秒
+            againstsameip=0				//同IP不分配一起
+            againstlastgame=0			//最后一次游戏过的用户不分配一起
+            gameendaction=0				//游戏结束后动作,0 无动作 1 准备
+            queuetype=0					//撮合类型 0 时间随机 1 固定人数 2输赢对战
+            queueusercount=3			//排队人数
+            queuetimeout=3				//排队人数超时
+            lessthanuser=10				//低於幾人不採用分桌機制
+
+            [robot]
+            enable=1									    //是否开启机器人
+            logoninterval=30								//加载机器人时间间隔
+            minmneyamount=10000							    //机器人最小金币数
+            maxmoneyamount=6000000						        //机器人最大金币数
+            queuecheckwaitspan=3,5							//配桌检查时间间隔
+            queueagainwaitspan=3,5							//继续配桌时间间隔
+            tablemaxusercount=8								//配桌时桌子上最大人数
+            tableminusercount=1								//配桌时桌子上最小人数
+            gameendleaveodds=1							    //游戏结束时离开游戏几率
+            autositwaitspan=1,3							    //主动入座时间间隔
+            gameactionwaitspan=1,2							//游戏动作响应时间间隔
+            gamereadywaitspan=1,5							//游戏准备相应时间间隔
+            maxusergameendleaveodds=0						//人数达到上限时离开游戏几率
+            maxcardsrndlvl=1								//机器人换牌概率0-10
+            againstgameing=0                                //進入正在遊戲中的(觀戰) 0是 1否
+            matchtablemode=0                                //配桌方式, 0輪詢桌子每次放一個機器人 1輪詢桌子每次放N個機率機器人
+            tablematchrobotrate=1,0|2,40|3,33|4,27          //為機器人人數,20機率%.  桌子隨機配N個機器人.分母为固定值,所有数字总和需为100
+            stresstest=0
+
+            [GameSetting]
+            TimeoutBetting=10                      //下注時間
+            TimeoutSettlement=15                //結算時間
+            ChipValue=500,1000,2000,5000,10000   // 籌碼面額
+            BetLimit=20000                      //押注限額
+            KickUserRound=5				        //多少回合沒下注將玩家踢出遊戲，單位回合
+
+            [SystemPool]
+            EnablePoolControl=1         // 是否開啟水線控制功能，0:關閉，1:開啟
+            WinLine=1500000             // 贏錢線
+            BombRate=10                 // 作弊機率，採百分比
+
+          robot.dat: |
+            [csize]
+            cn=1
+
+            //預設機器人
+            [c1]
+            BetRate=10000                                // 下注機率 ,100 是為1%
+            BetRange=1,7,2                              // 底注下注範圍,bet_range,1-7(籌碼編號),2(數量)
+            MoneyTime=200,1000	        	            // 下注間隔時間 200,1000 為200-1000毫秒隨機
+      - serverid: 200904010
+        configs:
+          gameserver.dat: |
+            [gameserver]
+            gameid=2009				    //游戏ID
+            gamename=欢乐聚宝盆 	    //游戏名称
+            flag=401			     	    //显示名称,客户端可根据此名称将房间分类显示
+            minplayer=2                 //游戏最小人数
+            maxplayer=8                 //游戏最大人数
+            tablecount=100			    //桌子数
+            seatcount=8				    //椅子数
+            loginmoney=0			    //进入游戏最小积分
+            scoremode=0					//0 即时写分 1退房间写分
+            maxuser=500					//最大人数
+            taxscale=5					//抽水比例
+            readywaittime=6				//举手超时时间,单位秒
+            reghallserverinterval=60	//注册广场时间间隔,单位秒
+            basescore=100			    //底分
+            pokertype=1					//1随机发牌 2 发牌器发牌
+            deallog=2					//牌局记录器类型0 不记录 ,1 文本, 2 db
+            maxgamecountsametable=0		//同一桌最大游戏次数
+            matchmakingtime=0           //滿遊戲最小人數的等待時間
+            matchmakingnumber=0         //開始倒數時間的最低人數
+            gametimeout=10              //當遊戲開始後超過N分鐘未結束該局就踢出此張桌子所有人
+            kickoutmoney=0			    //達到此积分，強制退出房間
+            syspoolmode=2               //系統水池模式 0:無水池, 1:單機模式, 2:資料庫模式
+            syspoolctrlrate=15          //系統水池，開系統有利獎的機率
+            winline=1500000             //贏錢線
+
+
+            [gamequeue]
+            gamematchwaitmintime=1		//撮合时间间隔范围小值,单位秒
+            gamematchwaitmaxtime=3		//撮合时间间隔范围大值,单位秒
+            againstsameip=0				//同IP不分配一起
+            againstlastgame=0			//最后一次游戏过的用户不分配一起
+            gameendaction=0				//游戏结束后动作,0 无动作 1 准备
+            queuetype=0					//撮合类型 0 时间随机 1 固定人数 2输赢对战
+            queueusercount=3			//排队人数
+            queuetimeout=3				//排队人数超时
+            lessthanuser=10				//低於幾人不採用分桌機制
+
+            [robot]
+            enable=1									    //是否开启机器人
+            logoninterval=30								//加载机器人时间间隔
+            minmneyamount=10000							    //机器人最小金币数
+            maxmoneyamount=6000000						        //机器人最大金币数
+            queuecheckwaitspan=3,5							//配桌检查时间间隔
+            queueagainwaitspan=3,5							//继续配桌时间间隔
+            tablemaxusercount=8								//配桌时桌子上最大人数
+            tableminusercount=1								//配桌时桌子上最小人数
+            gameendleaveodds=1							    //游戏结束时离开游戏几率
+            autositwaitspan=1,3							    //主动入座时间间隔
+            gameactionwaitspan=1,2							//游戏动作响应时间间隔
+            gamereadywaitspan=1,5							//游戏准备相应时间间隔
+            maxusergameendleaveodds=0						//人数达到上限时离开游戏几率
+            maxcardsrndlvl=1								//机器人换牌概率0-10
+            againstgameing=0                                //進入正在遊戲中的(觀戰) 0是 1否
+            matchtablemode=0                                //配桌方式, 0輪詢桌子每次放一個機器人 1輪詢桌子每次放N個機率機器人
+            tablematchrobotrate=1,0|2,40|3,33|4,27          //為機器人人數,20機率%.  桌子隨機配N個機器人.分母为固定值,所有数字总和需为100
+            stresstest=0
+
+            [GameSetting]
+            TimeoutBetting=10                      //下注時間
+            TimeoutSettlement=15                //結算時間
+            ChipValue=500,1000,2000,5000,10000   // 籌碼面額
+            BetLimit=20000                      //押注限額
+            KickUserRound=5				        //多少回合沒下注將玩家踢出遊戲，單位回合
+
+   
+
+          robot.dat: |
+            [csize]
+            cn=1
+
+            //預設機器人
+            [c1]
+            BetRate=10000                                // 下注機率 ,100 是為1%
+            BetRange=1,7,2                              // 底注下注範圍,bet_range,1-7(籌碼編號),2(數量)
+            MoneyTime=200,1000	        	            // 下注間隔時間 200,1000 為200-1000毫秒隨機                 

@@ -1,0 +1,5 @@
+agent-backend deployed successfully.
+
+  Service: {{ .Release.Name }} (port {{ .Values.service.port }})
+  Image:   {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
+  Namespace: {{ .Release.Namespace }}
