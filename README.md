@@ -1,6 +1,6 @@
 # deployment-configs
 
-19 个工程，583 个文本文件。每个目录内的 README.md 描述该工程。
+20 个工程，583 个文本文件。每目录一份 README（结构信息 + 原始说明）。
 
 ## 索引
 
@@ -20,8 +20,9 @@
 | [`gffv1proxy`](./gffv1proxy) | fon666 · vplus33 | 4 | YAML |
 | [`gffv3`](./gffv3) | helm-charts/apis · helm-charts/agent-backend · helm-charts/laravel-migration | 71 | YAML |
 | [`gke-gateway-route-manager`](./gke-gateway-route-manager) | docs · .devcontainer · .claude | 11 | JSON |
-| [`gs88`](./gs88) |  | 1 | — |
+| [`gs88`](./gs88) | — | 1 | — |
 | [`marscard`](./marscard) | msc · msc/templates | 16 | YAML |
 | [`pgs-hall`](./pgs-hall) | frontend/src · frontend · views/static | 75 | Vue |
 | [`pgs-kube`](./pgs-kube) | local-dev/core · local-dev/pgs-dev | 50 | YAML |
+| [`pgs-op_tickets`](./pgs-op_tickets) | — | 0 | — |
 | [`sre-onegate`](./sre-onegate) | helm-charts/laravel-app · helm-charts/laravel-migration | 22 | YAML |

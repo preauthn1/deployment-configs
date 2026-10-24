@@ -1,6 +1,8 @@
 # bwg888
 
-原始路径：`bwg888`　|　文件：**16**　|　主语言：YAML 13, Shell 3
+> 本目录原始 README 见文末，本节为快照补充信息。
+
+原始路径：`bwg888`　|　文件 **16**　|　主语言：YAML 13, Shell 3
 
 ## 目录构成
 
@@ -22,18 +24,34 @@ charts/metallb/  — 1
 
 - CI/构建：`.gitlab-ci.yml`
 
-## 主要文件
+---
 
-- `scripts/deploy.sh`
-- `scripts/update-config.sh`
-- `scripts/lib/common.sh`
-- `.gitlab-ci.yml`
-- `manifests/examples/example-app.yaml`
-- `manifests/examples/example-ingress.yaml`
-- `manifests/cert-manager/cluster-issuer.yaml`
-- `environments/production/cert-manager.yaml`
+## 原始说明
 
-## 说明
+# target Kubernetes 基础设施
 
-该工程为平台的一个组件。仅收录文本源码与配置，图片、音频等二进制资源未收录；凭据、密钥、内网地址与域名已按实际内容替换。
+本仓库管理 target Kubernetes 集群的基础设施配置。
+
+## 组件清单
+
+- cert-manager：证书管理
+- nginx-ingress：入口控制器
+- load-balancer：负载均衡
+
+## 目录结构
+
+target-infra/
+├── charts/ # Helm charts 配置
+├── manifests/ # Kubernetes 原生配置文件
+└── environments/ # 环境特定配置
+├── production/ # 生产环境配置
+└── staging/ # 测试环境配置
+
+## 部署说明
+
+待补充
+
+## 维护指南
+
+待补充
 

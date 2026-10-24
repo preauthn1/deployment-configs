@@ -1,6 +1,8 @@
 # cm
 
-原始路径：`cm`　|　文件：**60**　|　主语言：YAML 45, Shell 1
+> 本目录原始 README 见文末，本节为快照补充信息。
+
+原始路径：`cm`　|　文件 **60**　|　主语言：YAML 45, Shell 1
 
 ## 目录构成
 
@@ -20,18 +22,11 @@ build-dev/api-frontend/  — 1
 
 - CI/构建：`.gitlab-ci.yml`
 
-## 主要文件
+---
 
-- `.gitlab-ci.yml`
-- `helm-charts/tgbot-php/templates/deployment.yaml`
-- `helm-charts/cm-backend/templates/deployment.yaml`
-- `helm-charts/cm-api-frontend/templates/deployment.yaml`
-- `helm-charts/cm-api-frontend/values.yaml`
-- `helm-charts/cm-api-frontend/values_online.yaml`
-- `helm-charts/cm-backend/values.yaml`
-- `helm-charts/cm-backend/values_online.yaml`
+## 原始说明
 
-## 说明
+# cm
 
-该工程为平台的一个组件。仅收录文本源码与配置，图片、音频等二进制资源未收录；凭据、密钥、内网地址与域名已按实际内容替换。
+# git clone -b $BRANCH --single-branch http://gitlab-ci-token:[REDACTED]
 
