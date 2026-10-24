@@ -1,26 +1,28 @@
-# target Kubernetes 基础设施
+# bwg888
 
-本仓库管理 target Kubernetes 集群的基础设施配置。
+原始路径：`bwg888`　|　收录文件：**17**
 
-## 组件清单
+## 语言构成
 
-- cert-manager：证书管理
-- nginx-ingress：入口控制器
-- load-balancer：负载均衡
+- YAML — 13 个文件（76%）
+- Shell — 3 个文件（17%）
+- Markdown — 1 个文件（5%）
 
 ## 目录结构
 
-target-infra/
-├── charts/ # Helm charts 配置
-├── manifests/ # Kubernetes 原生配置文件
-└── environments/ # 环境特定配置
-├── production/ # 生产环境配置
-└── staging/ # 测试环境配置
+```
+manifests/  (8 个文件)
+scripts/  (3 个文件)
+charts/  (3 个文件)
+./  (2 个文件)
+environments/  (1 个文件)
+```
 
-## 部署说明
+## 关键文件
 
-待补充
+- 构建脚本：`.gitlab-ci.yml`
 
-## 维护指南
+## 说明
 
-待补充
+文本源码与配置的静态快照；二进制资源未收录。发布前已按本目录实际内容替换凭据、密钥、内网地址与域名。
+
