@@ -1,30 +1,42 @@
 # deployment-backend
 
-原始路径：`deployment-backend`　|　收录文件：**72**
+原始路径：`deployment-backend`　|　文件：**73**　|　主语言：YAML 49, JSON 16
 
-## 语言构成
-
-- YAML — 49 个文件（74%）
-- JSON — 16 个文件（24%）
-- Markdown — 1 个文件（1%）
-
-## 目录结构
+## 目录构成
 
 ```
-api/  (23 个文件)
-bwg-api/  (18 个文件)
-portal/  (11 个文件)
-bwg-portal/  (11 个文件)
-values/  (6 个文件)
-ci-jobs/  (2 个文件)
-./  (1 个文件)
+api/templates/  — 8
+portal/templates/  — 8
+bwg-portal/templates/  — 8
+bwg-api/templates/  — 8
+values/bwg/  — 6
+README.md/  — 1
+.gitlab-ci.yml/  — 1
+api/appsettings-game.json/  — 1
+api/readme.md/  — 1
+api/appsettings-vendor.json/  — 1
+api/appsettings-sandbox_vendor.json/  — 1
+api/values.yaml/  — 1
+api/appsettings-public.json/  — 1
+api/Chart.yaml/  — 1
 ```
 
 ## 关键文件
 
-- 构建脚本：`.gitlab-ci.yml`
+- CI/构建：`.gitlab-ci.yml`
+
+## 主要文件
+
+- `portal/values.yaml`
+- `bwg-api/appsettings-adminsys.json`
+- `api/appsettings-adminsys.json`
+- `bwg-api/appsettings-vendor.json`
+- `api/appsettings-vendor.json`
+- `bwg-api/appsettings-job.json`
+- `api/appsettings-job.json`
+- `api/values-public.yaml`
 
 ## 说明
 
-文本源码与配置的静态快照；二进制资源未收录。发布前已按本目录实际内容替换凭据、密钥、内网地址与域名。
+该工程为平台的一个组件。仅收录文本源码与配置，图片、音频等二进制资源未收录；凭据、密钥、内网地址与域名已按实际内容替换。
 

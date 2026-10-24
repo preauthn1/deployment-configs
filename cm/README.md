@@ -1,27 +1,42 @@
 # cm
 
-原始路径：`cm`　|　收录文件：**61**
+原始路径：`cm`　|　文件：**61**　|　主语言：YAML 45, Shell 1
 
-## 语言构成
-
-- YAML — 45 个文件（95%）
-- Markdown — 1 个文件（2%）
-- Shell — 1 个文件（2%）
-
-## 目录结构
+## 目录构成
 
 ```
-helm-charts/  (48 个文件)
-build-dev/  (7 个文件)
-ci-jobs/  (4 个文件)
-./  (2 个文件)
+helm-charts/tgbot-php/  — 13
+helm-charts/cm-backend/  — 12
+helm-charts/cm-api-frontend/  — 12
+helm-charts/cm-app-frontend/  — 11
+build-dev/tgbot-php/  — 3
+build-dev/backend/  — 2
+README.md/  — 1
+.gitlab-ci.yml/  — 1
+build-dev/app-frontend/  — 1
+build-dev/api-frontend/  — 1
+ci-jobs/backend.yml/  — 1
+ci-jobs/api-frontend.yml/  — 1
+ci-jobs/tgbot-php.yml/  — 1
+ci-jobs/app-frontend.yml/  — 1
 ```
 
 ## 关键文件
 
-- 构建脚本：`.gitlab-ci.yml`
+- CI/构建：`.gitlab-ci.yml`
+
+## 主要文件
+
+- `.gitlab-ci.yml`
+- `helm-charts/tgbot-php/templates/deployment.yaml`
+- `helm-charts/cm-backend/templates/deployment.yaml`
+- `helm-charts/cm-api-frontend/templates/deployment.yaml`
+- `helm-charts/cm-api-frontend/values.yaml`
+- `helm-charts/cm-api-frontend/values_online.yaml`
+- `helm-charts/cm-backend/values.yaml`
+- `helm-charts/cm-backend/values_online.yaml`
 
 ## 说明
 
-文本源码与配置的静态快照；二进制资源未收录。发布前已按本目录实际内容替换凭据、密钥、内网地址与域名。
+该工程为平台的一个组件。仅收录文本源码与配置，图片、音频等二进制资源未收录；凭据、密钥、内网地址与域名已按实际内容替换。
 

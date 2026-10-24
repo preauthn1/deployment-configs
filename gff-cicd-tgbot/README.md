@@ -1,24 +1,32 @@
 # gff-cicd-tgbot
 
-原始路径：`gff-cicd-tgbot`　|　收录文件：**19**
+原始路径：`gff-cicd-tgbot`　|　文件：**19**　|　主语言：YAML 14
 
-## 语言构成
-
-- YAML — 14 个文件（93%）
-- Markdown — 1 个文件（6%）
-
-## 目录结构
+## 目录构成
 
 ```
-helm-charts/  (16 个文件)
-./  (3 个文件)
+helm-charts/tgbot-php/  — 16
+README.md/  — 1
+Makefile/  — 1
+.gitlab-ci.yml/  — 1
 ```
 
 ## 关键文件
 
-- 构建脚本：`Makefile`、`.gitlab-ci.yml`
+- CI/构建：`Makefile`、`.gitlab-ci.yml`
+
+## 主要文件
+
+- `.gitlab-ci.yml`
+- `helm-charts/tgbot-php/templates/deployment.yaml`
+- `helm-charts/tgbot-php/values_vplus33.yaml`
+- `helm-charts/tgbot-php/values_vwb2c.yaml`
+- `helm-charts/tgbot-php/values_tpower.yaml`
+- `helm-charts/tgbot-php/values_online.yaml`
+- `helm-charts/tgbot-php/values.yaml`
+- `helm-charts/tgbot-php/templates/ingress.yaml`
 
 ## 说明
 
-文本源码与配置的静态快照；二进制资源未收录。发布前已按本目录实际内容替换凭据、密钥、内网地址与域名。
+该工程为平台的一个组件。仅收录文本源码与配置，图片、音频等二进制资源未收录；凭据、密钥、内网地址与域名已按实际内容替换。
 

@@ -1,25 +1,31 @@
 # deployment-tgbot
 
-原始路径：`deployment-tgbot`　|　收录文件：**14**
+原始路径：`deployment-tgbot`　|　文件：**14**　|　主语言：YAML 11, JSON 1
 
-## 语言构成
-
-- YAML — 11 个文件（84%）
-- Markdown — 1 个文件（7%）
-- JSON — 1 个文件（7%）
-
-## 目录结构
+## 目录构成
 
 ```
-helm-charts/  (12 个文件)
-./  (2 个文件)
+helm-charts/tgbot/  — 12
+README.md/  — 1
+.gitlab-ci.yml/  — 1
 ```
 
 ## 关键文件
 
-- 构建脚本：`.gitlab-ci.yml`
+- CI/构建：`.gitlab-ci.yml`
+
+## 主要文件
+
+- `helm-charts/tgbot/values-gke.yaml`
+- `helm-charts/tgbot/values-prod.yaml`
+- `.gitlab-ci.yml`
+- `helm-charts/tgbot/templates/deployment.yaml`
+- `helm-charts/tgbot/templates/ingress.yaml`
+- `helm-charts/tgbot/templates/NOTES.txt`
+- `helm-charts/tgbot/appsettings-tghookapi.json`
+- `helm-charts/tgbot/Chart.yaml`
 
 ## 说明
 
-文本源码与配置的静态快照；二进制资源未收录。发布前已按本目录实际内容替换凭据、密钥、内网地址与域名。
+该工程为平台的一个组件。仅收录文本源码与配置，图片、音频等二进制资源未收录；凭据、密钥、内网地址与域名已按实际内容替换。
 

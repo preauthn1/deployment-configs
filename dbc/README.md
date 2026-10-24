@@ -1,29 +1,42 @@
 # dbc
 
-原始路径：`dbc`　|　收录文件：**64**
+原始路径：`dbc`　|　文件：**64**　|　主语言：Go 53, YAML 4, Shell 2
 
-## 语言构成
-
-- Go — 53 个文件（84%）
-- Markdown — 4 个文件（6%）
-- YAML — 4 个文件（6%）
-- Shell — 2 个文件（3%）
-
-## 目录结构
+## 目录构成
 
 ```
-internal/  (51 个文件)
-./  (7 个文件)
-deploy/  (3 个文件)
-docs/  (2 个文件)
-cmd/  (1 个文件)
+internal/gateway/  — 19
+internal/proxy/  — 12
+internal/admin/  — 5
+internal/auth/  — 3
+deploy/kubernetes/  — 3
+internal/upgrade/  — 2
+internal/gatewayclient/  — 2
+internal/config/  — 2
+internal/gatewayproto/  — 2
+internal/cli/  — 2
+install.ps1/  — 1
+README.md/  — 1
+install.sh/  — 1
+.goreleaser.yaml/  — 1
 ```
 
 ## 关键文件
 
-- 构建脚本：`.gitlab-ci.yml`
+- CI/构建：`.gitlab-ci.yml`
+
+## 主要文件
+
+- `docs/SESSION-2026-09-03-DBC-GATEWAY.md`
+- `internal/proxy/queryaudit_test.go`
+- `internal/gateway/mysqlauth_test.go`
+- `internal/cli/cli.go`
+- `internal/proxy/queryaudit.go`
+- `internal/gateway/mysqlauth.go`
+- `internal/proxy/preparedstmt_test.go`
+- `internal/proxy/preparedstmt.go`
 
 ## 说明
 
-文本源码与配置的静态快照；二进制资源未收录。发布前已按本目录实际内容替换凭据、密钥、内网地址与域名。
+该工程为平台的一个组件。仅收录文本源码与配置，图片、音频等二进制资源未收录；凭据、密钥、内网地址与域名已按实际内容替换。
 

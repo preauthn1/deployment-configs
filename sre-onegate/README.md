@@ -1,24 +1,33 @@
 # sre-onegate
 
-原始路径：`sre-onegate`　|　收录文件：**23**
+原始路径：`sre-onegate`　|　文件：**23**　|　主语言：YAML 18
 
-## 语言构成
-
-- YAML — 18 个文件（94%）
-- Markdown — 1 个文件（5%）
-
-## 目录结构
+## 目录构成
 
 ```
-helm-charts/  (20 个文件)
-./  (3 个文件)
+helm-charts/laravel-app/  — 14
+helm-charts/laravel-migration/  — 6
+README.md/  — 1
+Makefile/  — 1
+.gitlab-ci.yml/  — 1
 ```
 
 ## 关键文件
 
-- 构建脚本：`Makefile`、`.gitlab-ci.yml`
+- CI/构建：`Makefile`、`.gitlab-ci.yml`
+
+## 主要文件
+
+- `helm-charts/laravel-app/templates/deployment.yaml`
+- `helm-charts/laravel-migration/templates/migration-job.yaml`
+- `helm-charts/laravel-app/templates/cronjob.yaml`
+- `helm-charts/laravel-app/templates/deployment-queue-work.yaml`
+- `helm-charts/laravel-app/.env.tpl`
+- `helm-charts/laravel-app/templates/NOTES.txt`
+- `Makefile`
+- `helm-charts/laravel-app/values_dev.yaml`
 
 ## 说明
 
-文本源码与配置的静态快照；二进制资源未收录。发布前已按本目录实际内容替换凭据、密钥、内网地址与域名。
+该工程为平台的一个组件。仅收录文本源码与配置，图片、音频等二进制资源未收录；凭据、密钥、内网地址与域名已按实际内容替换。
 
