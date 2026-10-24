@@ -1,24 +1,19 @@
 # pgs-hall
 
-原始路径：`pgs-hall`　|　文件：**76**　|　主语言：Vue 25, JavaScript 21, JSON 9
+原始路径：`pgs-hall`　|　文件：**75**　|　主语言：Vue 25, JavaScript 21, JSON 9
 
 ## 目录构成
 
 ```
 frontend/src/  — 52
+frontend/  — 5
 views/static/  — 3
+i18n/  — 3
+static2/  — 2
 internal/game/  — 2
 internal/vendor/  — 2
-config.yaml/  — 1
-README.md/  — 1
-Dockerfile/  — 1
-main.go/  — 1
-.gitlab-ci.yml/  — 1
-frontend/package.json/  — 1
-frontend/README.md/  — 1
-frontend/babel.config.js/  — 1
-frontend/package-lock.json/  — 1
-frontend/vue.config.js/  — 1
+frontend/public/  — 1
+views/  — 1
 ```
 
 ## 关键文件

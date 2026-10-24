@@ -1,15 +1,12 @@
 # gffv1proxy
 
-原始路径：`gffv1proxy`　|　文件：**5**　|　主语言：YAML 4
+原始路径：`gffv1proxy`　|　文件：**4**　|　主语言：YAML 4
 
 ## 目录构成
 
 ```
-README.md/  — 1
-.gitlab-ci.yml/  — 1
-fon666/ingress.yaml/  — 1
-fon666/deploy.yaml/  — 1
-vplus33/deploy.yaml/  — 1
+fon666/  — 2
+vplus33/  — 1
 ```
 
 ## 关键文件
@@ -22,7 +19,6 @@ vplus33/deploy.yaml/  — 1
 - `fon666/deploy.yaml`
 - `fon666/ingress.yaml`
 - `.gitlab-ci.yml`
-- `README.md`
 
 ## 说明
 

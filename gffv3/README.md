@@ -1,6 +1,6 @@
 # gffv3
 
-原始路径：`gffv3`　|　文件：**72**　|　主语言：YAML 65
+原始路径：`gffv3`　|　文件：**71**　|　主语言：YAML 65
 
 ## 目录构成
 
@@ -9,9 +9,6 @@ helm-charts/apis/  — 27
 helm-charts/agent-backend/  — 18
 helm-charts/laravel-migration/  — 13
 helm-charts/web-frontend/  — 11
-README.md/  — 1
-Makefile/  — 1
-.gitlab-ci.yml/  — 1
 ```
 
 ## 关键文件

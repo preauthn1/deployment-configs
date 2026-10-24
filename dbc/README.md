@@ -1,6 +1,6 @@
 # dbc
 
-原始路径：`dbc`　|　文件：**64**　|　主语言：Go 53, YAML 4, Shell 2
+原始路径：`dbc`　|　文件：**63**　|　主语言：Go 53, YAML 4, Shell 2
 
 ## 目录构成
 
@@ -10,15 +10,15 @@ internal/proxy/  — 12
 internal/admin/  — 5
 internal/auth/  — 3
 deploy/kubernetes/  — 3
+docs/  — 2
 internal/upgrade/  — 2
 internal/gatewayclient/  — 2
 internal/config/  — 2
 internal/gatewayproto/  — 2
 internal/cli/  — 2
-install.ps1/  — 1
-README.md/  — 1
-install.sh/  — 1
-.goreleaser.yaml/  — 1
+internal/doctor/  — 1
+internal/connect/  — 1
+cmd/dbc-gateway/  — 1
 ```
 
 ## 关键文件

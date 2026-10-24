@@ -1,13 +1,11 @@
 # deployment-tgbot
 
-原始路径：`deployment-tgbot`　|　文件：**14**　|　主语言：YAML 11, JSON 1
+原始路径：`deployment-tgbot`　|　文件：**13**　|　主语言：YAML 11, JSON 1
 
 ## 目录构成
 
 ```
 helm-charts/tgbot/  — 12
-README.md/  — 1
-.gitlab-ci.yml/  — 1
 ```
 
 ## 关键文件

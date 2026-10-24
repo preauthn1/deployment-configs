@@ -1,15 +1,12 @@
 # gff-cicd-gffpay
 
-原始路径：`gff-cicd-gffpay`　|　文件：**23**　|　主语言：YAML 18
+原始路径：`gff-cicd-gffpay`　|　文件：**22**　|　主语言：YAML 18
 
 ## 目录构成
 
 ```
 helm-charts/gffpay/  — 14
 helm-charts/laravel-migration/  — 6
-README.md/  — 1
-Makefile/  — 1
-.gitlab-ci.yml/  — 1
 ```
 
 ## 关键文件

@@ -1,20 +1,17 @@
 # bwg888
 
-原始路径：`bwg888`　|　文件：**17**　|　主语言：YAML 13, Shell 3
+原始路径：`bwg888`　|　文件：**16**　|　主语言：YAML 13, Shell 3
 
 ## 目录构成
 
 ```
 manifests/cert-manager/  — 3
 manifests/examples/  — 2
-README.md/  — 1
-.gitlab-ci.yml/  — 1
+scripts/  — 2
 manifests/registry/  — 1
 manifests/nginx-ingress/  — 1
 manifests/metallb/  — 1
 environments/production/  — 1
-scripts/deploy.sh/  — 1
-scripts/update-config.sh/  — 1
 scripts/lib/  — 1
 charts/cert-manager/  — 1
 charts/nginx-ingress/  — 1
@@ -31,10 +28,10 @@ charts/metallb/  — 1
 - `scripts/update-config.sh`
 - `scripts/lib/common.sh`
 - `.gitlab-ci.yml`
-- `README.md`
 - `manifests/examples/example-app.yaml`
 - `manifests/examples/example-ingress.yaml`
 - `manifests/cert-manager/cluster-issuer.yaml`
+- `environments/production/cert-manager.yaml`
 
 ## 说明
 

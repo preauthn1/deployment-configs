@@ -1,22 +1,13 @@
 # gke-gateway-route-manager
 
-原始路径：`gke-gateway-route-manager`　|　文件：**12**　|　主语言：JSON 2
+原始路径：`gke-gateway-route-manager`　|　文件：**11**　|　主语言：JSON 2
 
 ## 目录构成
 
 ```
-CLAUDE.md/  — 1
-README.md/  — 1
-.claude/settings.local.json/  — 1
-docs/faq.md/  — 1
-docs/commands-reference.md/  — 1
-docs/deployment-guide.md/  — 1
-docs/devcontainer-features.md/  — 1
-docs/getting-started.md/  — 1
-docs/troubleshooting.md/  — 1
-docs/architecture.md/  — 1
-.devcontainer/devcontainer.json/  — 1
-.devcontainer/Dockerfile/  — 1
+docs/  — 7
+.devcontainer/  — 2
+.claude/  — 1
 ```
 
 ## 关键文件

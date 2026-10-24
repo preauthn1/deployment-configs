@@ -1,24 +1,20 @@
 # deployment-backend
 
-原始路径：`deployment-backend`　|　文件：**73**　|　主语言：YAML 49, JSON 16
+原始路径：`deployment-backend`　|　文件：**72**　|　主语言：YAML 49, JSON 16
 
 ## 目录构成
 
 ```
+api/  — 15
+bwg-api/  — 10
 api/templates/  — 8
 portal/templates/  — 8
 bwg-portal/templates/  — 8
 bwg-api/templates/  — 8
 values/bwg/  — 6
-README.md/  — 1
-.gitlab-ci.yml/  — 1
-api/appsettings-game.json/  — 1
-api/readme.md/  — 1
-api/appsettings-vendor.json/  — 1
-api/appsettings-sandbox_vendor.json/  — 1
-api/values.yaml/  — 1
-api/appsettings-public.json/  — 1
-api/Chart.yaml/  — 1
+portal/  — 3
+bwg-portal/  — 3
+ci-jobs/  — 2
 ```
 
 ## 关键文件

@@ -1,24 +1,11 @@
 # deployment-game-server
 
-原始路径：`deployment-game-server`　|　文件：**32**　|　主语言：YAML 31
+原始路径：`deployment-game-server`　|　文件：**31**　|　主语言：YAML 31
 
 ## 目录构成
 
 ```
-README.md/  — 1
-.gitlab-ci.yml/  — 1
-values/game-hhdz.yaml/  — 1
-values/game-lkb.yaml/  — 1
-values/game-wlyc.yaml/  — 1
-values/game-xlhd.yaml/  — 1
-values/game-s888.yaml/  — 1
-values/game-faf.yaml/  — 1
-values/game-jzyq.yaml/  — 1
-values/game-fgsb.yaml/  — 1
-values/game-infc.yaml/  — 1
-values/game-bjl.yaml/  — 1
-values/value.yaml/  — 1
-values/game-dfdc.yaml/  — 1
+values/  — 30
 ```
 
 ## 关键文件

@@ -1,24 +1,14 @@
 # deployment-hall
 
-原始路径：`deployment-hall`　|　文件：**31**　|　主语言：YAML 28
+原始路径：`deployment-hall`　|　文件：**30**　|　主语言：YAML 28
 
 ## 目录构成
 
 ```
 demo/templates/  — 8
 helm/templates/  — 7
-demo-slot88.yaml/  — 1
-promotion.yaml/  — 1
-demo-dev.yaml/  — 1
-demo-slotsbb.yaml/  — 1
-README.md/  — 1
-demo-monitor-slotsbb.yaml/  — 1
-pre-demo.yaml/  — 1
-demo-qa.yaml/  — 1
-demo-bwg.yaml/  — 1
-demo-at.yaml/  — 1
-demo.yaml/  — 1
-.gitlab-ci.yml/  — 1
+helm/  — 2
+demo/  — 2
 ```
 
 ## 关键文件

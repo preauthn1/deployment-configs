@@ -1,21 +1,12 @@
 # marscard
 
-原始路径：`marscard`　|　文件：**17**　|　主语言：YAML 10, JSON 5
+原始路径：`marscard`　|　文件：**16**　|　主语言：YAML 10, JSON 5
 
 ## 目录构成
 
 ```
+msc/  — 7
 msc/templates/  — 7
-certificate.yaml/  — 1
-README.md/  — 1
-.gitlab-ci.yml/  — 1
-msc/appsettings-web-point.json/  — 1
-msc/appsettings-api-vendor.json/  — 1
-msc/values.yaml/  — 1
-msc/appsettings-api-point.json/  — 1
-msc/Chart.yaml/  — 1
-msc/appsettings-api-adminsys.json/  — 1
-msc/appsettings-web-adminsys.json/  — 1
 ```
 
 ## 关键文件

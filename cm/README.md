@@ -1,6 +1,6 @@
 # cm
 
-原始路径：`cm`　|　文件：**61**　|　主语言：YAML 45, Shell 1
+原始路径：`cm`　|　文件：**60**　|　主语言：YAML 45, Shell 1
 
 ## 目录构成
 
@@ -9,16 +9,11 @@ helm-charts/tgbot-php/  — 13
 helm-charts/cm-backend/  — 12
 helm-charts/cm-api-frontend/  — 12
 helm-charts/cm-app-frontend/  — 11
+ci-jobs/  — 4
 build-dev/tgbot-php/  — 3
 build-dev/backend/  — 2
-README.md/  — 1
-.gitlab-ci.yml/  — 1
 build-dev/app-frontend/  — 1
 build-dev/api-frontend/  — 1
-ci-jobs/backend.yml/  — 1
-ci-jobs/api-frontend.yml/  — 1
-ci-jobs/tgbot-php.yml/  — 1
-ci-jobs/app-frontend.yml/  — 1
 ```
 
 ## 关键文件

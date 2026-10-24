@@ -1,22 +1,18 @@
 # base-modules
 
-原始路径：`base-modules`　|　文件：**5**　|　主语言：YAML 3
+原始路径：`base-modules`　|　文件：**4**　|　主语言：YAML 3
 
 ## 目录构成
 
 ```
-readme.md/  — 1
-README.md/  — 1
-nginx-ingress/values.yaml/  — 1
-metallb/config.yaml/  — 1
-metallb/value.yaml/  — 1
+metallb/  — 2
+nginx-ingress/  — 1
 ```
 
 ## 主要文件
 
 - `readme.md`
 - `nginx-ingress/values.yaml`
-- `README.md`
 - `metallb/value.yaml`
 - `metallb/config.yaml`
 

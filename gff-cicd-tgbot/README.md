@@ -1,14 +1,11 @@
 # gff-cicd-tgbot
 
-原始路径：`gff-cicd-tgbot`　|　文件：**19**　|　主语言：YAML 14
+原始路径：`gff-cicd-tgbot`　|　文件：**18**　|　主语言：YAML 14
 
 ## 目录构成
 
 ```
 helm-charts/tgbot-php/  — 16
-README.md/  — 1
-Makefile/  — 1
-.gitlab-ci.yml/  — 1
 ```
 
 ## 关键文件
